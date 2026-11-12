@@ -227,3 +227,52 @@ export interface MessageItem {
   read: boolean
   from: string
 }
+
+export interface Tenant {
+  id: string
+  name: string
+  code: string
+  contact: string
+  phone: string
+  resourceQuota: string
+  userCount: number
+  deviceCount: number
+  status: '启用' | '停用'
+  createdAt: string
+}
+
+export type AuditStatus = '待审核' | '已通过' | '已驳回'
+
+export interface PlotAudit {
+  id: string
+  plotCode: string
+  plotName: string
+  crop: string
+  variety: string
+  area: number
+  greenhouse: string
+  submitBy: string
+  farmerId: string
+  submittedAt: string
+  status: AuditStatus
+  boundaryClosed: boolean
+  polygon: MapPoint[]
+  rejectReason?: string
+}
+
+export interface FarmerPlot {
+  id: string
+  name: string
+  crop: string
+  variety: string
+  area: number
+  greenhouse: string
+  plantedAt: string
+  expectedHarvest: string
+  auditStatus: AuditStatus
+  rejectReason?: string
+  deviceCount: number
+  envTemp: number
+  envHumidity: number
+  polygon: MapPoint[]
+}

@@ -134,10 +134,10 @@ function plotTone(status: string): Tone {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="辖区园区数" :value="12" unit="个" icon="园" note="覆盖 3 个镇街 · 6 个示范基地" trend="+1 本季度新增" />
-      <StatCard label="辖区种植面积" :value="formatNumber(3860)" unit="亩" icon="地" note="蔬菜 62% · 水果 27%" trend="+3.1% 同比" />
-      <StatCard label="抽检合格率" :value="qualityOverview.passRate" unit="%" icon="检" note="近 6 个月累计抽检 72 批次" trend="+0.2% 环比" />
-      <StatCard label="待处理预警" :value="pendingWarnings" unit="条" icon="警" note="质量异常 1 · 台账缺失 2" trend="较上周 -2" trend-up accent />
+      <StatCard label="辖区园区数" :value="12" unit="个" note="覆盖 3 个镇街 · 6 个示范基地" trend="+1 本季度新增" />
+      <StatCard label="辖区种植面积" :value="formatNumber(3860)" unit="亩" note="蔬菜 62% · 水果 27%" trend="+3.1% 同比" />
+      <StatCard label="抽检合格率" :value="qualityOverview.passRate" unit="%" note="近 6 个月累计抽检 72 批次" trend="+0.2% 环比" />
+      <StatCard label="待处理预警" :value="pendingWarnings" unit="条" note="质量异常 1 · 台账缺失 2" trend="较上周 -2" trend-up accent />
     </div>
 
     <div class="grid grid--main">

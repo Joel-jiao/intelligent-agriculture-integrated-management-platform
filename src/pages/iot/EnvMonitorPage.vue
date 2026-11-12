@@ -47,20 +47,19 @@ interface CurrentStat {
   label: string
   value: number
   unit: string
-  icon: string
   note: string
   accent?: boolean
 }
 
 const currentStats = computed<CurrentStat[]>(() => [
-  { label: '空气温度', value: lastOf(liveSeries.value.temperature, 1), unit: '℃', icon: '温', note: '适宜 18 - 30℃' },
-  { label: '空气湿度', value: lastOf(liveSeries.value.humidity), unit: '%', icon: '湿', note: '适宜 55% - 85%' },
-  { label: '土壤温度', value: lastOf(liveSeries.value.soilTemperature, 1), unit: '℃', icon: '土', note: '适宜 20 - 28℃' },
-  { label: '土壤湿度', value: lastOf(liveSeries.value.soilMoisture), unit: '%', icon: '墒', note: '下限 40%' },
-  { label: 'CO₂ 浓度', value: lastOf(liveSeries.value.co2), unit: 'ppm', icon: '碳', note: '适宜 450 - 600 ppm' },
-  { label: '光照强度', value: lastOf(liveSeries.value.light), unit: 'lux', icon: '光', note: '峰值 6080 lux' },
-  { label: '水体 pH', value: lastOf(liveSeries.value.ph, 1), unit: 'pH', icon: 'pH', note: '适宜 6.0 - 7.0' },
-  { label: '水温', value: lastOf(liveSeries.value.waterTemperature, 1), unit: '℃', icon: '水', note: '适宜 18 - 24℃', accent: true },
+  { label: '空气温度', value: lastOf(liveSeries.value.temperature, 1), unit: '℃', note: '适宜 18 - 30℃' },
+  { label: '空气湿度', value: lastOf(liveSeries.value.humidity), unit: '%', note: '适宜 55% - 85%' },
+  { label: '土壤温度', value: lastOf(liveSeries.value.soilTemperature, 1), unit: '℃', note: '适宜 20 - 28℃' },
+  { label: '土壤湿度', value: lastOf(liveSeries.value.soilMoisture), unit: '%', note: '下限 40%' },
+  { label: 'CO₂ 浓度', value: lastOf(liveSeries.value.co2), unit: 'ppm', note: '适宜 450 - 600 ppm' },
+  { label: '光照强度', value: lastOf(liveSeries.value.light), unit: 'lux', note: '峰值 6080 lux' },
+  { label: '水体 pH', value: lastOf(liveSeries.value.ph, 1), unit: 'pH', note: '适宜 6.0 - 7.0' },
+  { label: '水温', value: lastOf(liveSeries.value.waterTemperature, 1), unit: '℃', note: '适宜 18 - 24℃', accent: true },
 ])
 
 const chartSeries = computed(() => {
@@ -224,7 +223,6 @@ const currentDevice = computed(() => sensorDevices.value.find((item) => item.id 
         :label="item.label"
         :value="item.value"
         :unit="item.unit"
-        :icon="item.icon"
         :note="item.note"
         :accent="item.accent"
       />

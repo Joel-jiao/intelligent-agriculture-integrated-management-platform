@@ -85,10 +85,10 @@ function resultTone(result: string): 'ok' | 'danger' {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="抽检批次" :value="qualityOverview.inspectedBatches" unit="批" icon="检" note="覆盖蔬菜、水果、粮油" trend="+6 环比" />
-      <StatCard label="合格批次" :value="qualityOverview.qualified" unit="批" icon="合" note="合格率 98.6%" trend="+1 环比" />
-      <StatCard label="不合格批次" :value="qualityOverview.unqualified" unit="批" icon="异" note="黄瓜批次农残超标" trend="持平" trend-up accent />
-      <StatCard label="产品召回" :value="qualityOverview.recalls" unit="起" icon="召" note="进行中 1 起 · 已完成 2 起" trend="-1 环比" />
+      <StatCard label="抽检批次" :value="qualityOverview.inspectedBatches" unit="批" note="覆盖蔬菜、水果、粮油" trend="+6 环比" />
+      <StatCard label="合格批次" :value="qualityOverview.qualified" unit="批" note="合格率 98.6%" trend="+1 环比" />
+      <StatCard label="不合格批次" :value="qualityOverview.unqualified" unit="批" note="黄瓜批次农残超标" trend="持平" trend-up accent />
+      <StatCard label="产品召回" :value="qualityOverview.recalls" unit="起" note="进行中 1 起 · 已完成 2 起" trend="-1 环比" />
     </div>
 
     <div class="grid grid--main">

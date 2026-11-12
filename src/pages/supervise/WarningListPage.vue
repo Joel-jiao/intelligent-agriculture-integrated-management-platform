@@ -129,10 +129,10 @@ function statusTone(status: string): Tone {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="待处理" :value="pendingCount" unit="条" icon="待" note="需在 24 小时内响应" trend="较昨日 -1" trend-up />
-      <StatCard label="处理中" :value="handlingCount" unit="条" icon="中" note="已指派处置责任人" />
-      <StatCard label="已办结" :value="closedCount" unit="条" icon="结" note="本月累计办结" trend="办结率 33%" />
-      <StatCard label="高危预警" :value="highCount" unit="条" icon="危" note="质量异常类占比最高" accent />
+      <StatCard label="待处理" :value="pendingCount" unit="条" note="需在 24 小时内响应" trend="较昨日 -1" trend-up />
+      <StatCard label="处理中" :value="handlingCount" unit="条" note="已指派处置责任人" />
+      <StatCard label="已办结" :value="closedCount" unit="条" note="本月累计办结" trend="办结率 33%" />
+      <StatCard label="高危预警" :value="highCount" unit="条" note="质量异常类占比最高" accent />
     </div>
 
     <section class="card">

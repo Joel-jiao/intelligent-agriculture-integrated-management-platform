@@ -14,8 +14,9 @@ const props = withDefaults(
     height?: number
     unit?: string
     fill?: boolean
+    dense?: boolean
   }>(),
-  { height: 210, unit: '', fill: true },
+  { height: 210, unit: '', fill: true, dense: false },
 )
 
 const width = 720
@@ -71,7 +72,7 @@ const yTicks = computed(() => {
 
 const xTicks = computed(() => {
   const count = props.labels.length
-  const step = Math.max(1, Math.ceil(count / 6))
+  const step = Math.max(1, Math.ceil(count / (props.dense ? 4 : 6)))
   const list: { label: string; x: number; index: number }[] = []
   for (let i = 0; i < count; i += step) {
     const label = props.labels[i]
@@ -101,7 +102,7 @@ const hoverLabel = computed(() => {
 </script>
 
 <template>
-  <div class="line-chart">
+  <div class="line-chart" :class="{ 'line-chart--dense': dense }">
     <div class="legend line-chart__legend">
       <span v-for="item in series" :key="item.name"><i :style="{ background: item.color }" />{{ item.name }}</span>
     </div>
@@ -120,7 +121,7 @@ const hoverLabel = computed(() => {
           :x2="width - pad.right"
           :y1="tick.y"
           :y2="tick.y"
-          stroke="#e7efe9"
+          stroke="var(--border-card)"
           stroke-dasharray="3 5"
         />
         <text v-for="tick in yTicks" :key="`t-${tick.y}`" :x="pad.left - 8" :y="tick.y + 3" text-anchor="end" class="axis-text">
@@ -147,7 +148,7 @@ const hoverLabel = computed(() => {
           :x2="x(hover)"
           :y1="pad.top"
           :y2="pad.top + plotH"
-          stroke="#b8c9be"
+          stroke="var(--border-strong)"
           stroke-dasharray="4 4"
         />
         <circle
@@ -158,7 +159,7 @@ const hoverLabel = computed(() => {
           :cy="hover === null ? 0 : y(item.data[hover] ?? 0)"
           r="4"
           :fill="item.color"
-          stroke="#fff"
+          stroke="var(--bg-card-solid)"
           stroke-width="2"
         />
       </svg>
@@ -177,6 +178,15 @@ const hoverLabel = computed(() => {
   margin-bottom: 6px;
 }
 
+/* 窄容器内放大坐标文字，抵消 viewBox 缩放 */
+.line-chart--dense .axis-text {
+  font-size: 19px;
+}
+
+.line-chart--dense .line-chart__legend {
+  font-size: 11.5px;
+}
+
 .line-chart__canvas {
   position: relative;
   width: 100%;
@@ -189,8 +199,8 @@ const hoverLabel = computed(() => {
 }
 
 .axis-text {
-  font-size: 9px;
-  fill: #9aa9a0;
+  font-size: 9.5px;
+  fill: var(--text-tertiary);
   font-family: var(--font-num);
 }
 
@@ -200,20 +210,21 @@ const hoverLabel = computed(() => {
   z-index: 2;
   min-width: 110px;
   padding: 8px 10px;
-  border-radius: 8px;
-  background: rgba(20, 40, 28, 0.92);
-  color: #fff;
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  background: var(--bg-card-solid);
+  color: var(--text-primary);
   font-size: 11px;
   transform: translateX(-50%);
   pointer-events: none;
-  box-shadow: 0 8px 20px rgba(10, 30, 18, 0.2);
+  box-shadow: var(--shadow-float);
 }
 
 .line-chart__tip b {
   display: block;
   margin-bottom: 3px;
   font-size: 10.5px;
-  color: #a7e8bf;
+  color: var(--text-secondary);
   font-family: var(--font-num);
 }
 

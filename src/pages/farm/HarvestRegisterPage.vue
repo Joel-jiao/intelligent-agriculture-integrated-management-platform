@@ -143,9 +143,9 @@ function exportRecords() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="今日采收重量" :value="formatNumber(todayWeight)" unit="kg" icon="收" note="按采收时间统计今日累计" trend="较昨日 +12%" />
-      <StatCard label="待入库批次" :value="pendingCount" unit="批" icon="待" note="需尽快完成冷库入库" trend="需处理" :trend-up="false" accent />
-      <StatCard label="已入库批次" :value="storedCount" unit="批" icon="库" :note="`累计采收 ${formatNumber(totalWeight)} kg`" trend="入库率 92%" />
+      <StatCard label="今日采收重量" :value="formatNumber(todayWeight)" unit="kg" note="按采收时间统计今日累计" trend="较昨日 +12%" />
+      <StatCard label="待入库批次" :value="pendingCount" unit="批" note="需尽快完成冷库入库" trend="需处理" :trend-up="false" accent />
+      <StatCard label="已入库批次" :value="storedCount" unit="批" :note="`累计采收 ${formatNumber(totalWeight)} kg`" trend="入库率 92%" />
     </div>
 
     <div class="grid grid--main">

@@ -128,10 +128,10 @@ function exportFiles() {
     <input ref="fileInput" type="file" style="display: none" @change="onFilePick" />
 
     <div class="stat-grid">
-      <StatCard label="已用存储" :value="storage.used" unit="GB" icon="存" note="总配额 1024 GB" trend="使用率 47%" />
-      <StatCard label="文件总数" :value="rows.length" unit="个" icon="文" note="图片 3 · 文档 4 · 视频 1" trend="本月 +12" trend-up />
-      <StatCard label="本月上传" :value="formatNumber(126)" unit="个" icon="传" note="检测报告占比 46%" trend="较上月 +18" trend-up />
-      <StatCard label="待清理文件" :value="12" unit="个" icon="清" note="90 天未访问" trend="可释放 3.2 GB" accent />
+      <StatCard label="已用存储" :value="storage.used" unit="GB" note="总配额 1024 GB" trend="使用率 47%" />
+      <StatCard label="文件总数" :value="rows.length" unit="个" note="图片 3 · 文档 4 · 视频 1" trend="本月 +12" trend-up />
+      <StatCard label="本月上传" :value="formatNumber(126)" unit="个" note="检测报告占比 46%" trend="较上月 +18" trend-up />
+      <StatCard label="待清理文件" :value="12" unit="个" note="90 天未访问" trend="可释放 3.2 GB" accent />
     </div>
 
     <div class="grid grid--main" style="margin-bottom: 16px">

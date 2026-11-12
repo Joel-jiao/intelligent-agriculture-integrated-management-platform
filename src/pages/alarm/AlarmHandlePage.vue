@@ -158,10 +158,10 @@ function exportCsv() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="紧急告警待处置" :value="urgentCount" unit="条" icon="急" note="需 30 分钟内响应" accent />
-      <StatCard label="重要告警待处置" :value="importantCount" unit="条" icon="重" note="需 2 小时内响应" />
-      <StatCard label="待确认告警" :value="waitingCount" unit="条" icon="确" note="尚未指派处置人" />
-      <StatCard label="已归档告警" :value="archivedCount" unit="条" icon="档" note="本月闭环记录" trend="闭环率 62%" />
+      <StatCard label="紧急告警待处置" :value="urgentCount" unit="条" note="需 30 分钟内响应" accent />
+      <StatCard label="重要告警待处置" :value="importantCount" unit="条" note="需 2 小时内响应" />
+      <StatCard label="待确认告警" :value="waitingCount" unit="条" note="尚未指派处置人" />
+      <StatCard label="已归档告警" :value="archivedCount" unit="条" note="本月闭环记录" trend="闭环率 62%" />
     </div>
 
     <div class="toolbar">
@@ -412,7 +412,7 @@ function exportCsv() {
   flex: 0 0 auto;
   padding: 3px 8px;
   border-radius: 12px;
-  background: #fff;
+  background: var(--bg-card-solid);
   border: 1px solid var(--line);
   font-size: 10.5px;
   color: var(--muted);

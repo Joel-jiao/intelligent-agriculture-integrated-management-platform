@@ -199,10 +199,10 @@ function exportApis() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="接口总数" :value="rows.length" unit="个" icon="接" note="覆盖气象、监管、短信等" trend="本周新增 1" trend-up />
-      <StatCard label="已启用" :value="enabledCount" unit="个" icon="启" note="停用接口不对外响应" trend="启用率 80%" />
-      <StatCard label="今日调用" :value="formatNumber(sysInfo.apiCalls)" unit="次" icon="调" note="峰值 QPS 128" trend="+6.4% 环比" trend-up />
-      <StatCard label="调用成功率" :value="99.2" unit="%" icon="成" note="失败主因：签名过期" trend="较昨日 +0.3%" trend-up accent />
+      <StatCard label="接口总数" :value="rows.length" unit="个" note="覆盖气象、监管、短信等" trend="本周新增 1" trend-up />
+      <StatCard label="已启用" :value="enabledCount" unit="个" note="停用接口不对外响应" trend="启用率 80%" />
+      <StatCard label="今日调用" :value="formatNumber(sysInfo.apiCalls)" unit="次" note="峰值 QPS 128" trend="+6.4% 环比" trend-up />
+      <StatCard label="调用成功率" :value="99.2" unit="%" note="失败主因：签名过期" trend="较昨日 +0.3%" trend-up accent />
     </div>
 
     <section class="card">

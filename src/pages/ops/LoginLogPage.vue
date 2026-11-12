@@ -73,10 +73,10 @@ function exportLogs() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="今日登录" :value="todayLogin" unit="次" icon="登" note="管理员端 2 · 运维端 1" trend="较昨日 +1" trend-up />
-      <StatCard label="失败次数" :value="todayFail" unit="次" icon="败" note="密码错误 1 次" trend="风控已记录" />
-      <StatCard label="独立账号" :value="uniqueAccounts" unit="个" icon="账" note="覆盖 4 个业务端" trend="全部实名" />
-      <StatCard label="最近刷新" :value="lastRefresh.slice(11)" icon="时" note="日志实时写入" trend="自动同步" accent />
+      <StatCard label="今日登录" :value="todayLogin" unit="次" note="管理员端 2 · 运维端 1" trend="较昨日 +1" trend-up />
+      <StatCard label="失败次数" :value="todayFail" unit="次" note="密码错误 1 次" trend="风控已记录" />
+      <StatCard label="独立账号" :value="uniqueAccounts" unit="个" note="覆盖 4 个业务端" trend="全部实名" />
+      <StatCard label="最近刷新" :value="lastRefresh.slice(11)" note="日志实时写入" trend="自动同步" accent />
     </div>
 
     <section class="card">
@@ -163,7 +163,7 @@ function exportLogs() {
 
 <style scoped>
 .row--danger td {
-  background: #fdf4f4;
+  background: var(--danger-soft);
 }
 
 .row--danger td:first-child {
@@ -171,6 +171,6 @@ function exportLogs() {
 }
 
 .row--danger:hover td {
-  background: #fbeaea;
+  background: var(--danger-soft);
 }
 </style>

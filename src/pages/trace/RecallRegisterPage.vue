@@ -137,14 +137,13 @@ function exportCsv() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="召回批次" :value="rows.length" unit="批" icon="召" note="一级召回 1 批 · 二级 2 批" accent />
-      <StatCard label="受影响产品数量" :value="formatNumber(affectedTotal)" unit="件" icon="量" note="含在售与仓储数量" />
-      <StatCard label="已回收数量" :value="formatNumber(recoveredTotal)" unit="件" icon="收" note="销售终端已确认回收" />
+      <StatCard label="召回批次" :value="rows.length" unit="批" note="一级召回 1 批 · 二级 2 批" accent />
+      <StatCard label="受影响产品数量" :value="formatNumber(affectedTotal)" unit="件" note="含在售与仓储数量" />
+      <StatCard label="已回收数量" :value="formatNumber(recoveredTotal)" unit="件" note="销售终端已确认回收" />
       <StatCard
         label="整体回收率"
         :value="formatNumber(recoveryRate, 1)"
         unit="%"
-        icon="率"
         note="目标回收率 ≥ 95%"
         trend="较上周 +6.2%"
       />

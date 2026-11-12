@@ -81,7 +81,7 @@ function demoLogin() {
   max-width: 360px;
   padding: 30px 24px 24px;
   border-radius: 26px;
-  background: #fff;
+  background: var(--bg-card-solid);
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.3);
 }
 

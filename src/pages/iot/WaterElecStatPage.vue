@@ -142,7 +142,6 @@ function exportCsv() {
         label="本月用水量"
         :value="formatNumber(latest?.water ?? 0)"
         unit="m³"
-        icon="水"
         :note="plotScope"
         :trend="`较上月 ${waterChange > 0 ? '+' : ''}${waterChange}%`"
         :trend-up="waterChange <= 0"
@@ -151,7 +150,6 @@ function exportCsv() {
         label="本月用电量"
         :value="formatNumber(latest?.electric ?? 0)"
         unit="kWh"
-        icon="电"
         :note="plotScope"
         :trend="`较上月 ${electricChange > 0 ? '+' : ''}${electricChange}%`"
         :trend-up="electricChange <= 0"
@@ -160,7 +158,6 @@ function exportCsv() {
         label="本月水电费用"
         :value="formatNumber(latest?.cost ?? 0)"
         unit="元"
-        icon="费"
         note="含基本电费与水资源费"
         accent
       />
@@ -168,7 +165,6 @@ function exportCsv() {
         label="水电同比"
         :value="Math.abs(yoy)"
         unit="%"
-        icon="比"
         :trend="`${yoy > 0 ? '+' : ''}${yoy}% 环比`"
         :trend-up="yoy <= 0"
         note="用水与用电合计"

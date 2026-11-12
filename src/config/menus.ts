@@ -27,6 +27,7 @@ export const adminMenu: MenuGroup[] = [
     title: '远程控制',
     items: [
       { label: '设备远程控制', to: '/control/device', icon: '控' },
+      { label: '智能灌溉控制', to: '/control/irrigation', icon: '灌' },
       { label: '自动联动策略', to: '/control/linkage', icon: '联' },
     ],
   },
@@ -67,6 +68,10 @@ export const opsMenu: MenuGroup[] = [
   {
     title: '总览',
     items: [{ label: '运维工作台', to: '/ops/workbench', icon: '台' }],
+  },
+  {
+    title: '租户管理',
+    items: [{ label: '租户信息管理', to: '/ops/tenants', icon: '租' }],
   },
   {
     title: '用户与权限',
@@ -127,6 +132,7 @@ export const supMenu: MenuGroup[] = [
 export const mobileTabs: MenuItem[] = [
   { label: '首页', to: '/app/home', icon: '家' },
   { label: '任务', to: '/app/tasks', icon: '务' },
+  { label: '地块', to: '/app/plots', icon: '地' },
   { label: '消息', to: '/app/messages', icon: '信' },
   { label: '我的', to: '/app/mine', icon: '我' },
 ]

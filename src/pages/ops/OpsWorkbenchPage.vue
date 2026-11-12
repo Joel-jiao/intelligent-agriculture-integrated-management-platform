@@ -88,10 +88,10 @@ function exportServices() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="系统健康度" :value="92" unit="%" icon="健" note="5 项服务 · 4 运行正常" trend="较昨日 +1" trend-up />
-      <StatCard label="在线用户" :value="sysInfo.onlineUsers" unit="人" icon="用" note="管理员端 2 · 运维端 1" trend="会话正常" />
-      <StatCard label="MQTT 消息累计" :value="formatNumber(sysInfo.mqttMessages)" unit="条" icon="联" note="今日新增 12,860 条" trend="+3.2% 环比" trend-up />
-      <StatCard label="接口调用累计" :value="formatNumber(sysInfo.apiCalls)" unit="次" icon="接" note="平均响应 42 ms" trend="成功率 99.2%" accent />
+      <StatCard label="系统健康度" :value="92" unit="%" note="5 项服务 · 4 运行正常" trend="较昨日 +1" trend-up />
+      <StatCard label="在线用户" :value="sysInfo.onlineUsers" unit="人" note="管理员端 2 · 运维端 1" trend="会话正常" />
+      <StatCard label="MQTT 消息累计" :value="formatNumber(sysInfo.mqttMessages)" unit="条" note="今日新增 12,860 条" trend="+3.2% 环比" trend-up />
+      <StatCard label="接口调用累计" :value="formatNumber(sysInfo.apiCalls)" unit="次" note="平均响应 42 ms" trend="成功率 99.2%" accent />
     </div>
 
     <div class="grid grid--main">
@@ -203,14 +203,13 @@ function exportServices() {
           </div>
           <div class="card__body entry-grid">
             <RouterLink v-for="entry in [
-              { to: '/ops/users', mark: '用', name: '用户管理', desc: '账号启停与权限归属' },
-              { to: '/ops/roles', mark: '角', name: '角色权限', desc: 'RBAC 权限矩阵配置' },
-              { to: '/ops/devices', mark: '接', name: '设备接入', desc: '网关与协议参数' },
-              { to: '/ops/backup', mark: '备', name: '备份恢复', desc: '数据库全量备份' },
-              { to: '/ops/openapi', mark: '接', name: '接口配置', desc: '第三方接口与密钥' },
-              { to: '/ops/files', mark: '文', name: '文件存储', desc: '附件与配额管理' },
+              { to: '/ops/users', name: '用户管理', desc: '账号启停与权限归属' },
+              { to: '/ops/roles', name: '角色权限', desc: 'RBAC 权限矩阵配置' },
+              { to: '/ops/devices', name: '设备接入', desc: '网关与协议参数' },
+              { to: '/ops/backup', name: '备份恢复', desc: '数据库全量备份' },
+              { to: '/ops/openapi', name: '接口配置', desc: '第三方接口与密钥' },
+              { to: '/ops/files', name: '文件存储', desc: '附件与配额管理' },
             ]" :key="entry.to" class="entry" :to="entry.to">
-              <span class="entry__mark">{{ entry.mark }}</span>
               <b>{{ entry.name }}</b>
               <small>{{ entry.desc }}</small>
             </RouterLink>
@@ -306,19 +305,6 @@ function exportServices() {
 .entry:hover {
   border-color: var(--brand);
   background: var(--brand-softer);
-}
-
-.entry__mark {
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  margin-bottom: 4px;
-  border-radius: 8px;
-  background: var(--brand-soft);
-  color: var(--brand);
-  font-size: 12px;
-  font-weight: 700;
 }
 
 .entry b {

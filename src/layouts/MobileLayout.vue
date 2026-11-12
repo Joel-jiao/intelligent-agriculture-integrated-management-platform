@@ -2,6 +2,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { mobileTabs } from '@/config/menus'
+import NetworkStatusBar from '@/components/ui/NetworkStatusBar.vue'
 import { pad } from '@/utils/format'
 
 const clock = ref('09:41')
@@ -29,6 +30,7 @@ onBeforeUnmount(() => window.clearInterval(timer))
         <span style="font-size: 10px; letter-spacing: 1px">5G ▮▮▮</span>
       </div>
       <div class="phone__view">
+        <NetworkStatusBar />
         <RouterView />
       </div>
       <nav class="phone__tabbar">

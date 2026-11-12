@@ -179,17 +179,16 @@ function exportCsv() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="溯源批次总数" :value="rows.length" unit="批" icon="批" note="覆盖 6 个地块" trend="本月新增 3 批" />
+      <StatCard label="溯源批次总数" :value="rows.length" unit="批" note="覆盖 6 个地块" trend="本月新增 3 批" />
       <StatCard
         label="已赋码批次"
         :value="codedBatches.length"
         unit="批"
-        icon="码"
         :note="`累计赋码 ${formatNumber(codedCount)} 枚`"
         trend="赋码率 50%"
       />
-      <StatCard label="待赋码批次" :value="pendingCount" unit="批" icon="待" note="需尽快完成赋码" accent />
-      <StatCard label="累计扫码次数" :value="formatNumber(totalScans)" unit="次" icon="扫" note="消费者访问溯源页" trend="较上周 +18%" />
+      <StatCard label="待赋码批次" :value="pendingCount" unit="批" note="需尽快完成赋码" accent />
+      <StatCard label="累计扫码次数" :value="formatNumber(totalScans)" unit="次" note="消费者访问溯源页" trend="较上周 +18%" />
     </div>
 
     <div class="toolbar">

@@ -46,7 +46,7 @@ const rings = computed(() => {
           :cy="radius"
           :r="radius - thickness / 2"
           fill="none"
-          stroke="var(--surface-2)"
+          stroke="var(--border-card)"
           :stroke-width="thickness"
         />
         <circle
@@ -107,15 +107,16 @@ const rings = computed(() => {
 }
 
 .donut__center b {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }
 
 .donut__center span {
-  font-size: 10.5px;
-  color: var(--muted);
+  font-size: 11px;
+  color: var(--text-secondary);
 }
 
 .donut__legend {

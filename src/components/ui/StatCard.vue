@@ -4,7 +4,6 @@ withDefaults(
     label: string
     value: string | number
     unit?: string
-    icon?: string
     trend?: string
     trendUp?: boolean
     note?: string
@@ -12,7 +11,6 @@ withDefaults(
   }>(),
   {
     unit: '',
-    icon: '数',
     trend: '',
     trendUp: true,
     note: '',
@@ -25,7 +23,6 @@ withDefaults(
   <div class="stat" :class="{ 'stat--accent': accent }">
     <div class="stat__top">
       <span class="stat__label">{{ label }}</span>
-      <span class="stat__icon">{{ icon }}</span>
     </div>
     <div class="stat__value">{{ value }}<small v-if="unit">{{ unit }}</small></div>
     <div class="stat__foot">

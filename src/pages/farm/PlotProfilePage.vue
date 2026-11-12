@@ -227,7 +227,7 @@ function exportPlots() {
 
 <template>
   <div>
-    <PageHeader eyebrow="FARM GIS" title="GIS 地块管理" description="园区地块分布、作物档案与责任人一图统管 · 共 {{ plotList.length }} 个地块">
+    <PageHeader eyebrow="FARM GIS" title="GIS 地块管理" :description="'园区地块分布、作物档案与责任人一图统管 · 共 ' + plotList.length + ' 个地块'">
       <template #actions>
         <button class="btn" type="button" @click="exportPlots">导出地块</button>
         <button class="btn btn--primary" type="button" @click="openCreate">新增地块</button>
@@ -235,10 +235,10 @@ function exportPlots() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="地块数量" :value="plotList.length" unit="个" icon="地" :note="`温室 ${greenhouseCount} 个 · 露天 ${plotList.length - greenhouseCount} 个`" trend="档案完整率 100%" />
-      <StatCard label="种植总面积" :value="formatNumber(totalArea, 1)" unit="亩" icon="亩" note="园区规划面积 286 亩" trend="+2.4% 环比" />
-      <StatCard label="预警地块" :value="warningCount" unit="个" icon="警" note="需重点巡查的作物地块" trend="较昨日持平" :trend-up="false" accent />
-      <StatCard label="接入设备" :value="devices.length" unit="台" icon="设" note="水泵、风机、卷帘与传感器" trend="在线率 90%" />
+      <StatCard label="地块数量" :value="plotList.length" unit="个" :note="`温室 ${greenhouseCount} 个 · 露天 ${plotList.length - greenhouseCount} 个`" trend="档案完整率 100%" />
+      <StatCard label="种植总面积" :value="formatNumber(totalArea, 1)" unit="亩" note="园区规划面积 286 亩" trend="+2.4% 环比" />
+      <StatCard label="预警地块" :value="warningCount" unit="个" note="需重点巡查的作物地块" trend="较昨日持平" :trend-up="false" accent />
+      <StatCard label="接入设备" :value="devices.length" unit="台" note="水泵、风机、卷帘与传感器" trend="在线率 90%" />
     </div>
 
     <div class="grid grid--main">

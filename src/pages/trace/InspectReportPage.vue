@@ -140,14 +140,13 @@ function exportCsv() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="检测报告总数" :value="rows.length" unit="份" icon="检" note="覆盖 5 个批次" trend="本月新增 3 份" />
-      <StatCard label="合格报告" :value="qualifiedCount" unit="份" icon="合" note="农残与重金属均达标" />
-      <StatCard label="不合格报告" :value="unqualifiedCount" unit="份" icon="警" note="需跟进召回与整改" accent />
+      <StatCard label="检测报告总数" :value="rows.length" unit="份" note="覆盖 5 个批次" trend="本月新增 3 份" />
+      <StatCard label="合格报告" :value="qualifiedCount" unit="份" note="农残与重金属均达标" />
+      <StatCard label="不合格报告" :value="unqualifiedCount" unit="份" note="需跟进召回与整改" accent />
       <StatCard
         label="检测合格率"
         :value="formatNumber(passRate, 1)"
         unit="%"
-        icon="率"
         note="目标值 ≥ 98%"
         trend="较上月 +0.4%"
       />

@@ -100,10 +100,10 @@ function exportCsv() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="用药记录" :value="ledger.length" unit="条" icon="药" note="近 30 天累计登记" />
-      <StatCard label="合规记录" :value="compliantCount" unit="条" icon="合" note="安全间隔期符合规定" trend="合规率 83.3%" />
-      <StatCard label="违规记录" :value="violatedCount" unit="条" icon="违" note="需整改并复检" trend="待整改 1" trend-up accent />
-      <StatCard label="涉及地块" :value="plotCount" unit="个" icon="地" note="覆盖蔬菜、水果与粮油" />
+      <StatCard label="用药记录" :value="ledger.length" unit="条" note="近 30 天累计登记" />
+      <StatCard label="合规记录" :value="compliantCount" unit="条" note="安全间隔期符合规定" trend="合规率 83.3%" />
+      <StatCard label="违规记录" :value="violatedCount" unit="条" note="需整改并复检" trend="待整改 1" trend-up accent />
+      <StatCard label="涉及地块" :value="plotCount" unit="个" note="覆盖蔬菜、水果与粮油" />
     </div>
 
     <div class="notice notice--warn" style="margin-bottom: 16px">

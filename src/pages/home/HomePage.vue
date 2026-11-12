@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
+import { useNetwork } from '@/composables/useNetwork'
 import { alarms, envSeries, park, plotName, plots, weather, workOrders } from '@/data/mock'
 import type { WorkOrder } from '@/data/types'
 import { today } from '@/utils/format'
+
+const network = useNetwork()
 
 const farmerName = '王强'
 const farmerPlot = plots.find((item) => item.manager === farmerName)
@@ -58,6 +61,14 @@ function levelTone(level: string): 'danger' | 'warn' | 'info' {
   if (level === '紧急') return 'danger'
   if (level === '重要') return 'warn'
   return 'info'
+}
+
+function toggleNetwork() {
+  if (network.isOffline.value) {
+    network.recover()
+  } else {
+    network.goOffline({ gateway: true })
+  }
 }
 </script>
 
@@ -173,6 +184,13 @@ function levelTone(level: string): 'danger' | 'warn' | 'info' {
       <p class="env-note">数据来源：{{ farmerPlot?.name ?? '1号智能大棚' }}环境传感器 · 每小时更新</p>
     </section>
 
+    <section class="mobile-section">
+      <button class="mobile-btn mobile-btn--ghost mobile-btn--full demo-net-btn" type="button" @click="toggleNetwork">
+        {{ network.isOffline.value ? '模拟网络恢复' : '演示：模拟网络异常' }}
+      </button>
+      <p class="env-note">点击可预览顶部网络重试状态条（含网关离线与缓存补传提示）</p>
+    </section>
+
     <div class="page-spacer" />
   </div>
 </template>
@@ -218,7 +236,7 @@ function levelTone(level: string): 'danger' | 'warn' | 'info' {
   padding: 13px 6px;
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: #fff;
+  background: var(--bg-card-solid);
   box-shadow: 0 3px 10px rgba(24, 68, 44, 0.04);
 }
 
@@ -311,6 +329,11 @@ function levelTone(level: string): 'danger' | 'warn' | 'info' {
   margin-top: 7px;
   font-size: 10.5px;
   color: var(--faint);
+}
+
+.demo-net-btn {
+  border-style: dashed;
+  color: var(--muted);
 }
 
 .page-spacer {

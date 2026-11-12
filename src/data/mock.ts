@@ -3,6 +3,7 @@ import type {
   BackupRecord,
   Camera,
   Device,
+  FarmerPlot,
   FileRecord,
   HarvestRecord,
   InspectReport,
@@ -11,10 +12,12 @@ import type {
   MessageItem,
   OpenApi,
   Plot,
+  PlotAudit,
   RecallRecord,
   Role,
   SupWarning,
   SysUser,
+  Tenant,
   TraceBatch,
   WorkOrder,
 } from './types'
@@ -455,6 +458,76 @@ export const sysInfo = {
   mqttMessages: 1286420,
   apiCalls: 286412,
 }
+
+export const tenants: Tenant[] = [
+  { id: 'T-01', name: '云岭智慧农业示范园', code: 'YUNLING', contact: '李明', phone: '138****0001', resourceQuota: '地块 12 · 用户 50 · 设备 200 · 存储 500GB', userCount: 34, deviceCount: 128, status: '启用', createdAt: '2026-03-01' },
+  { id: 'T-02', name: '璧山生态果蔬基地', code: 'BISHAN', contact: '王建国', phone: '139****2210', resourceQuota: '地块 6 · 用户 20 · 设备 80 · 存储 200GB', userCount: 12, deviceCount: 46, status: '启用', createdAt: '2026-05-18' },
+  { id: 'T-03', name: '潼南柠檬产业园', code: 'TONGNAN', contact: '陈静', phone: '136****7789', resourceQuota: '地块 8 · 用户 30 · 设备 100 · 存储 300GB', userCount: 0, deviceCount: 0, status: '停用', createdAt: '2026-07-22' },
+]
+
+export const plotAudits: PlotAudit[] = [
+  {
+    id: 'PA-01', plotCode: 'P-07', plotName: '7号番茄新棚', crop: '番茄', variety: '云粉 10 号', area: 6.5,
+    greenhouse: '连栋薄膜温室', submitBy: '王强', farmerId: 'U-002', submittedAt: '2026-11-06 10:15', status: '待审核',
+    boundaryClosed: true, polygon: [{ x: 120, y: 120 }, { x: 320, y: 116 }, { x: 336, y: 250 }, { x: 128, y: 258 }],
+  },
+  {
+    id: 'PA-02', plotCode: 'P-08', plotName: '8号露天菜地', crop: '白菜', variety: '早熟 5 号', area: 4.2,
+    greenhouse: '露天种植', submitBy: '王强', farmerId: 'U-002', submittedAt: '2026-11-06 09:40', status: '待审核',
+    boundaryClosed: false, polygon: [{ x: 420, y: 140 }, { x: 560, y: 138 }, { x: 570, y: 230 }, { x: 430, y: 236 }],
+  },
+  {
+    id: 'PA-03', plotCode: 'P-09', plotName: '9号草莓新棚', crop: '草莓', variety: '章姬', area: 5.8,
+    greenhouse: '日光温室', submitBy: '赵敏', farmerId: 'U-003', submittedAt: '2026-11-05 16:20', status: '已通过',
+    boundaryClosed: true, polygon: [{ x: 620, y: 130 }, { x: 820, y: 126 }, { x: 834, y: 252 }, { x: 628, y: 260 }],
+  },
+  {
+    id: 'PA-04', plotCode: 'P-10', plotName: '10号辣椒苗棚', crop: '辣椒', variety: '螺丝椒', area: 3.1,
+    greenhouse: '育苗温室', submitBy: '赵敏', farmerId: 'U-003', submittedAt: '2026-11-05 14:05', status: '已驳回',
+    boundaryClosed: true, rejectReason: '地块边界与相邻 6 号育苗棚重叠，请重新绘制边界后提交。',
+    polygon: [{ x: 740, y: 310 }, { x: 900, y: 308 }, { x: 912, y: 430 }, { x: 750, y: 438 }],
+  },
+]
+
+export const screenConfig = {
+  sections: [
+    { id: 'overview', name: '园区综合态势', icon: '态', enabled: true },
+    { id: 'env', name: '环境监测趋势', icon: '环', enabled: true },
+    { id: 'device', name: '设备状态统计', icon: '设', enabled: true },
+    { id: 'alarm', name: '告警动态统计', icon: '警', enabled: true },
+    { id: 'map', name: '地块地图分布', icon: '图', enabled: true },
+    { id: 'crop', name: '作物种植分布', icon: '作', enabled: true },
+    { id: 'work', name: '农事工单进度', icon: '工', enabled: true },
+    { id: 'scan', name: '溯源扫码统计', icon: '溯', enabled: true },
+    { id: 'water', name: '水电能耗统计', icon: '水', enabled: false },
+  ],
+  interval: 15,
+  theme: '深色主题',
+  resolution: '1920 × 1080',
+  defaultScope: '全部地块',
+}
+
+export const farmerPlots: FarmerPlot[] = [
+  {
+    id: 'P-01', name: '1号智能大棚', crop: '番茄', variety: '云粉 9 号', area: 12.8,
+    greenhouse: '连栋薄膜温室', plantedAt: '2026-08-12', expectedHarvest: '2026-11-20', auditStatus: '已通过',
+    deviceCount: 5, envTemp: 26.4, envHumidity: 68,
+    polygon: [{ x: 78, y: 92 }, { x: 298, y: 82 }, { x: 320, y: 236 }, { x: 92, y: 252 }],
+  },
+  {
+    id: 'P-07', name: '7号番茄新棚', crop: '番茄', variety: '云粉 10 号', area: 6.5,
+    greenhouse: '连栋薄膜温室', plantedAt: '2026-11-01', expectedHarvest: '2027-03-15', auditStatus: '待审核',
+    deviceCount: 0, envTemp: 24.8, envHumidity: 61,
+    polygon: [{ x: 120, y: 120 }, { x: 320, y: 116 }, { x: 336, y: 250 }, { x: 128, y: 258 }],
+  },
+  {
+    id: 'P-08', name: '8号露天菜地', crop: '白菜', variety: '早熟 5 号', area: 4.2,
+    greenhouse: '露天种植', plantedAt: '2026-10-25', expectedHarvest: '2026-12-30', auditStatus: '已驳回',
+    rejectReason: '地块边界未闭合，请重新绘制完整闭合边界后再次提交。',
+    deviceCount: 0, envTemp: 22.1, envHumidity: 57,
+    polygon: [{ x: 420, y: 140 }, { x: 560, y: 138 }, { x: 570, y: 230 }, { x: 430, y: 236 }],
+  },
+]
 
 export function findPlot(id: string): Plot | undefined {
   return plots.find((item) => item.id === id)

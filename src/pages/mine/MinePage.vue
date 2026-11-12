@@ -26,6 +26,7 @@ interface NavRow {
 
 const navRows: NavRow[] = [
   { label: '我的任务', desc: '查看待接单与进行中任务', to: '/app/tasks', icon: '务' },
+  { label: '我的地块', desc: '地块档案、边界与审核进度', to: '/app/plots', icon: '地' },
   { label: '消息中心', desc: '告警与工单通知', to: '/app/messages', icon: '信' },
   { label: '环境查看', desc: '地块环境与设备在线状态', to: '/app/env', icon: '环' },
   { label: '设备控制', desc: '远程启停水泵与风机', to: '/app/devices', icon: '控' },

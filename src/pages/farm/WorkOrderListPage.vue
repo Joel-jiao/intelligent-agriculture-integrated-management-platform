@@ -199,11 +199,11 @@ function exportOrders() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="工单总数" :value="statusCounts.total" unit="单" icon="单" note="本月累计派发 9 单" trend="+12.5% 环比" />
-      <StatCard label="待接单" :value="statusCounts.pending" unit="单" icon="待" note="超时未接单将自动提醒" trend="需关注" :trend-up="false" accent />
-      <StatCard label="进行中" :value="statusCounts.doing" unit="单" icon="行" note="田间作业执行中" trend="按时率 96%" />
-      <StatCard label="待验收" :value="statusCounts.reviewing" unit="单" icon="验" note="等待管理员确认" trend="平均 2.4 小时" />
-      <StatCard label="已完成" :value="statusCounts.done" unit="单" icon="毕" note="已完成并归档的工单" trend="完成率 25%" />
+      <StatCard label="工单总数" :value="statusCounts.total" unit="单" note="本月累计派发 9 单" trend="+12.5% 环比" />
+      <StatCard label="待接单" :value="statusCounts.pending" unit="单" note="超时未接单将自动提醒" trend="需关注" :trend-up="false" accent />
+      <StatCard label="进行中" :value="statusCounts.doing" unit="单" note="田间作业执行中" trend="按时率 96%" />
+      <StatCard label="待验收" :value="statusCounts.reviewing" unit="单" note="等待管理员确认" trend="平均 2.4 小时" />
+      <StatCard label="已完成" :value="statusCounts.done" unit="单" note="已完成并归档的工单" trend="完成率 25%" />
     </div>
 
     <section class="card">

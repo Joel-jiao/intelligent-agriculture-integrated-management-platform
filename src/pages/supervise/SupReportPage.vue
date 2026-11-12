@@ -203,7 +203,6 @@ function addRecord(label: string, status: string) {
         :label="item.label"
         :value="item.value"
         :unit="item.unit"
-        :icon="item.icon"
         :note="item.note"
       />
     </div>

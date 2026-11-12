@@ -379,7 +379,6 @@ function refreshStatus() {
       <div class="stat">
         <div class="stat__top">
           <span class="stat__label">策略总数</span>
-          <span class="stat__icon">策</span>
         </div>
         <div class="stat__value">{{ strategies.length }}<small>条</small></div>
         <div class="stat__foot"><span>覆盖 {{ plotCoverage }} 个地块</span></div>
@@ -387,7 +386,6 @@ function refreshStatus() {
       <div class="stat">
         <div class="stat__top">
           <span class="stat__label">启用中</span>
-          <span class="stat__icon">启</span>
         </div>
         <div class="stat__value">{{ enabledCount }}<small>条</small></div>
         <div class="stat__foot"><span class="stat__trend stat__trend--up">调度引擎运行正常</span></div>
@@ -395,7 +393,6 @@ function refreshStatus() {
       <div class="stat">
         <div class="stat__top">
           <span class="stat__label">今日触发</span>
-          <span class="stat__icon">触</span>
         </div>
         <div class="stat__value">{{ todayTriggerCount }}<small>次</small></div>
         <div class="stat__foot"><span>最近触发 {{ strategies[0]?.lastTriggered ?? '—' }}</span></div>
@@ -403,7 +400,6 @@ function refreshStatus() {
       <div class="stat stat--accent">
         <div class="stat__top">
           <span class="stat__label">执行成功率</span>
-          <span class="stat__icon">率</span>
         </div>
         <div class="stat__value">92<small>%</small></div>
         <div class="stat__foot"><span>近 7 日共执行 26 次</span></div>

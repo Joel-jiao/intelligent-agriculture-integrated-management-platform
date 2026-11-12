@@ -192,10 +192,10 @@ function exportUsers() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="用户总数" :value="totalCount" unit="个" icon="用" note="覆盖 4 类角色" trend="本月新增 2" trend-up />
-      <StatCard label="启用账号" :value="enabledCount" unit="个" icon="启" note="可正常登录系统" trend="启用率 86%" />
-      <StatCard label="停用账号" :value="disabledCount" unit="个" icon="停" note="离职或待复核账号" trend="较上月持平" />
-      <StatCard label="农户账号" :value="farmerCount" unit="个" icon="农" note="绑定地块作业范围" trend="移动端在用" accent />
+      <StatCard label="用户总数" :value="totalCount" unit="个" note="覆盖 4 类角色" trend="本月新增 2" trend-up />
+      <StatCard label="启用账号" :value="enabledCount" unit="个" note="可正常登录系统" trend="启用率 86%" />
+      <StatCard label="停用账号" :value="disabledCount" unit="个" note="离职或待复核账号" trend="较上月持平" />
+      <StatCard label="农户账号" :value="farmerCount" unit="个" note="绑定地块作业范围" trend="移动端在用" accent />
     </div>
 
     <section class="card">

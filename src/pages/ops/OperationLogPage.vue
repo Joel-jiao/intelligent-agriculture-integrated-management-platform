@@ -81,10 +81,10 @@ function auditDetail(log: LogRecord | null): string {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="今日操作" :value="todayLogs.length" unit="次" icon="审" note="覆盖 5 个业务模块" trend="较昨日 +2" trend-up />
-      <StatCard label="成功操作" :value="todaySuccess" unit="次" icon="成" note="指令执行与数据写入正常" trend="成功率 100%" trend-up />
-      <StatCard label="失败操作" :value="todayFail" unit="次" icon="败" note="暂无失败记录" trend="无异常" />
-      <StatCard label="审计留存" :value="180" unit="天" icon="留" note="满足等保合规要求" trend="自动归档" accent />
+      <StatCard label="今日操作" :value="todayLogs.length" unit="次" note="覆盖 5 个业务模块" trend="较昨日 +2" trend-up />
+      <StatCard label="成功操作" :value="todaySuccess" unit="次" note="指令执行与数据写入正常" trend="成功率 100%" trend-up />
+      <StatCard label="失败操作" :value="todayFail" unit="次" note="暂无失败记录" trend="无异常" />
+      <StatCard label="审计留存" :value="180" unit="天" note="满足等保合规要求" trend="自动归档" accent />
     </div>
 
     <section class="card">

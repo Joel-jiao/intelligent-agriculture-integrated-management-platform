@@ -190,10 +190,10 @@ function exportDevices() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="接入设备" :value="rows.length" unit="台" icon="设" note="覆盖 5 种协议类型" trend="本周新增 2" trend-up />
-      <StatCard label="网关在线" :value="`${gatewayOnline}/1`" icon="关" note="主网关心跳正常" trend="在线率 100%" />
-      <StatCard label="MQTT 连接" :value="mqttOnline" unit="个" icon="联" note="QoS 1 · 保留会话" trend="连接稳定" />
-      <StatCard label="今日上报" :value="formatNumber(12860)" unit="条" icon="报" note="平均延迟 1.2 s" trend="+4.1% 环比" trend-up accent />
+      <StatCard label="接入设备" :value="rows.length" unit="台" note="覆盖 5 种协议类型" trend="本周新增 2" trend-up />
+      <StatCard label="网关在线" :value="`${gatewayOnline}/1`" note="主网关心跳正常" trend="在线率 100%" />
+      <StatCard label="MQTT 连接" :value="mqttOnline" unit="个" note="QoS 1 · 保留会话" trend="连接稳定" />
+      <StatCard label="今日上报" :value="formatNumber(12860)" unit="条" note="平均延迟 1.2 s" trend="+4.1% 环比" trend-up accent />
     </div>
 
     <section class="card">

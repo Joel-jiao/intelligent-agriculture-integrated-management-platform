@@ -406,7 +406,7 @@ function refreshDevices() {
 }
 
 .device-card.is-locked {
-  background: #fbfbfa;
+  background: var(--bg-subtle);
 }
 
 .device-card__top {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import type { Device, MapPoint, Plot } from '@/data/types'
+import { useTheme } from '@/composables/useTheme'
 
 const props = withDefaults(
   defineProps<{
@@ -20,6 +21,9 @@ const emit = defineEmits<{
   'select-device': [id: string]
   'select-area': [rect: { x: number; y: number; width: number; height: number }]
 }>()
+
+const { theme } = useTheme()
+const darkMode = computed(() => props.dark || theme.value === 'dark')
 
 const hoverId = ref('')
 const dragging = ref(false)
@@ -113,7 +117,7 @@ const selectionRect = computed(() => {
 </script>
 
 <template>
-  <div class="gis-map" :class="{ 'gis-map--dark': dark }" :style="{ height: `${height}px` }">
+  <div class="gis-map" :class="{ 'gis-map--dark': darkMode }" :style="{ height: `${height}px` }">
     <svg
       viewBox="0 0 1000 600"
       preserveAspectRatio="xMidYMid meet"
@@ -123,16 +127,11 @@ const selectionRect = computed(() => {
       @mouseleave="onUp"
     >
       <defs>
-        <pattern id="gis-grid" width="50" height="50" patternUnits="userSpaceOnUse">
-          <path d="M 50 0 L 0 0 0 50" fill="none" :stroke="dark ? 'rgba(90,220,150,0.08)' : '#e5ede7'" stroke-width="1" />
-        </pattern>
         <linearGradient id="gis-water" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" :stop-color="dark ? '#1a6b8f' : '#9cc7dd'" />
-          <stop offset="100%" :stop-color="dark ? '#124e6b' : '#79abc5'" />
+          <stop offset="0%" :stop-color="darkMode ? '#1a6b8f' : '#9cc7dd'" />
+          <stop offset="100%" :stop-color="darkMode ? '#124e6b' : '#79abc5'" />
         </linearGradient>
       </defs>
-      <rect width="1000" height="600" :fill="dark ? '#06180f' : '#f2f6f3'" />
-      <rect width="1000" height="600" fill="url(#gis-grid)" />
       <path
         d="M 0 560 Q 180 520 350 548 T 700 520 T 1000 540 L 1000 600 L 0 600 Z"
         fill="url(#gis-water)"
@@ -140,13 +139,13 @@ const selectionRect = computed(() => {
       />
       <path
         d="M 0 286 Q 260 270 520 286 T 1000 268"
-        :stroke="dark ? 'rgba(120,210,150,0.22)' : '#d9e3db'"
+        :stroke="darkMode ? 'rgba(120,210,150,0.22)' : 'var(--border-strong)'"
         stroke-width="10"
         fill="none"
       />
       <path
         d="M 420 0 Q 430 160 405 300 T 430 600"
-        :stroke="dark ? 'rgba(120,210,150,0.18)' : '#dfe8e1'"
+        :stroke="darkMode ? 'rgba(120,210,150,0.18)' : 'var(--border-strong)'"
         stroke-width="8"
         fill="none"
       />
@@ -177,7 +176,7 @@ const selectionRect = computed(() => {
           :x="item.center.x"
           :y="item.center.y - 2"
           text-anchor="middle"
-          :fill="dark ? '#d8f5e4' : '#253c2c'"
+          :fill="darkMode ? '#d8f5e4' : 'var(--text-primary)'"
           font-size="15"
           font-weight="700"
         >
@@ -187,15 +186,15 @@ const selectionRect = computed(() => {
           :x="item.center.x"
           :y="item.center.y + 16"
           text-anchor="middle"
-          :fill="dark ? 'rgba(200,247,221,0.6)' : '#73857a'"
+          :fill="darkMode ? 'rgba(200,247,221,0.6)' : 'var(--text-secondary)'"
           font-size="11"
         >
           {{ item.plot.crop }} · {{ item.plot.area }} 亩
         </text>
       </g>
       <g v-for="marker in deviceMarkers" :key="marker?.device.id" class="gis-map__device" @click.stop="marker && emit('select-device', marker.device.id)">
-        <circle :cx="marker?.x" :cy="marker?.y" r="6" :fill="marker?.device.status === '在线' ? '#2f9e5a' : '#c93e3e'" />
-        <circle :cx="marker?.x" :cy="marker?.y" r="10" :fill="marker?.device.status === '在线' ? '#2f9e5a' : '#c93e3e'" opacity="0.18" />
+        <circle :cx="marker?.x" :cy="marker?.y" r="6" :fill="marker?.device.status === '在线' ? '#34c759' : '#ff3b30'" />
+        <circle :cx="marker?.x" :cy="marker?.y" r="10" :fill="marker?.device.status === '在线' ? '#34c759' : '#ff3b30'" opacity="0.18" />
       </g>
       <rect
         v-if="selectionRect"
@@ -203,8 +202,8 @@ const selectionRect = computed(() => {
         :y="selectionRect.y"
         :width="selectionRect.width"
         :height="selectionRect.height"
-        fill="rgba(47,143,91,0.14)"
-        stroke="#2f8f5b"
+        fill="rgba(0,122,255,0.12)"
+        stroke="#007aff"
         stroke-width="1.5"
         stroke-dasharray="5 4"
         pointer-events="none"
@@ -223,15 +222,22 @@ const selectionRect = computed(() => {
 <style scoped>
 .gis-map {
   position: relative;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border-card);
   border-radius: var(--radius-sm);
-  background: #f2f6f3;
+  background-color: var(--bg-page);
+  background-image:
+    linear-gradient(var(--border-card) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-card) 1px, transparent 1px);
+  background-size: 54px 54px;
   overflow: hidden;
 }
 
 .gis-map--dark {
-  border-color: rgba(90, 220, 150, 0.16);
-  background: #06180f;
+  border-color: rgba(255, 255, 255, 0.08);
+  background-color: #0a0a0b;
+  background-image:
+    linear-gradient(rgba(90, 220, 150, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(90, 220, 150, 0.07) 1px, transparent 1px);
 }
 
 .gis-map svg {

@@ -257,7 +257,7 @@ function refresh() {
   padding: 0 14px;
   border: 1px solid var(--line);
   border-radius: 22px;
-  background: #fff;
+  background: var(--bg-card-solid);
   font-size: 11.5px;
   color: var(--muted);
 }

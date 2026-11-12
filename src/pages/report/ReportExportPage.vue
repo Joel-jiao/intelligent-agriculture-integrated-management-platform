@@ -348,7 +348,6 @@ function exportPdf() {
         :label="item.label"
         :value="item.value"
         :unit="item.unit"
-        :icon="item.icon"
         :note="item.note"
         :accent="Boolean(item.accent)"
       />

@@ -186,10 +186,10 @@ function exportMaterials() {
     </PageHeader>
 
     <div class="stat-grid">
-      <StatCard label="农资品类" :value="materialList.length" unit="种" icon="资" :note="`覆盖 ${categoryCount} 个类别 · 共 ${materialList.length} 条档案`" trend="档案完整率 100%" />
-      <StatCard label="库存不足" :value="lowStockCount" unit="种" icon="警" note="低于安全库存需补货" trend="需及时补货" :trend-up="false" accent />
-      <StatCard label="本月入库" :value="monthIn" unit="笔" icon="入" note="含本次操作实时累加" trend="较上月 +18%" />
-      <StatCard label="本月出库" :value="monthOut" unit="笔" icon="出" note="按工单领用登记" trend="较上月 +6%" />
+      <StatCard label="农资品类" :value="materialList.length" unit="种" :note="`覆盖 ${categoryCount} 个类别 · 共 ${materialList.length} 条档案`" trend="档案完整率 100%" />
+      <StatCard label="库存不足" :value="lowStockCount" unit="种" note="低于安全库存需补货" trend="需及时补货" :trend-up="false" accent />
+      <StatCard label="本月入库" :value="monthIn" unit="笔" note="含本次操作实时累加" trend="较上月 +18%" />
+      <StatCard label="本月出库" :value="monthOut" unit="笔" note="按工单领用登记" trend="较上月 +6%" />
     </div>
 
     <section class="card">

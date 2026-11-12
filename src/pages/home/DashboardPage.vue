@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import PageHeader from '@/components/ui/PageHeader.vue'
-import StatCard from '@/components/ui/StatCard.vue'
 import LineChart from '@/components/ui/LineChart.vue'
 import DonutChart from '@/components/ui/DonutChart.vue'
-import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { alarms, devices, envLabels, envSeries, park, plots, weather, workOrders } from '@/data/mock'
+import { alarms, devices, envLabels, envSeries, park, plots, workOrders } from '@/data/mock'
 import { buildCsv, downloadText, formatNumber } from '@/utils/format'
 
 const toast = useToast()
 
+const today = '2026-11-06'
+
 const metrics = [
-  { key: 'temperature', label: '空气温湿度' },
-  { key: 'soil', label: '土壤墒情' },
-  { key: 'co2', label: 'CO₂ 与光照' },
-  { key: 'water', label: '水体环境' },
+  { key: 'temperature', label: '空气温度' },
+  { key: 'humidity', label: '空气湿度' },
+  { key: 'soil', label: '土壤水分' },
+  { key: 'light', label: '光照强度' },
 ] as const
 
 type MetricKey = (typeof metrics)[number]['key']
@@ -23,103 +23,124 @@ const activeMetric = ref<MetricKey>('temperature')
 const liveSeries = ref({
   temperature: [...envSeries.temperature],
   humidity: [...envSeries.humidity],
-  soilTemperature: [...envSeries.soilTemperature],
   soilMoisture: [...envSeries.soilMoisture],
-  co2: [...envSeries.co2],
   light: [...envSeries.light],
-  waterTemperature: [...envSeries.waterTemperature],
-  ph: [...envSeries.ph],
 })
 
 const chartSeries = computed(() => {
-  if (activeMetric.value === 'temperature') {
-    return [
-      { name: '空气温度', color: '#2f8f5b', data: liveSeries.value.temperature },
-      { name: '空气湿度', color: '#7ba6d9', data: liveSeries.value.humidity },
-    ]
+  if (activeMetric.value === 'humidity') {
+    return [{ name: '空气湿度', color: '#34c759', data: liveSeries.value.humidity }]
   }
   if (activeMetric.value === 'soil') {
-    return [
-      { name: '土壤温度', color: '#b8862f', data: liveSeries.value.soilTemperature },
-      { name: '土壤湿度', color: '#4fae74', data: liveSeries.value.soilMoisture },
-    ]
+    return [{ name: '土壤水分', color: '#5e5ce6', data: liveSeries.value.soilMoisture }]
   }
-  if (activeMetric.value === 'co2') {
-    return [
-      { name: 'CO₂ 浓度', color: '#2f6fae', data: liveSeries.value.co2 },
-      { name: '光照强度', color: '#c9973f', data: liveSeries.value.light },
-    ]
+  if (activeMetric.value === 'light') {
+    return [{ name: '光照强度', color: '#ff9f0a', data: liveSeries.value.light }]
   }
-  return [
-    { name: '水温', color: '#2f6fae', data: liveSeries.value.waterTemperature },
-    { name: 'pH 值', color: '#7a5cae', data: liveSeries.value.ph },
-  ]
+  return [{ name: '空气温度', color: '#007aff', data: liveSeries.value.temperature }]
 })
 
 const chartUnit = computed(() => {
-  if (activeMetric.value === 'temperature') return ' ℃ / %'
-  if (activeMetric.value === 'soil') return ' ℃ / %'
-  if (activeMetric.value === 'co2') return ' ppm / lux'
-  return ' ℃ / pH'
+  if (activeMetric.value === 'humidity') return ' %'
+  if (activeMetric.value === 'soil') return ' %'
+  if (activeMetric.value === 'light') return ' lux'
+  return ' ℃'
 })
 
 const onlineDevices = computed(() => devices.filter((item) => item.status === '在线').length)
-const pendingAlarms = computed(() => alarms.filter((item) => item.status !== '已归档').length)
-const activeOrders = computed(() => workOrders.filter((item) => item.status === '进行中' || item.status === '待接单').length)
+const onlineRate = computed(() => Math.round((onlineDevices.value / devices.length) * 100))
+const todayAlarms = computed(() => alarms.filter((item) => item.createdAt.startsWith(today)))
+const healthyPlots = computed(() => plots.filter((item) => item.status === '正常').length)
+const healthyRate = computed(() => Math.round((healthyPlots.value / plots.length) * 100))
 
 const deviceSegments = computed(() => [
-  { label: '在线运行', value: devices.filter((item) => item.status === '在线').length, color: '#2f9e5b' },
-  { label: '离线', value: devices.filter((item) => item.status === '离线').length, color: '#c47f17' },
-  { label: '故障', value: devices.filter((item) => item.status === '故障').length, color: '#c93e3e' },
+  { label: '在线', value: devices.filter((item) => item.status === '在线').length, color: '#34c759' },
+  { label: '离线', value: devices.filter((item) => item.status === '离线').length, color: '#c7c7cc' },
+  { label: '故障', value: devices.filter((item) => item.status === '故障').length, color: '#ff3b30' },
 ])
 
-const latestAlarms = computed(() => alarms.slice(0, 5))
-const activeOrderList = computed(() => workOrders.filter((item) => item.status !== '已完成').slice(0, 4))
+const latestAlarms = computed(() => alarms.slice(0, 4))
+const todayTasks = computed(() => workOrders.filter((item) => item.deadline.startsWith(today)).slice(0, 4))
 
-const plotProgress = computed(() =>
-  plots.map((plot, index) => ({
-    ...plot,
-    progress: [78, 56, 92, 64, 85, 32][index] ?? 50,
-  })),
-)
+function alarmTone(level: string): 'ok' | 'warn' | 'danger' {
+  if (level === '紧急') return 'danger'
+  if (level === '重要') return 'warn'
+  return 'ok'
+}
+
+function alarmLabel(level: string): string {
+  if (level === '紧急') return '异常'
+  if (level === '重要') return '预警'
+  return '正常'
+}
+
+function taskTone(status: string): 'ok' | 'warn' | 'brand' | 'mute' {
+  if (status === '已完成') return 'ok'
+  if (status === '进行中') return 'brand'
+  if (status === '待接单') return 'warn'
+  return 'mute'
+}
 
 function refresh() {
-  liveSeries.value.temperature = liveSeries.value.temperature.map((value) => Math.round((value + (Math.random() - 0.5) * 1.4) * 10) / 10)
+  liveSeries.value.temperature = liveSeries.value.temperature.map(
+    (value) => Math.round((value + (Math.random() - 0.5) * 1.4) * 10) / 10,
+  )
   liveSeries.value.humidity = liveSeries.value.humidity.map((value) => Math.round(value + (Math.random() - 0.5) * 3))
   toast.success('环境监测数据已刷新至最新时刻')
 }
 
 function exportReport() {
   const rows = plots.map((plot) => [plot.code, plot.name, plot.crop, plot.area, plot.stage, plot.status, plot.manager])
-  downloadText('园区综合日报_20261106.csv', buildCsv(['地块编号', '地块名称', '作物', '面积(亩)', '生育期', '状态', '负责人'], rows))
+  downloadText(
+    '园区综合日报_20261106.csv',
+    buildCsv(['地块编号', '地块名称', '作物', '面积(亩)', '生育期', '状态', '负责人'], rows),
+  )
   toast.success('综合日报已导出为 CSV 文件')
 }
 </script>
 
 <template>
-  <div>
-    <PageHeader eyebrow="DASHBOARD" title="综合数据看板" description="园区环境、设备、告警与农事进度一屏总览 · 数据更新于 2026-11-06 09:42">
+  <div class="dashboard">
+    <PageHeader title="智慧农业管理平台" description="园区环境、设备、告警与农事进度总览 · 数据更新于 2026-11-06 09:42">
       <template #actions>
         <button class="btn" type="button" @click="refresh">刷新数据</button>
         <button class="btn btn--primary" type="button" @click="exportReport">导出日报</button>
       </template>
     </PageHeader>
 
-    <div class="stat-grid">
-      <StatCard label="园区种植总面积" :value="park.area" unit="亩" icon="地" note="6 个地块 · 3 座温室" trend="+2.4% 环比" />
-      <StatCard label="在线设备" :value="`${onlineDevices}/${devices.length}`" icon="设" note="网关与传感器在线" trend="在线率 90%" />
-      <StatCard label="待处置告警" :value="pendingAlarms" unit="条" icon="警" note="紧急 1 条 · 重要 2 条" trend="较昨日 -3" trend-up />
-      <StatCard label="进行中工单" :value="activeOrders" unit="单" icon="工" note="今日新增 4 单" trend="按时完成率 96%" accent />
+    <!-- 第一行：KPI -->
+    <div class="kpi-row">
+      <section class="kpi">
+        <div class="kpi__label">农田总面积</div>
+        <div class="kpi__value">{{ formatNumber(park.area) }}<small>亩</small></div>
+        <div class="kpi__meta">{{ plots.length }} 个地块 · 3 座温室</div>
+      </section>
+      <section class="kpi">
+        <div class="kpi__label">在线设备数</div>
+        <div class="kpi__value">{{ onlineDevices }}<small>/ {{ devices.length }} 台</small></div>
+        <div class="kpi__meta">设备在线率 {{ onlineRate }}%</div>
+      </section>
+      <section class="kpi">
+        <div class="kpi__label">今日告警</div>
+        <div class="kpi__value">{{ todayAlarms.length }}<small>条</small></div>
+        <div class="kpi__meta">异常 1 条 · 预警 2 条</div>
+      </section>
+      <section class="kpi">
+        <div class="kpi__label">作物生长良好率</div>
+        <div class="kpi__value">{{ healthyRate }}<small>%</small></div>
+        <div class="kpi__meta">{{ healthyPlots }} / {{ plots.length }} 个地块长势正常</div>
+      </section>
     </div>
 
-    <div class="grid grid--main">
-      <div class="stack">
-        <section class="card">
-          <div class="card__head">
-            <div class="card__title">
-              24 小时环境趋势
-              <span class="card__sub">1号智能大棚 · 采集间隔 1 小时</span>
-            </div>
+    <!-- 第二行：趋势 + 设备状态 -->
+    <div class="grid grid--main dashboard__row">
+      <section class="card">
+        <div class="card__head">
+          <div class="card__title">
+            环境趋势
+            <span class="card__sub">24 小时 · 采集间隔 1 小时</span>
+          </div>
+          <div class="card__head-right">
             <div class="tabs">
               <button
                 v-for="item in metrics"
@@ -133,131 +154,96 @@ function exportReport() {
               </button>
             </div>
           </div>
-          <div class="card__body">
-            <LineChart :labels="envLabels" :series="chartSeries" :unit="chartUnit" :height="232" />
-          </div>
-        </section>
+        </div>
+        <div class="card__body">
+          <LineChart :labels="envLabels" :series="chartSeries" :unit="chartUnit" :height="236" />
+        </div>
+      </section>
 
-        <section class="card">
-          <div class="card__head">
-            <div class="card__title">各地块生长进度 <span class="card__sub">按作物生育期折算</span></div>
-            <RouterLink class="link-action" to="/farm/plots">查看地块档案</RouterLink>
+      <section class="card">
+        <div class="card__head">
+          <div class="card__title">设备状态</div>
+          <RouterLink class="link-action" to="/iot/devices">查看全部</RouterLink>
+        </div>
+        <div class="card__body">
+          <DonutChart
+            :segments="deviceSegments"
+            :size="148"
+            :center-value="`${onlineDevices}`"
+            center-label="在线设备"
+          />
+          <div class="device-foot">
+            <span>网关 <b>1 / 1</b> 在线</span>
+            <span>最后同步 09:42</span>
           </div>
-          <div class="card__body" style="display: grid; gap: 12px">
-            <div v-for="plot in plotProgress" :key="plot.id" class="progress-row">
-              <span style="width: 98px; color: var(--ink-2)">{{ plot.name }}</span>
-              <span class="tag" :class="plot.status === '预警' ? 'tag--warn' : 'tag--brand'" style="width: 52px; justify-content: center">{{ plot.crop }}</span>
-              <div class="progress">
-                <div class="progress__bar" :class="{ 'progress__bar--warn': plot.progress < 50 }" :style="{ width: `${plot.progress}%` }" />
-              </div>
-              <b>{{ plot.progress }}%</b>
-            </div>
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="card__head">
-            <div class="card__title">农事工单动态</div>
-            <RouterLink class="link-action" to="/farm/work-orders">全部工单</RouterLink>
-          </div>
-          <div class="table-wrap" style="border: 0; border-radius: 0 0 14px 14px">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>工单编号</th>
-                  <th>任务</th>
-                  <th>负责人</th>
-                  <th>截止时间</th>
-                  <th>状态</th>
-                  <th>进度</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="order in activeOrderList" :key="order.id">
-                  <td><RouterLink class="cell-strong" :to="`/farm/work-orders/${order.id}`">{{ order.id }}</RouterLink></td>
-                  <td>{{ order.title }}</td>
-                  <td>{{ order.assignee }}</td>
-                  <td class="num">{{ order.deadline }}</td>
-                  <td>
-                    <StatusTag :text="order.status" :tone="order.status === '进行中' ? 'brand' : order.status === '待接单' ? 'warn' : 'info'" dot />
-                  </td>
-                  <td>
-                    <div class="progress" style="width: 90px">
-                      <div class="progress__bar" :style="{ width: `${order.progress}%` }" />
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </div>
-
-      <div class="stack">
-        <section class="card card--tint">
-          <div class="card__head">
-            <div class="card__title">园区气象</div>
-            <span class="tag tag--brand">实况</span>
-          </div>
-          <div class="card__body">
-            <div class="row row--between">
-              <div>
-                <div style="font-size: 34px; font-weight: 700; letter-spacing: -1px">{{ weather.temperature }}<small style="font-size: 14px">℃</small></div>
-                <div style="font-size: 12px; color: var(--muted)">{{ weather.condition }} · {{ weather.wind }}</div>
-              </div>
-              <div style="text-align: right; font-size: 11.5px; color: var(--muted); line-height: 1.9">
-                <div>湿度 {{ weather.humidity }}%</div>
-                <div>降雨 {{ weather.rainfall }} mm</div>
-                <div>适宜度 良好</div>
-              </div>
-            </div>
-            <div class="weather-forecast">
-              <div v-for="item in weather.forecast" :key="item.day" class="weather-forecast__item">
-                <span>{{ item.day }}</span>
-                <b>{{ item.icon }}</b>
-                <small>{{ item.high }}° / {{ item.low }}°</small>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="card__head">
-            <div class="card__title">设备运行状态</div>
-            <RouterLink class="link-action" to="/iot/devices">设备明细</RouterLink>
-          </div>
-          <div class="card__body">
-            <DonutChart
-              :segments="deviceSegments"
-              :size="140"
-              :center-value="`${onlineDevices}`"
-              center-label="在线设备"
-            />
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="card__head">
-            <div class="card__title">最新告警</div>
-            <RouterLink class="link-action" to="/alarms">处理告警</RouterLink>
-          </div>
-          <div class="card__body" style="padding-top: 6px">
-            <div v-for="alarm in latestAlarms" :key="alarm.id" class="alarm-row">
-              <span class="tag" :class="alarm.level === '紧急' ? 'tag--danger' : alarm.level === '重要' ? 'tag--warn' : 'tag--info'">{{ alarm.level }}</span>
-              <div style="flex: 1; min-width: 0">
-                <div class="alarm-row__title">{{ alarm.title }}</div>
-                <div class="alarm-row__meta">{{ alarm.plot }} · {{ alarm.createdAt }}</div>
-              </div>
-              <span class="dot" :class="alarm.status === '已归档' ? 'dot--ok' : 'dot--warn'" />
-            </div>
-          </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
 
-    <section class="card" style="margin-top: 16px">
+    <!-- 第三行：告警 + 任务 -->
+    <div class="grid grid--2">
+      <section class="card">
+        <div class="card__head">
+          <div class="card__title">
+            最近告警
+            <span class="card__sub">{{ todayAlarms.length }} 条待处理</span>
+          </div>
+          <RouterLink class="link-action" to="/alarms">查看全部</RouterLink>
+        </div>
+        <div class="card__body card__body--list">
+          <RouterLink v-for="alarm in latestAlarms" :key="alarm.id" to="/alarms" class="alarm-row">
+            <span class="pill" :class="`pill--${alarmTone(alarm.level)}`">
+              <i class="dot" :class="`dot--${alarmTone(alarm.level)}`" />
+              {{ alarmLabel(alarm.level) }}
+            </span>
+            <div class="alarm-row__main">
+              <div class="alarm-row__title">{{ alarm.title }}</div>
+              <div class="alarm-row__meta">{{ alarm.plot }} · {{ alarm.createdAt }}</div>
+            </div>
+            <span class="alarm-row__value">{{ alarm.value }}</span>
+          </RouterLink>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card__head">
+          <div class="card__title">
+            今日农事任务
+            <span class="card__sub">{{ todayTasks.length }} 项</span>
+          </div>
+          <RouterLink class="link-action" to="/farm/work-orders">查看全部</RouterLink>
+        </div>
+        <div class="card__body card__body--list">
+          <div v-for="task in todayTasks" :key="task.id" class="task-row">
+            <div class="task-row__main">
+              <div class="task-row__title">{{ task.title }}</div>
+              <div class="task-row__meta">{{ task.assignee }} · 截止 {{ task.deadline.slice(11) }}</div>
+            </div>
+            <div class="task-row__progress">
+              <div class="progress">
+                <div
+                  class="progress__bar"
+                  :class="{ 'progress__bar--ok': task.progress === 100 }"
+                  :style="{ width: `${task.progress}%` }"
+                />
+              </div>
+              <b>{{ task.progress }}%</b>
+            </div>
+            <span class="pill" :class="`pill--${taskTone(task.status)}`">
+              {{ task.status }}
+            </span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 补充：园区核心指标 -->
+    <section class="card dashboard__row">
       <div class="card__head">
-        <div class="card__title">园区核心指标 <span class="card__sub">2026 年 11 月累计</span></div>
+        <div class="card__title">
+          园区核心指标
+          <span class="card__sub">2026 年 11 月累计</span>
+        </div>
         <RouterLink class="link-action" to="/reports">综合报表</RouterLink>
       </div>
       <div class="card__body">
@@ -275,63 +261,107 @@ function exportReport() {
 </template>
 
 <style scoped>
-.weather-forecast {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-top: 16px;
+.dashboard__row {
+  margin-bottom: 16px;
 }
 
-.weather-forecast__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 9px 6px;
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid var(--line);
+.card__body--list {
+  padding-top: 6px;
+  padding-bottom: 10px;
 }
 
-.weather-forecast__item span {
-  font-size: 10.5px;
-  color: var(--muted);
-}
-
-.weather-forecast__item b {
-  font-size: 16px;
-  color: var(--ink);
-}
-
-.weather-forecast__item small {
-  font-size: 10px;
-  color: var(--faint);
-  font-family: var(--font-num);
-}
-
-.alarm-row {
+.alarm-row,
+.task-row {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 10px 0;
-  border-bottom: 1px dashed var(--line);
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-card);
 }
 
-.alarm-row:last-child {
+.alarm-row:last-child,
+.task-row:last-child {
   border-bottom: 0;
 }
 
-.alarm-row__title {
+.alarm-row:hover .alarm-row__title,
+.task-row:hover .task-row__title {
+  color: var(--primary);
+}
+
+.alarm-row__main,
+.task-row__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.alarm-row__title,
+.task-row__title {
+  font-size: 13px;
+  color: var(--text-primary);
   overflow: hidden;
-  font-size: 12px;
-  color: var(--ink-2);
   text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.16s ease;
+}
+
+.alarm-row__meta,
+.task-row__meta {
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.alarm-row__value {
+  font-family: var(--font-num);
+  font-size: 12px;
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
-.alarm-row__meta {
-  margin-top: 1px;
-  font-size: 10.5px;
-  color: var(--faint);
+.task-row__progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 104px;
+  flex: 0 0 auto;
+}
+
+.task-row__progress .progress {
+  flex: 1;
+}
+
+.task-row__progress b {
+  font-family: var(--font-num);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.device-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-card);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.device-foot b {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+@media (max-width: 720px) {
+  .alarm-row__value,
+  .task-row__progress {
+    display: none;
+  }
 }
 </style>

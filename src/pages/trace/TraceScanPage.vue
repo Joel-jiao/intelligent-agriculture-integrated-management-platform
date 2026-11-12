@@ -269,7 +269,7 @@ function submitRecord() {
   padding: 11px 12px;
   border: 1px dashed var(--line-strong);
   border-radius: 10px;
-  background: #fff;
+  background: var(--bg-card-solid);
 }
 
 .code-box span {
