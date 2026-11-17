@@ -35,16 +35,15 @@ const envSummary = computed(() => [
 interface QuickLink {
   label: string
   to: string
-  icon: string
 }
 
 const quickLinks: QuickLink[] = [
-  { label: '任务列表', to: '/app/tasks', icon: '务' },
-  { label: '环境查看', to: '/app/env', icon: '环' },
-  { label: '设备控制', to: '/app/devices', icon: '控' },
-  { label: '扫码录入', to: '/app/trace-scan', icon: '码' },
-  { label: '消息中心', to: '/app/messages', icon: '信' },
-  { label: '个人中心', to: '/app/mine', icon: '我' },
+  { label: '任务列表', to: '/app/tasks' },
+  { label: '环境查看', to: '/app/env' },
+  { label: '设备控制', to: '/app/devices' },
+  { label: '扫码录入', to: '/app/trace-scan' },
+  { label: '消息中心', to: '/app/messages' },
+  { label: '个人中心', to: '/app/mine' },
 ]
 
 function statusTone(status: WorkOrder['status']): 'ok' | 'warn' | 'brand' | 'info' {
@@ -114,7 +113,6 @@ function toggleNetwork() {
       </div>
       <nav class="quick-grid">
         <RouterLink v-for="link in quickLinks" :key="link.to" :to="link.to" class="quick-item">
-          <span class="mobile-icon">{{ link.icon }}</span>
           <span class="quick-label">{{ link.label }}</span>
         </RouterLink>
       </nav>

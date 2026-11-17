@@ -21,16 +21,15 @@ interface NavRow {
   label: string
   desc: string
   to: string
-  icon: string
 }
 
 const navRows: NavRow[] = [
-  { label: '我的任务', desc: '查看待接单与进行中任务', to: '/app/tasks', icon: '务' },
-  { label: '我的地块', desc: '地块档案、边界与审核进度', to: '/app/plots', icon: '地' },
-  { label: '消息中心', desc: '告警与工单通知', to: '/app/messages', icon: '信' },
-  { label: '环境查看', desc: '地块环境与设备在线状态', to: '/app/env', icon: '环' },
-  { label: '设备控制', desc: '远程启停水泵与风机', to: '/app/devices', icon: '控' },
-  { label: '扫码录入', desc: '采收批次溯源录入', to: '/app/trace-scan', icon: '码' },
+  { label: '我的任务', desc: '查看待接单与进行中任务', to: '/app/tasks' },
+  { label: '我的地块', desc: '地块档案、边界与审核进度', to: '/app/plots' },
+  { label: '消息中心', desc: '告警与工单通知', to: '/app/messages' },
+  { label: '环境查看', desc: '地块环境与设备在线状态', to: '/app/env' },
+  { label: '设备控制', desc: '远程启停水泵与风机', to: '/app/devices' },
+  { label: '扫码录入', desc: '采收批次溯源录入', to: '/app/trace-scan' },
 ]
 
 const accountOpen = ref(false)
@@ -86,7 +85,6 @@ function confirmLogout() {
       </div>
       <div class="mobile-card menu-card">
         <RouterLink v-for="row in navRows" :key="row.to" :to="row.to" class="mobile-list-item menu-row">
-          <span class="mobile-icon">{{ row.icon }}</span>
           <span class="menu-main">
             <span class="menu-label">{{ row.label }}</span>
             <span class="menu-desc">{{ row.desc }}</span>

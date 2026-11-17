@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import type { FormInstance } from 'ant-design-vue'
 import { useAuth, portalNames, type Portal } from '@/composables/useAuth'
 import { useTheme } from '@/composables/useTheme'
 
@@ -17,12 +18,34 @@ const route = useRoute()
 const { login } = useAuth()
 const { theme, toggle } = useTheme()
 
-const account = ref('')
-const password = ref('')
-const captcha = ref('')
-const captchaCode = ref(createCode())
+const formRef = ref<FormInstance>()
 const loading = ref(false)
 const error = ref('')
+const captchaCode = ref(createCode())
+
+const formState = reactive({
+  account: '',
+  password: '',
+  captcha: '',
+})
+
+const rules = {
+  account: [{ required: true, whitespace: true, message: '请输入登录账号', trigger: 'blur' }],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, message: '密码长度不能少于 6 位', trigger: 'blur' },
+  ],
+  captcha: [
+    { required: true, whitespace: true, message: '请输入验证码', trigger: 'blur' },
+    {
+      validator: (_rule: unknown, value: string) =>
+        value.trim().toUpperCase() === captchaCode.value
+          ? Promise.resolve()
+          : Promise.reject(new Error('验证码不正确，请重新输入')),
+      trigger: 'blur',
+    },
+  ],
+}
 
 function createCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -31,7 +54,7 @@ function createCode(): string {
 
 function refreshCaptcha() {
   captchaCode.value = createCode()
-  captcha.value = ''
+  formState.captcha = ''
 }
 
 const portalPath: Record<Portal, string> = {
@@ -51,24 +74,23 @@ const otherPortals = computed(() => {
   return list.filter((item) => item.path !== portalPath[props.portal])
 })
 
+interface ValidateError {
+  errorFields?: { name: (string | number)[] }[]
+}
+
 async function submit() {
   error.value = ''
-  if (!account.value.trim()) {
-    error.value = '请输入登录账号'
-    return
-  }
-  if (password.value.length < 6) {
-    error.value = '密码长度不能少于 6 位'
-    return
-  }
-  if (captcha.value.trim().toUpperCase() !== captchaCode.value) {
-    error.value = '验证码不正确，请重新输入'
-    refreshCaptcha()
+  try {
+    await formRef.value?.validateFields()
+  } catch (raw) {
+    // 保持旧行为：验证码输错时自动换一张
+    const fields = (raw as ValidateError).errorFields ?? []
+    if (fields.some((item) => item.name.includes('captcha'))) refreshCaptcha()
     return
   }
   loading.value = true
   window.setTimeout(() => {
-    login(props.portal, account.value.trim())
+    login(props.portal, formState.account.trim())
     loading.value = false
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : props.redirect
     router.push(redirect)
@@ -101,37 +123,59 @@ async function submit() {
           <p>账号登录 · {{ portalNames[portal] }}</p>
         </div>
 
-        <div v-if="error" class="login-error">{{ error }}</div>
+        <a-alert
+          v-if="error"
+          class="login-error"
+          type="info"
+          show-icon
+          closable
+          :message="error"
+          @close="error = ''"
+        />
 
-        <form @submit.prevent="submit">
-          <label class="field">
-            <span class="field__label">账号</span>
-            <input v-model="account" class="input" type="text" placeholder="请输入账号" autocomplete="username" />
-          </label>
-          <label class="field">
-            <span class="field__label">密码</span>
-            <input
-              v-model="password"
-              class="input"
+        <a-form
+          ref="formRef"
+          :model="formState"
+          :rules="rules"
+          layout="vertical"
+          class="login-antd-form"
+          @submit.prevent="submit"
+        >
+          <a-form-item name="account" label="账号">
+            <a-input
+              v-model:value="formState.account"
+              placeholder="请输入账号"
+              size="large"
+              autocomplete="username"
+            />
+          </a-form-item>
+          <a-form-item name="password" label="密码">
+            <a-input
+              v-model:value="formState.password"
               type="password"
               placeholder="请输入密码（不少于 6 位）"
+              size="large"
               autocomplete="current-password"
             />
-          </label>
-          <div class="field">
-            <span class="field__label">验证码</span>
+          </a-form-item>
+          <a-form-item name="captcha" label="验证码">
             <div class="captcha-field">
-              <input v-model="captcha" class="input" type="text" maxlength="4" placeholder="请输入验证码" />
+              <a-input
+                v-model:value="formState.captcha"
+                :maxlength="4"
+                placeholder="请输入验证码"
+                size="large"
+              />
               <button class="captcha-box" type="button" title="点击刷新验证码" @click="refreshCaptcha">
                 {{ captchaCode }}
               </button>
             </div>
-          </div>
+          </a-form-item>
 
-          <button class="btn btn--primary btn--full" type="submit" :disabled="loading">
-            {{ loading ? '正在登录…' : '登录' }}
-          </button>
-        </form>
+          <a-button type="primary" html-type="submit" block size="large" :loading="loading">
+            登录
+          </a-button>
+        </a-form>
 
         <div class="login-links">
           <a href="#" @click.prevent="error = '请联系园区管理员重置密码（内线 8021）'">忘记密码</a>
@@ -169,5 +213,10 @@ async function submit() {
     top: 12px;
     right: 12px;
   }
+}
+
+.login-error {
+  margin-bottom: 16px;
+  border-radius: 10px;
 }
 </style>

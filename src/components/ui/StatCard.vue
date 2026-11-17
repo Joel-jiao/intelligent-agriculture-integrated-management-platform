@@ -21,13 +21,26 @@ withDefaults(
 
 <template>
   <div class="stat" :class="{ 'stat--accent': accent }">
-    <div class="stat__top">
-      <span class="stat__label">{{ label }}</span>
-    </div>
-    <div class="stat__value">{{ value }}<small v-if="unit">{{ unit }}</small></div>
-    <div class="stat__foot">
-      <span v-if="trend" class="stat__trend" :class="trendUp ? 'stat__trend--up' : 'stat__trend--down'">{{ trend }}</span>
+    <a-statistic class="stat__figure" :title="label" :value="value">
+      <template v-if="unit" #suffix>
+        <small class="stat__unit">{{ unit }}</small>
+      </template>
+    </a-statistic>
+    <div v-if="trend || note" class="stat__foot">
+      <span v-if="trend" class="stat__trend" :class="trendUp ? 'stat__trend--up' : 'stat__trend--down'">
+        {{ trend }}
+      </span>
       <span v-if="note">{{ note }}</span>
     </div>
   </div>
 </template>
+
+<style scoped>
+.stat__unit {
+  margin-left: 3px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--text-secondary);
+}
+</style>

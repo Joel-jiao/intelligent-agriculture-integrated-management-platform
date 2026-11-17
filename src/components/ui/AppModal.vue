@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useSlots } from 'vue'
+import { computed, useSlots } from 'vue'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     modelValue: boolean
     title: string
@@ -13,40 +13,31 @@ withDefaults(
 const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
 const slots = useSlots()
 
-function close() {
-  emit('update:modelValue', false)
-}
+/** 与原设计一致：内容超高时在弹窗内部滚动，不撑破视口 */
+const bodyStyle = { maxHeight: '72vh', overflowY: 'auto' } as const
+
+/** 与原设计一致：md 560px / lg 780px */
+const width = computed(() => (props.size === 'lg' ? 780 : 560))
+
+const open = computed({
+  get: () => props.modelValue,
+  set: (value: boolean) => emit('update:modelValue', value),
+})
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="fade">
-      <div v-if="modelValue" class="modal-mask" @click.self="close">
-        <div class="modal" :class="{ 'modal--lg': size === 'lg' }">
-          <div class="modal__head">
-            <h3>{{ title }}</h3>
-            <button class="modal__close" type="button" @click="close">×</button>
-          </div>
-          <div class="modal__body">
-            <slot />
-          </div>
-          <div v-if="slots.footer" class="modal__foot">
-            <slot name="footer" />
-          </div>
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
+  <a-modal
+    v-model:open="open"
+    :title="title"
+    :width="width"
+    centered
+    destroy-on-close
+    :body-style="bodyStyle"
+    :footer="slots.footer ? undefined : null"
+  >
+    <slot />
+    <template v-if="slots.footer" #footer>
+      <slot name="footer" />
+    </template>
+  </a-modal>
 </template>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.18s;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

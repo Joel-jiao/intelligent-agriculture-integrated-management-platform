@@ -17,7 +17,7 @@ const visible = computed(() => isOffline.value)
 
 const barTone = computed(() => (recovered.value ? 'recovered' : 'retrying'))
 
-const message = computed(() => {
+const barMessage = computed(() => {
   if (recovered.value) return '网络已恢复，缓存数据已补传'
   if (state.gatewayOffline) return '网关离线，数据存在延迟，正在重试'
   return '网络连接异常，正在重试'
@@ -88,124 +88,31 @@ onBeforeUnmount(() => {
 
 <template>
   <Transition name="net">
-    <div v-if="visible" class="net-bar" :class="`net-bar--${barTone}`">
-      <span class="net-bar__icon" aria-hidden="true">
-        <span v-if="barTone === 'retrying'" class="net-spinner" />
-        <span v-else>✓</span>
-      </span>
-      <div class="net-bar__main">
-        <b>{{ message }}</b>
-        <span>{{ detail }}</span>
-      </div>
-      <div class="net-bar__actions">
-        <button v-if="barTone === 'retrying'" class="net-bar__btn" type="button" @click="manualRetry">立即重试</button>
-        <button class="net-bar__close" type="button" aria-label="关闭" @click="dismiss">×</button>
-      </div>
-    </div>
+    <a-alert
+      v-if="visible"
+      class="net-alert"
+      :type="barTone === 'recovered' ? 'success' : 'warning'"
+      show-icon
+      :message="barMessage"
+      :description="detail"
+      closable
+      @close="dismiss"
+    >
+      <template v-if="barTone === 'retrying'" #action>
+        <a-button size="small" @click="manualRetry">立即重试</a-button>
+      </template>
+    </a-alert>
   </Transition>
 </template>
 
 <style scoped>
-.net-bar {
-  display: flex;
+/* 沿用原顶部横条形态：贴边、无圆角、紧贴视图顶部 */
+.net-alert {
+  margin: 0;
+  border-radius: 0;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
   align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  font-size: 12px;
-  border-bottom: 1px solid var(--line);
-  overflow: hidden;
-}
-
-.net-bar--retrying {
-  background: #fff6e5;
-  color: #8a5a00;
-}
-
-.net-bar--recovered {
-  background: #eaf7ef;
-  color: var(--brand-dark);
-}
-
-.net-bar__icon {
-  display: grid;
-  place-items: center;
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-.net-spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: net-spin 0.9s linear infinite;
-}
-
-.net-bar__main {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.net-bar__main b {
-  font-weight: 650;
-  color: inherit;
-}
-
-.net-bar__main span {
-  margin-top: 1px;
-  font-size: 10.5px;
-  opacity: 0.72;
-}
-
-.net-bar__actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.net-bar__btn {
-  padding: 4px 10px;
-  border: 1px solid currentColor;
-  border-radius: 7px;
-  background: transparent;
-  color: inherit;
-  font-size: 11px;
-  cursor: pointer;
-}
-
-.net-bar__close {
-  display: grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  border: 0;
-  background: none;
-  color: inherit;
-  font-size: 16px;
-  line-height: 1;
-  cursor: pointer;
-  opacity: 0.7;
-}
-
-.net-enter-active,
-.net-leave-active {
-  transition: 0.24s;
-}
-
-.net-enter-from,
-.net-leave-to {
-  opacity: 0;
-  transform: translateY(-100%);
-}
-
-@keyframes net-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>

@@ -1,0 +1,42 @@
+/* ==========================================================================
+   Ant Design Vue 组件内部样式覆盖
+   背景：antd 组件的内部 DOM（.ant-statistic-title 等）与 Vue Transition 的
+   运行时过渡类无法被 IDE 静态关联，写在 .vue 的 <style> 中会持续产生
+   "选择器从未使用" 告警，故统一收敛到本文件（纯 CSS 文件不做该检查）。
+   约定：每条规则必须带组件根 class 命名空间，避免污染全局。
+   ========================================================================== */
+
+/* --- StatCard：视觉参数与 theme.css 设计系统（.stat__*）对齐 --- */
+.stat .stat__figure .ant-statistic-title {
+  margin-bottom: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.stat .stat__figure .ant-statistic-content {
+  margin-top: 10px;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- PortalLogin：紧凑表单行距（antd 原生为 marginLG 24px，全局令牌不宜改） --- */
+.login-antd-form .ant-form-item {
+  margin-bottom: 16px;
+}
+
+/* --- NetworkStatusBar：顶部滑入/滑出过渡（Transition 运行时类） --- */
+.net-alert.net-enter-active,
+.net-alert.net-leave-active {
+  transition: opacity 0.24s, transform 0.24s;
+}
+
+.net-alert.net-enter-from,
+.net-alert.net-leave-to {
+  opacity: 0;
+  transform: translateY(-100%);
+}
