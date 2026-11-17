@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useNetwork } from '@/composables/useNetwork'
-import { useAuth } from '@/composables/useAuth'
+import { useAuth, demoUsers } from '@/composables/useAuth'
 import { alarms, envSeries, park, plotName, plots, weather, workOrders } from '@/api/store'
 import type { WorkOrder } from '@/data/types'
 import { today } from '@/utils/format'
@@ -11,7 +11,7 @@ const network = useNetwork()
 const { session } = useAuth()
 
 // 当前登录农户来自登录态，地块信息来自后端
-const farmerName = session('app').value.name
+const farmerName = session('app').value?.name ?? demoUsers.app.name
 const farmerPlot = plots.find((item) => item.manager === farmerName)
 
 const todoTasks = computed(() => workOrders.filter((item) => item.status !== '已完成').slice(0, 3))

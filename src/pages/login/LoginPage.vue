@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
-import { park } from '@/api/store'
+import { useAuth, DEMO_PASSWORD } from '@/composables/useAuth'
+import { park, loadAllData } from '@/api/store'
 
 const router = useRouter()
 const { login } = useAuth()
@@ -11,7 +11,7 @@ const password = ref('')
 const loading = ref(false)
 const error = ref('')
 
-function submit() {
+async function submit() {
   error.value = ''
   if (!account.value.trim()) {
     error.value = '请输入手机号或账号'
@@ -21,12 +21,20 @@ function submit() {
     error.value = '密码长度不能少于 6 位'
     return
   }
+  if (password.value !== DEMO_PASSWORD) {
+    error.value = '密码错误，请重新输入'
+    return
+  }
   loading.value = true
-  window.setTimeout(() => {
-    login('app', account.value.trim())
+  const result = await login('app', account.value.trim(), password.value)
+  if (!result.ok) {
+    error.value = result.error ?? '登录失败'
     loading.value = false
-    router.push('/app/home')
-  }, 600)
+    return
+  }
+  await loadAllData()
+  loading.value = false
+  router.push('/app/home')
 }
 
 function demoLogin() {

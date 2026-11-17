@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { FormInstance } from 'ant-design-vue'
-import { useAuth, portalNames, type Portal } from '@/composables/useAuth'
+import { useAuth, portalNames, DEMO_PASSWORD, type Portal } from '@/composables/useAuth'
 import { useTheme } from '@/composables/useTheme'
+import { loadAllData } from '@/api/store'
 
 const props = defineProps<{
   portal: Extract<Portal, 'admin' | 'ops' | 'sup'>
@@ -18,7 +18,6 @@ const route = useRoute()
 const { login } = useAuth()
 const { theme, toggle } = useTheme()
 
-const formRef = ref<FormInstance>()
 const loading = ref(false)
 const error = ref('')
 const captchaCode = ref(createCode())
@@ -34,6 +33,13 @@ const rules = {
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 6, message: '密码长度不能少于 6 位', trigger: 'blur' },
+    {
+      validator: (_rule: unknown, value: string) =>
+        value === DEMO_PASSWORD
+          ? Promise.resolve()
+          : Promise.reject(new Error('密码错误，请重新输入')),
+      trigger: 'blur',
+    },
   ],
   captcha: [
     { required: true, whitespace: true, message: '请输入验证码', trigger: 'blur' },
@@ -74,27 +80,29 @@ const otherPortals = computed(() => {
   return list.filter((item) => item.path !== portalPath[props.portal])
 })
 
-interface ValidateError {
-  errorFields?: { name: (string | number)[] }[]
-}
-
-async function submit() {
+/**
+ * antd-vue Form 内部会拦截原生 submit、自动执行 rules 校验，
+ * 只有校验通过才触发 @finish，失败则触发 @finish-failed。
+ * 因此登录逻辑挂在 @finish 上即可，无需再手动 validateFields。
+ */
+async function onFinish() {
   error.value = ''
-  try {
-    await formRef.value?.validateFields()
-  } catch (raw) {
-    // 保持旧行为：验证码输错时自动换一张
-    const fields = (raw as ValidateError).errorFields ?? []
-    if (fields.some((item) => item.name.includes('captcha'))) refreshCaptcha()
+  loading.value = true
+  const result = await login(props.portal, formState.account.trim(), formState.password)
+  if (!result.ok) {
+    error.value = result.error ?? '登录失败'
+    loading.value = false
     return
   }
-  loading.value = true
-  window.setTimeout(() => {
-    login(props.portal, formState.account.trim())
-    loading.value = false
-    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : props.redirect
-    router.push(redirect)
-  }, 700)
+  await loadAllData()
+  loading.value = false
+  const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : props.redirect
+  router.push(redirect)
+}
+
+function onFinishFailed(info: { errorFields?: { name: (string | number)[] }[] }) {
+  // 保持旧行为：验证码输错时自动换一张
+  if ((info.errorFields ?? []).some((item) => item.name.includes('captcha'))) refreshCaptcha()
 }
 </script>
 
@@ -134,12 +142,12 @@ async function submit() {
         />
 
         <a-form
-          ref="formRef"
           :model="formState"
           :rules="rules"
           layout="vertical"
           class="login-antd-form"
-          @submit.prevent="submit"
+          @finish="onFinish"
+          @finish-failed="onFinishFailed"
         >
           <a-form-item name="account" label="账号">
             <a-input

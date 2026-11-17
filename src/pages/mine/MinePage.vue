@@ -2,13 +2,14 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AppModal from '@/components/ui/AppModal.vue'
-import { useAuth } from '@/composables/useAuth'
+import { useAuth, demoUsers } from '@/composables/useAuth'
 import { useToast } from '@/composables/useToast'
 import { park, plots, sysInfo, users } from '@/api/store'
 
 const auth = useAuth()
 const session = auth.session('app')
-const profile = computed(() => session.value)
+// 路由守卫保证进入时已登录，demoUsers 仅作类型层面的防御性回退
+const profile = computed(() => session.value ?? demoUsers.app)
 const accountUser = computed(() => users.find((item) => item.account === profile.value.account))
 const router = useRouter()
 const toast = useToast()

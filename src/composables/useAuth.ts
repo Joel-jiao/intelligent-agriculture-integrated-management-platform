@@ -1,4 +1,5 @@
-import { reactive, computed } from 'vue'
+import { reactive, computed, ref } from 'vue'
+import { apiPost, ApiError } from '@/api/http'
 
 export type Portal = 'admin' | 'ops' | 'sup' | 'app'
 
@@ -23,6 +24,9 @@ export const demoUsers: Record<Portal, SessionUser> = {
   app: { portal: 'app', account: 'wangq', name: '王强', role: '农户' },
 }
 
+/** 演示环境统一登录密码（最终校验以后端为准） */
+export const DEMO_PASSWORD = '123456'
+
 const STORAGE_KEY = 'agri_platform_sessions'
 const sessions = reactive<Partial<Record<Portal, SessionUser>>>(load())
 
@@ -43,31 +47,83 @@ function persist() {
   }
 }
 
+/** 当前持有的访问令牌，登录后由后端签发 */
+const token = ref<string>(readToken())
+
+function readToken(): string {
+  try {
+    return localStorage.getItem('agri_platform_token') ?? ''
+  } catch {
+    return ''
+  }
+}
+
+// 脏数据清理：旧版本只存 session 不存 token，升级后 session 残留但无 token。
+// 此时视为未登录，清空 session，避免 hasSession 误判导致接口 401 循环。
+if (token.value === '' && Object.values(sessions).some(Boolean)) {
+  for (const key of Object.keys(sessions)) {
+    delete sessions[key as Portal]
+  }
+  persist()
+}
+
+export interface LoginResult {
+  ok: boolean
+  error?: string
+}
+
 export function useAuth() {
-  function login(portal: Portal, account: string, role?: string) {
-    const base = demoUsers[portal]
-    sessions[portal] = {
-      portal,
-      account,
-      name: base.name,
-      role: role ?? base.role,
+  /** 任一业务端已登录且持有令牌，才视为「已认证」（避免旧 session 无 token 的脏数据误判） */
+  const hasSession = computed(() => token.value !== '' && Object.values(sessions).some(Boolean))
+
+  /** 调用后端登录接口，成功则写入令牌与会话 */
+  async function login(portal: Portal, account: string, password: string): Promise<LoginResult> {
+    try {
+      const data = await apiPost<{ token: string; user: SessionUser }>('/auth/login', {
+        portal,
+        account,
+        password,
+      })
+      token.value = data.token
+      try {
+        localStorage.setItem('agri_platform_token', data.token)
+      } catch {
+        // ignore
+      }
+      sessions[portal] = data.user
+      persist()
+      return { ok: true }
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 401) {
+        return { ok: false, error: '账号或密码错误' }
+      }
+      const message = error instanceof Error ? error.message : '登录失败，请稍后重试'
+      return { ok: false, error: message }
     }
-    persist()
-    return sessions[portal]
   }
 
   function logout(portal: Portal) {
     delete sessions[portal]
     persist()
+    // 所有业务端都退出后，清空访问令牌
+    if (!Object.values(sessions).some(Boolean)) {
+      token.value = ''
+      try {
+        localStorage.removeItem('agri_platform_token')
+      } catch {
+        // ignore
+      }
+    }
   }
 
   function session(portal: Portal) {
-    return computed(() => sessions[portal] ?? demoUsers[portal])
+    // 未登录时返回 undefined，不再回退演示用户（避免掩盖未登录态）
+    return computed(() => sessions[portal])
   }
 
   function isLoggedIn(portal: Portal) {
-    return computed(() => Boolean(sessions[portal]))
+    return computed(() => token.value !== '' && Boolean(sessions[portal]))
   }
 
-  return { sessions, login, logout, session, isLoggedIn }
+  return { sessions, login, logout, session, isLoggedIn, hasSession }
 }

@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import PortalLayout from '@/layouts/PortalLayout.vue'
 import MobileLayout from '@/layouts/MobileLayout.vue'
 import { adminMenu, opsMenu, supMenu } from '@/config/menus'
+import { useAuth, type Portal } from '@/composables/useAuth'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', redirect: '/portals' },
@@ -40,7 +41,7 @@ const routes: RouteRecordRaw[] = [
     path: '/screen',
     name: 'command-screen',
     component: () => import('@/pages/screen/CommandScreenPage.vue'),
-    meta: { title: '指挥中心大屏' },
+    meta: { title: '指挥中心大屏', requiresAuth: true, portal: 'admin' },
   },
   {
     path: '/trace/h5/:code',
@@ -58,6 +59,7 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     component: PortalLayout,
     props: { portal: 'admin', menu: adminMenu },
+    meta: { requiresAuth: true, portal: 'admin' },
     children: [
       { path: '', redirect: '/login' },
       { path: 'dashboard', name: 'dashboard', component: () => import('@/pages/home/DashboardPage.vue'), meta: { title: '综合数据看板' } },
@@ -89,6 +91,7 @@ const routes: RouteRecordRaw[] = [
     path: '/ops',
     component: PortalLayout,
     props: { portal: 'ops', menu: opsMenu },
+    meta: { requiresAuth: true, portal: 'ops' },
     children: [
       { path: '', redirect: '/ops/workbench' },
       { path: 'workbench', name: 'ops-workbench', component: () => import('@/pages/ops/OpsWorkbenchPage.vue'), meta: { title: '运维工作台' } },
@@ -109,6 +112,7 @@ const routes: RouteRecordRaw[] = [
     path: '/sup',
     component: PortalLayout,
     props: { portal: 'sup', menu: supMenu },
+    meta: { requiresAuth: true, portal: 'sup' },
     children: [
       { path: '', redirect: '/sup/overview' },
       { path: 'overview', name: 'sup-overview', component: () => import('@/pages/supervise/SupOverviewPage.vue'), meta: { title: '监管数据总览' } },
@@ -123,6 +127,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/app',
     component: MobileLayout,
+    meta: { requiresAuth: true, portal: 'app' },
     children: [
       { path: '', redirect: '/app/home' },
       { path: 'home', name: 'app-home', component: () => import('@/pages/home/HomePage.vue'), meta: { title: '农户工作台' } },
@@ -145,6 +150,22 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+})
+
+const loginPaths: Record<Portal, string> = {
+  admin: '/login',
+  ops: '/ops/login',
+  sup: '/sup/login',
+  app: '/app/login',
+}
+
+/** 登录门禁：受保护路由未登录时，一律重定向到对应业务端的登录页 */
+router.beforeEach((to) => {
+  const guard = to.matched.find((record) => record.meta.requiresAuth === true)
+  if (!guard) return true
+  const portal = guard.meta.portal as Portal
+  if (useAuth().isLoggedIn(portal).value) return true
+  return { path: loginPaths[portal], query: { redirect: to.fullPath } }
 })
 
 router.afterEach((to) => {

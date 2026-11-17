@@ -322,6 +322,53 @@ function clearAll() {
 }
 
 /* ------------------------------------------------------------------ *
+ * 公开数据加载（无需登录）：供登录页 / 溯源 H5 / 业务端总览使用
+ * 不设置 backend.status（该状态由 loadAllData 管理），失败静默降级为空数据
+ * ------------------------------------------------------------------ */
+
+let publicInflight: Promise<void> | null = null
+
+export function loadPublicData(): Promise<void> {
+  if (publicInflight) return publicInflight
+
+  publicInflight = (async () => {
+    try {
+      const [
+        parkData,
+        sysInfoData,
+        traceDetailData,
+        traceTimelineData,
+        plotsData,
+        batchesData,
+        inspectionsData,
+      ] = await Promise.all([
+        fetchPark(),
+        fetchSysInfo(),
+        fetchTraceDetail(),
+        fetchTraceTimeline(),
+        fetchPlots(),
+        fetchBatches(),
+        fetchInspections(),
+      ])
+
+      fillObject(park, parkData)
+      fillObject(sysInfo, sysInfoData)
+      fillObject(traceDetail, traceDetailData)
+      fillArray(plots, plotsData)
+      fillArray(batches, batchesData)
+      fillArray(inspections, inspectionsData)
+      fillArray(traceTimeline, traceTimelineData)
+    } catch {
+      // 公开数据加载失败不阻塞（未登录用户仅看到空数据兜底）
+    } finally {
+      publicInflight = null
+    }
+  })()
+
+  return publicInflight
+}
+
+/* ------------------------------------------------------------------ *
  * 全量加载
  * ------------------------------------------------------------------ */
 
