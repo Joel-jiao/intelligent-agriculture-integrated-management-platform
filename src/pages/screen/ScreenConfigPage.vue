@@ -3,7 +3,7 @@ import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/components/ui/PageHeader.vue'
 import { useToast } from '@/composables/useToast'
-import { screenConfig as seedConfig } from '@/data/mock'
+import { plots, screenConfig as seedConfig } from '@/api/store'
 
 const toast = useToast()
 const router = useRouter()
@@ -126,11 +126,7 @@ function preview() {
                 <span class="field__label">默认展示范围</span>
                 <select v-model="form.defaultScope" class="select">
                   <option>全部地块</option>
-                  <option>1号智能大棚</option>
-                  <option>2号草莓棚</option>
-                  <option>3号黄瓜棚</option>
-                  <option>露天 A 区果园</option>
-                  <option>露天 B 区稻田</option>
+                  <option v-for="plot in plots" :key="plot.id" :value="plot.name">{{ plot.name }}</option>
                 </select>
               </label>
             </div>

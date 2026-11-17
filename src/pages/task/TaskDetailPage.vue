@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { materials, plotName, workOrders as seedOrders } from '@/data/mock'
+import { materials, plotName, workOrders as seedOrders } from '@/api/store'
 import type { WorkOrder } from '@/data/types'
 import { nowDateTime, today } from '@/utils/format'
 

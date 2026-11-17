@@ -7,7 +7,7 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import Pager from '@/components/ui/Pager.vue'
 import { useToast } from '@/composables/useToast'
-import { batches, plotName, plots, traceTimeline } from '@/data/mock'
+import { batches, plotName, plots, traceTimeline } from '@/api/store'
 import type { TraceBatch } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, today } from '@/utils/format'
 

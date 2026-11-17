@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { park, plots, sysInfo, traceDetail } from '@/data/mock'
+import { park, plots, sysInfo, traceDetail } from '@/api/store'
 
 const entries = [
   {

@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { messages as seedMessages } from '@/data/mock'
+import { messages as seedMessages } from '@/api/store'
 import type { MessageItem } from '@/data/types'
 import { today } from '@/utils/format'
 

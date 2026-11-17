@@ -14,7 +14,7 @@ import {
   sysInfo,
   waterElectric,
   workOrders,
-} from '@/data/mock'
+} from '@/api/store'
 import { formatNumber, pad } from '@/utils/format'
 
 const clock = ref('')

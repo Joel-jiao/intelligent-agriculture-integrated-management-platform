@@ -5,7 +5,7 @@ import PageHeader from '@/components/ui/PageHeader.vue'
 import QrCode from '@/components/ui/QrCode.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { batches } from '@/data/mock'
+import { batches } from '@/api/store'
 import { buildCsv, downloadText, formatNumber, today } from '@/utils/format'
 
 const toast = useToast()

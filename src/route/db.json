@@ -1130,6 +1130,17 @@
       "status": "启用",
       "lastLogin": "2026-11-06 09:01",
       "createdAt": "2026-06-20"
+    },
+    {
+      "id": "U-008",
+      "account": "zhout",
+      "name": "周涛",
+      "role": "农户",
+      "phone": "135****3390",
+      "plotScope": "P-04",
+      "status": "启用",
+      "lastLogin": "2026-11-06 07:55",
+      "createdAt": "2026-04-02"
     }
   ],
   "roles": [
@@ -2523,5 +2534,705 @@
         }
       ]
     }
-  ]
+  ],
+  "dictTypes": [
+    {
+      "id": "DT-01",
+      "code": "crop_type",
+      "name": "作物分类",
+      "desc": "用于农事档案与报表的作物大类划分",
+      "items": [
+        {
+          "id": "CT-01",
+          "code": "VEG",
+          "name": "蔬菜类",
+          "sort": 1,
+          "status": "启用",
+          "note": "茄果、瓜类、叶菜等"
+        },
+        {
+          "id": "CT-02",
+          "code": "FRUIT",
+          "name": "水果类",
+          "sort": 2,
+          "status": "启用",
+          "note": "草莓、柑橘等"
+        },
+        {
+          "id": "CT-03",
+          "code": "GRAIN",
+          "name": "粮油类",
+          "sort": 3,
+          "status": "启用",
+          "note": "水稻、玉米、油菜"
+        },
+        {
+          "id": "CT-04",
+          "code": "LEAF",
+          "name": "叶菜类",
+          "sort": 4,
+          "status": "启用",
+          "note": "生菜、菠菜、小白菜"
+        },
+        {
+          "id": "CT-05",
+          "code": "OTHER",
+          "name": "其他作物",
+          "sort": 5,
+          "status": "停用",
+          "note": "暂未启用"
+        }
+      ]
+    },
+    {
+      "id": "DT-02",
+      "code": "device_type",
+      "name": "设备类型",
+      "desc": "设备接入与远程控制的功能分类",
+      "items": [
+        {
+          "id": "DT2-01",
+          "code": "PUMP",
+          "name": "水泵",
+          "sort": 1,
+          "status": "启用",
+          "note": "灌溉与排水"
+        },
+        {
+          "id": "DT2-02",
+          "code": "FAN",
+          "name": "风机",
+          "sort": 2,
+          "status": "启用",
+          "note": "环流与加温"
+        },
+        {
+          "id": "DT2-03",
+          "code": "CURTAIN",
+          "name": "卷帘",
+          "sort": 3,
+          "status": "启用",
+          "note": "内外遮阳"
+        },
+        {
+          "id": "DT2-04",
+          "code": "LIGHT",
+          "name": "补光灯",
+          "sort": 4,
+          "status": "启用",
+          "note": "育苗补光"
+        },
+        {
+          "id": "DT2-05",
+          "code": "VALVE",
+          "name": "电磁阀",
+          "sort": 5,
+          "status": "启用",
+          "note": "滴灌分区控制"
+        },
+        {
+          "id": "DT2-06",
+          "code": "SENSOR",
+          "name": "传感器",
+          "sort": 6,
+          "status": "启用",
+          "note": "环境与水质采集"
+        },
+        {
+          "id": "DT2-07",
+          "code": "GATEWAY",
+          "name": "网关",
+          "sort": 7,
+          "status": "启用",
+          "note": "边缘接入节点"
+        }
+      ]
+    },
+    {
+      "id": "DT-03",
+      "code": "alarm_level",
+      "name": "告警级别",
+      "desc": "告警分级决定通知渠道与响应时限",
+      "items": [
+        {
+          "id": "DT3-01",
+          "code": "URGENT",
+          "name": "紧急",
+          "sort": 1,
+          "status": "启用",
+          "note": "短信 + 电话，10 分钟内响应"
+        },
+        {
+          "id": "DT3-02",
+          "code": "IMPORTANT",
+          "name": "重要",
+          "sort": 2,
+          "status": "启用",
+          "note": "站内 + 短信，30 分钟内响应"
+        },
+        {
+          "id": "DT3-03",
+          "code": "NORMAL",
+          "name": "一般",
+          "sort": 3,
+          "status": "启用",
+          "note": "站内通知，2 小时内响应"
+        },
+        {
+          "id": "DT3-04",
+          "code": "INFO",
+          "name": "提示",
+          "sort": 4,
+          "status": "停用",
+          "note": "仅记录，不推送"
+        }
+      ]
+    },
+    {
+      "id": "DT-04",
+      "code": "product_grade",
+      "name": "产品等级",
+      "desc": "采收分级与溯源码赋码依据",
+      "items": [
+        {
+          "id": "DT4-01",
+          "code": "SPECIAL",
+          "name": "特级",
+          "sort": 1,
+          "status": "启用",
+          "note": "外观与规格均优"
+        },
+        {
+          "id": "DT4-02",
+          "code": "FIRST",
+          "name": "一级",
+          "sort": 2,
+          "status": "启用",
+          "note": "符合主销标准"
+        },
+        {
+          "id": "DT4-03",
+          "code": "SECOND",
+          "name": "二级",
+          "sort": 3,
+          "status": "启用",
+          "note": "加工或团购渠道"
+        },
+        {
+          "id": "DT4-04",
+          "code": "REJECT",
+          "name": "等外",
+          "sort": 4,
+          "status": "启用",
+          "note": "不进入溯源销售"
+        }
+      ]
+    },
+    {
+      "id": "DT-05",
+      "code": "measure_unit",
+      "name": "计量单位",
+      "desc": "农资、采收与报表统一单位",
+      "items": [
+        {
+          "id": "DT5-01",
+          "code": "KG",
+          "name": "千克",
+          "sort": 1,
+          "status": "启用",
+          "note": "kg"
+        },
+        {
+          "id": "DT5-02",
+          "code": "TON",
+          "name": "吨",
+          "sort": 2,
+          "status": "启用",
+          "note": "t"
+        },
+        {
+          "id": "DT5-03",
+          "code": "L",
+          "name": "升",
+          "sort": 3,
+          "status": "启用",
+          "note": "L"
+        },
+        {
+          "id": "DT5-04",
+          "code": "M2",
+          "name": "平方米",
+          "sort": 4,
+          "status": "启用",
+          "note": "m²"
+        },
+        {
+          "id": "DT5-05",
+          "code": "M3",
+          "name": "立方米",
+          "sort": 5,
+          "status": "启用",
+          "note": "m³"
+        }
+      ]
+    },
+    {
+      "id": "DT-06",
+      "code": "work_status",
+      "name": "工单状态",
+      "desc": "农事工单流转状态定义",
+      "items": [
+        {
+          "id": "DT6-01",
+          "code": "PENDING",
+          "name": "待接单",
+          "sort": 1,
+          "status": "启用",
+          "note": "农户尚未接单"
+        },
+        {
+          "id": "DT6-02",
+          "code": "DOING",
+          "name": "进行中",
+          "sort": 2,
+          "status": "启用",
+          "note": "作业执行中"
+        },
+        {
+          "id": "DT6-03",
+          "code": "CHECKING",
+          "name": "待验收",
+          "sort": 3,
+          "status": "启用",
+          "note": "等待管理员验收"
+        },
+        {
+          "id": "DT6-04",
+          "code": "DONE",
+          "name": "已完成",
+          "sort": 4,
+          "status": "启用",
+          "note": "验收通过归档"
+        }
+      ]
+    }
+  ],
+  "loginDevices": [
+    {
+      "id": "D-01",
+      "name": "Windows 工作站",
+      "client": "Chrome 122 · Windows 11",
+      "ip": "192.168.10.22",
+      "time": "2026-11-06 09:32",
+      "current": true
+    },
+    {
+      "id": "D-02",
+      "name": "iPhone 15",
+      "client": "飞书内置浏览器 · iOS 18",
+      "ip": "10.20.8.42",
+      "time": "2026-11-05 18:12",
+      "current": false
+    },
+    {
+      "id": "D-03",
+      "name": "iPad Air",
+      "client": "Safari · iPadOS 18",
+      "ip": "10.20.8.55",
+      "time": "2026-11-03 08:26",
+      "current": false
+    }
+  ],
+  "controlLogs": [
+    {
+      "id": "LOG-001",
+      "time": "2026-11-06 09:40:12",
+      "device": "1号棚水泵",
+      "action": "启动",
+      "result": "成功"
+    },
+    {
+      "id": "LOG-002",
+      "time": "2026-11-06 08:15:40",
+      "device": "1号棚外遮阳卷帘",
+      "action": "收起",
+      "result": "成功"
+    },
+    {
+      "id": "LOG-003",
+      "time": "2026-11-05 22:30:08",
+      "device": "育苗棚补光灯",
+      "action": "停止",
+      "result": "成功"
+    },
+    {
+      "id": "LOG-004",
+      "time": "2026-11-05 18:12:25",
+      "device": "3号棚水泵",
+      "action": "启动",
+      "result": "失败"
+    }
+  ],
+  "linkageStrategies": [
+    {
+      "id": "LS-01",
+      "name": "高温自动通风",
+      "plotId": "P-01",
+      "tempMin": 18,
+      "tempMax": 30,
+      "humidityMin": 55,
+      "humidityMax": 85,
+      "soilMin": 45,
+      "action": "启动环流风机",
+      "window": "08:00-18:00",
+      "enabled": true,
+      "lastTriggered": "2026-11-06 13:20"
+    },
+    {
+      "id": "LS-02",
+      "name": "夜间低温保温",
+      "plotId": "P-02",
+      "tempMin": 16,
+      "tempMax": 28,
+      "humidityMin": 60,
+      "humidityMax": 85,
+      "soilMin": 50,
+      "action": "关闭外遮阳卷帘",
+      "window": "18:00-08:00",
+      "enabled": true,
+      "lastTriggered": "2026-11-05 23:10"
+    },
+    {
+      "id": "LS-03",
+      "name": "土壤干旱自动补灌",
+      "plotId": "P-03",
+      "tempMin": 20,
+      "tempMax": 32,
+      "humidityMin": 50,
+      "humidityMax": 80,
+      "soilMin": 40,
+      "action": "启动滴灌电磁阀",
+      "window": "06:00-10:00",
+      "enabled": false,
+      "lastTriggered": "2026-11-04 07:05"
+    },
+    {
+      "id": "LS-04",
+      "name": "高湿自动除湿",
+      "plotId": "P-05",
+      "tempMin": 18,
+      "tempMax": 30,
+      "humidityMin": 60,
+      "humidityMax": 80,
+      "soilMin": 50,
+      "action": "启动环流风机",
+      "window": "00:00-24:00",
+      "enabled": true,
+      "lastTriggered": "2026-11-06 06:40"
+    },
+    {
+      "id": "LS-05",
+      "name": "育苗期定时补光",
+      "plotId": "P-06",
+      "tempMin": 22,
+      "tempMax": 28,
+      "humidityMin": 65,
+      "humidityMax": 85,
+      "soilMin": 55,
+      "action": "开启补光灯组",
+      "window": "16:00-22:00",
+      "enabled": true,
+      "lastTriggered": "2026-11-05 18:00"
+    }
+  ],
+  "linkageLogs": [
+    {
+      "id": "EL-01",
+      "time": "2026-11-06 13:20:08",
+      "strategy": "高温自动通风",
+      "detail": "1号棚温度 31.2℃，启动环流风机",
+      "result": "成功"
+    },
+    {
+      "id": "EL-02",
+      "time": "2026-11-06 06:40:12",
+      "strategy": "高湿自动除湿",
+      "detail": "B区稻田湿度 84%，启动环流风机",
+      "result": "成功"
+    },
+    {
+      "id": "EL-03",
+      "time": "2026-11-05 23:10:40",
+      "strategy": "夜间低温保温",
+      "detail": "2号棚温度 15.4℃，关闭外遮阳卷帘",
+      "result": "成功"
+    },
+    {
+      "id": "EL-04",
+      "time": "2026-11-05 18:00:05",
+      "strategy": "育苗期定时补光",
+      "detail": "进入补光时段，开启补光灯组",
+      "result": "成功"
+    },
+    {
+      "id": "EL-05",
+      "time": "2026-11-04 07:05:22",
+      "strategy": "土壤干旱自动补灌",
+      "detail": "3号棚土壤湿度 38%，启动滴灌电磁阀",
+      "result": "失败"
+    }
+  ],
+  "deviceOpRecords": [
+    {
+      "id": 1,
+      "time": "2026-11-06 09:40",
+      "text": "管理员下发 1号棚水泵启动指令"
+    },
+    {
+      "id": 2,
+      "time": "2026-11-06 08:12",
+      "text": "安全锁开启，远程控制已锁定"
+    }
+  ],
+  "workOrderCheckins": [
+    {
+      "id": 1,
+      "time": "2026-11-06 08:34",
+      "lat": "29.5912",
+      "lng": "106.2205",
+      "distance": "4.2 m"
+    }
+  ],
+  "opApiKeys": [
+    {
+      "id": "K-01",
+      "name": "运维自动化脚本",
+      "key": "ak_ops_a12f****90bc",
+      "scope": "设备读写 / 备份查询",
+      "createdAt": "2026-09-12 10:20"
+    },
+    {
+      "id": "K-02",
+      "name": "监控告警回调",
+      "key": "ak_mon_7c3d****e481",
+      "scope": "只读 / 告警订阅",
+      "createdAt": "2026-10-08 15:42"
+    }
+  ],
+  "opSessions": [
+    {
+      "id": "D-01",
+      "device": "运维工作站",
+      "browser": "Chrome 130 · Windows 11",
+      "ip": "192.168.10.31",
+      "location": "园区机房内网",
+      "time": "2026-11-06 09:10",
+      "current": true
+    },
+    {
+      "id": "D-02",
+      "device": "值班笔记本",
+      "browser": "Edge 130 · Windows 11",
+      "ip": "10.20.8.42",
+      "location": "璧山办公区",
+      "time": "2026-11-05 18:22",
+      "current": false
+    },
+    {
+      "id": "D-03",
+      "device": "移动巡检终端",
+      "browser": "Safari · iPadOS 18",
+      "ip": "10.20.8.57",
+      "location": "园区东门值班室",
+      "time": "2026-11-04 08:15",
+      "current": false
+    }
+  ],
+  "serviceHealth": [
+    {
+      "name": "API 服务",
+      "desc": "Spring Boot 业务接口",
+      "port": 8080,
+      "version": "3.2.4",
+      "uptime": "128 天",
+      "latency": 42,
+      "status": "运行中"
+    },
+    {
+      "name": "MQTT Broker",
+      "desc": "设备消息接入与分发",
+      "port": 1883,
+      "version": "EMQX 5.6",
+      "uptime": "128 天",
+      "latency": 8,
+      "status": "运行中"
+    },
+    {
+      "name": "MySQL 数据库",
+      "desc": "业务主数据存储",
+      "port": 3306,
+      "version": "8.0.36",
+      "uptime": "96 天",
+      "latency": 6,
+      "status": "运行中"
+    },
+    {
+      "name": "Redis 缓存",
+      "desc": "会话与热点数据缓存",
+      "port": 6379,
+      "version": "7.2.4",
+      "uptime": "96 天",
+      "latency": 3,
+      "status": "运行中"
+    },
+    {
+      "name": "文件存储",
+      "desc": "对象存储与附件服务",
+      "port": 9000,
+      "version": "MinIO 2025",
+      "uptime": "64 天",
+      "latency": 18,
+      "status": "告警"
+    }
+  ],
+  "exportRecords": [
+    {
+      "id": 1,
+      "name": "环境月报_2026-10.csv",
+      "format": "CSV",
+      "time": "2026-11-05 16:30",
+      "rows": 1,
+      "operator": "李明",
+      "status": "成功"
+    },
+    {
+      "id": 2,
+      "name": "水肥消耗_2026Q3.xls",
+      "format": "Excel",
+      "time": "2026-11-03 10:12",
+      "rows": 3,
+      "operator": "李明",
+      "status": "成功"
+    }
+  ],
+  "videoReplays": [
+    {
+      "id": "R-01",
+      "cameraId": "CAM-01",
+      "cameraName": "1号大棚 · 东侧",
+      "start": "2026-11-06 09:00",
+      "duration": "32 分钟",
+      "size": "186 MB",
+      "daysAgo": 0
+    },
+    {
+      "id": "R-02",
+      "cameraId": "CAM-02",
+      "cameraName": "1号大棚 · 西侧",
+      "start": "2026-11-06 08:30",
+      "duration": "28 分钟",
+      "size": "164 MB",
+      "daysAgo": 0
+    },
+    {
+      "id": "R-03",
+      "cameraId": "CAM-03",
+      "cameraName": "2号草莓棚 · 入口",
+      "start": "2026-11-06 07:00",
+      "duration": "45 分钟",
+      "size": "212 MB",
+      "daysAgo": 0
+    },
+    {
+      "id": "R-04",
+      "cameraId": "CAM-04",
+      "cameraName": "3号黄瓜棚 · 中部",
+      "start": "2026-11-05 16:20",
+      "duration": "36 分钟",
+      "size": "198 MB",
+      "daysAgo": 1
+    },
+    {
+      "id": "R-05",
+      "cameraId": "CAM-06",
+      "cameraName": "稻田 · 灌渠",
+      "start": "2026-11-04 10:15",
+      "duration": "52 分钟",
+      "size": "264 MB",
+      "daysAgo": 2
+    },
+    {
+      "id": "R-06",
+      "cameraId": "CAM-01",
+      "cameraName": "1号大棚 · 东侧",
+      "start": "2026-11-02 14:00",
+      "duration": "40 分钟",
+      "size": "208 MB",
+      "daysAgo": 4
+    },
+    {
+      "id": "R-07",
+      "cameraId": "CAM-05",
+      "cameraName": "露天果园 · 全景",
+      "start": "2026-10-31 09:30",
+      "duration": "25 分钟",
+      "size": "142 MB",
+      "daysAgo": 6
+    }
+  ],
+  "irrigationPlots": [
+    {
+      "id": "IR-01",
+      "plotId": "P-01",
+      "moisture": 58,
+      "planned": 28,
+      "status": "正常",
+      "lastRun": "2026-11-06 06:20"
+    },
+    {
+      "id": "IR-02",
+      "plotId": "P-02",
+      "moisture": 43,
+      "planned": 18,
+      "status": "正常",
+      "lastRun": "2026-11-05 18:40"
+    },
+    {
+      "id": "IR-03",
+      "plotId": "P-03",
+      "moisture": 38,
+      "planned": 24,
+      "status": "待灌溉",
+      "lastRun": "2026-11-05 07:10"
+    },
+    {
+      "id": "IR-04",
+      "plotId": "P-04",
+      "moisture": 62,
+      "planned": 36,
+      "status": "正常",
+      "lastRun": "2026-11-06 05:50"
+    },
+    {
+      "id": "IR-05",
+      "plotId": "P-05",
+      "moisture": 51,
+      "planned": 32,
+      "status": "正常",
+      "lastRun": "2026-11-05 19:05"
+    },
+    {
+      "id": "IR-06",
+      "plotId": "P-06",
+      "moisture": 47,
+      "planned": 14,
+      "status": "正常",
+      "lastRun": "2026-11-04 16:30"
+    }
+  ],
+  "irrigationSummary": {
+    "todayWater": 428,
+    "todayArea": 96.4,
+    "savingRate": 18.6
+  }
 }

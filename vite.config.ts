@@ -24,4 +24,13 @@ export default defineConfig({
       },
     },
   },
+  preview: {
+    // 生产构建预览同样需要后端，保持与 dev 一致的代理行为
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:3001',
+        changeOrigin: true,
+      },
+    },
+  },
 })

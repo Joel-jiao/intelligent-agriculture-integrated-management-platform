@@ -4,105 +4,17 @@ import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
+import { dictTypes as seedDictTypes } from '@/api/store'
+import type { DictItem, DictType } from '@/data/types'
 
 const toast = useToast()
 
-interface DictItem {
-  id: string
-  code: string
-  name: string
-  sort: number
-  status: '启用' | '停用'
-  note: string
-}
+const dictTypes = ref<DictType[]>(cloneDictTypes())
 
-interface DictType {
-  id: string
-  code: string
-  name: string
-  desc: string
-  items: DictItem[]
+/** 本地编辑副本：字典数据来自后端 /api/v1/system/dicts */
+function cloneDictTypes(): DictType[] {
+  return JSON.parse(JSON.stringify(seedDictTypes)) as DictType[]
 }
-
-const dictTypes = ref<DictType[]>([
-  {
-    id: 'DT-01',
-    code: 'crop_type',
-    name: '作物分类',
-    desc: '用于农事档案与报表的作物大类划分',
-    items: [
-      { id: 'CT-01', code: 'VEG', name: '蔬菜类', sort: 1, status: '启用', note: '茄果、瓜类、叶菜等' },
-      { id: 'CT-02', code: 'FRUIT', name: '水果类', sort: 2, status: '启用', note: '草莓、柑橘等' },
-      { id: 'CT-03', code: 'GRAIN', name: '粮油类', sort: 3, status: '启用', note: '水稻、玉米、油菜' },
-      { id: 'CT-04', code: 'LEAF', name: '叶菜类', sort: 4, status: '启用', note: '生菜、菠菜、小白菜' },
-      { id: 'CT-05', code: 'OTHER', name: '其他作物', sort: 5, status: '停用', note: '暂未启用' },
-    ],
-  },
-  {
-    id: 'DT-02',
-    code: 'device_type',
-    name: '设备类型',
-    desc: '设备接入与远程控制的功能分类',
-    items: [
-      { id: 'DT2-01', code: 'PUMP', name: '水泵', sort: 1, status: '启用', note: '灌溉与排水' },
-      { id: 'DT2-02', code: 'FAN', name: '风机', sort: 2, status: '启用', note: '环流与加温' },
-      { id: 'DT2-03', code: 'CURTAIN', name: '卷帘', sort: 3, status: '启用', note: '内外遮阳' },
-      { id: 'DT2-04', code: 'LIGHT', name: '补光灯', sort: 4, status: '启用', note: '育苗补光' },
-      { id: 'DT2-05', code: 'VALVE', name: '电磁阀', sort: 5, status: '启用', note: '滴灌分区控制' },
-      { id: 'DT2-06', code: 'SENSOR', name: '传感器', sort: 6, status: '启用', note: '环境与水质采集' },
-      { id: 'DT2-07', code: 'GATEWAY', name: '网关', sort: 7, status: '启用', note: '边缘接入节点' },
-    ],
-  },
-  {
-    id: 'DT-03',
-    code: 'alarm_level',
-    name: '告警级别',
-    desc: '告警分级决定通知渠道与响应时限',
-    items: [
-      { id: 'DT3-01', code: 'URGENT', name: '紧急', sort: 1, status: '启用', note: '短信 + 电话，10 分钟内响应' },
-      { id: 'DT3-02', code: 'IMPORTANT', name: '重要', sort: 2, status: '启用', note: '站内 + 短信，30 分钟内响应' },
-      { id: 'DT3-03', code: 'NORMAL', name: '一般', sort: 3, status: '启用', note: '站内通知，2 小时内响应' },
-      { id: 'DT3-04', code: 'INFO', name: '提示', sort: 4, status: '停用', note: '仅记录，不推送' },
-    ],
-  },
-  {
-    id: 'DT-04',
-    code: 'product_grade',
-    name: '产品等级',
-    desc: '采收分级与溯源码赋码依据',
-    items: [
-      { id: 'DT4-01', code: 'SPECIAL', name: '特级', sort: 1, status: '启用', note: '外观与规格均优' },
-      { id: 'DT4-02', code: 'FIRST', name: '一级', sort: 2, status: '启用', note: '符合主销标准' },
-      { id: 'DT4-03', code: 'SECOND', name: '二级', sort: 3, status: '启用', note: '加工或团购渠道' },
-      { id: 'DT4-04', code: 'REJECT', name: '等外', sort: 4, status: '启用', note: '不进入溯源销售' },
-    ],
-  },
-  {
-    id: 'DT-05',
-    code: 'measure_unit',
-    name: '计量单位',
-    desc: '农资、采收与报表统一单位',
-    items: [
-      { id: 'DT5-01', code: 'KG', name: '千克', sort: 1, status: '启用', note: 'kg' },
-      { id: 'DT5-02', code: 'TON', name: '吨', sort: 2, status: '启用', note: 't' },
-      { id: 'DT5-03', code: 'L', name: '升', sort: 3, status: '启用', note: 'L' },
-      { id: 'DT5-04', code: 'M2', name: '平方米', sort: 4, status: '启用', note: 'm²' },
-      { id: 'DT5-05', code: 'M3', name: '立方米', sort: 5, status: '启用', note: 'm³' },
-    ],
-  },
-  {
-    id: 'DT-06',
-    code: 'work_status',
-    name: '工单状态',
-    desc: '农事工单流转状态定义',
-    items: [
-      { id: 'DT6-01', code: 'PENDING', name: '待接单', sort: 1, status: '启用', note: '农户尚未接单' },
-      { id: 'DT6-02', code: 'DOING', name: '进行中', sort: 2, status: '启用', note: '作业执行中' },
-      { id: 'DT6-03', code: 'CHECKING', name: '待验收', sort: 3, status: '启用', note: '等待管理员验收' },
-      { id: 'DT6-04', code: 'DONE', name: '已完成', sort: 4, status: '启用', note: '验收通过归档' },
-    ],
-  },
-])
 
 const activeId = ref(dictTypes.value[0]?.id ?? '')
 const keyword = ref('')

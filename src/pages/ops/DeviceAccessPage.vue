@@ -6,7 +6,7 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import Pager from '@/components/ui/Pager.vue'
 import { useToast } from '@/composables/useToast'
-import { devices, plotName, plots } from '@/data/mock'
+import { devices, plotName, plots } from '@/api/store'
 import type { Device, DeviceType } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, nowDateTime } from '@/utils/format'
 

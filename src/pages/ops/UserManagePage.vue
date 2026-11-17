@@ -6,7 +6,7 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import Pager from '@/components/ui/Pager.vue'
 import { useToast } from '@/composables/useToast'
-import { plots, roles, users } from '@/data/mock'
+import { plots, roles, users } from '@/api/store'
 import type { SysUser } from '@/data/types'
 import { buildCsv, downloadText } from '@/utils/format'
 

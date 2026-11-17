@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { plotName, workOrders as seedOrders } from '@/data/mock'
+import { plotName, workOrders as seedOrders } from '@/api/store'
 import type { WorkOrder, WorkStatus } from '@/data/types'
 import { today } from '@/utils/format'
 

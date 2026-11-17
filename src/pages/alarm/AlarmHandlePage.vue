@@ -5,7 +5,7 @@ import StatCard from '@/components/ui/StatCard.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { alarms, plotName } from '@/data/mock'
+import { alarms, plotName } from '@/api/store'
 import type { Alarm, AlarmLevel, AlarmStatus } from '@/data/types'
 import { buildCsv, downloadText, today } from '@/utils/format'
 

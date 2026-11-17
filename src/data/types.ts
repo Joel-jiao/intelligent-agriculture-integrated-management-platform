@@ -260,6 +260,167 @@ export interface PlotAudit {
   rejectReason?: string
 }
 
+/* ---------- 以下为聚合类接口返回结构（园区概览、系统信息、统计看板等） ---------- */
+
+export interface ParkInfo {
+  name: string
+  shortName: string
+  location: string
+  area: number
+  plots: number
+  farmers: number
+  manager: string
+}
+
+export interface WeatherForecast {
+  day: string
+  high: number
+  low: number
+  icon: string
+}
+
+export interface WeatherInfo {
+  temperature: number
+  humidity: number
+  condition: string
+  wind: string
+  rainfall: number
+  forecast: WeatherForecast[]
+}
+
+export interface SysInfo {
+  version: string
+  env: string
+  db: string
+  api: string
+  uptime: string
+  cpu: number
+  memory: number
+  disk: number
+  onlineUsers: number
+  mqttMessages: number
+  apiCalls: number
+}
+
+export interface QualityCategory {
+  name: string
+  batches: number
+  passRate: number
+}
+
+export interface QualityOverview {
+  passRate: number
+  inspectedBatches: number
+  qualified: number
+  unqualified: number
+  recalls: number
+  pesticideChecks: number
+  trend: number[]
+  categories: QualityCategory[]
+}
+
+export interface TraceInspect {
+  reportNo: string
+  agency: string
+  testedAt: string
+  pesticide: string
+  heavyMetal: string
+  conclusion: string
+}
+
+export interface TraceDetail {
+  batchNo: string
+  crop: string
+  variety: string
+  origin: string
+  grade: string
+  weight: string
+  harvestedAt: string
+  farmer: string
+  plot: string
+  scans: number
+  inspect: TraceInspect
+}
+
+export interface TraceTimelineItem {
+  date: string
+  title: string
+  desc: string
+}
+
+export interface ScreenSection {
+  id: string
+  name: string
+  icon: string
+  enabled: boolean
+}
+
+export interface ScreenConfig {
+  sections: ScreenSection[]
+  interval: number
+  theme: string
+  resolution: string
+  defaultScope: string
+}
+
+export interface EnvSeries {
+  labels: string[]
+  temperature: number[]
+  humidity: number[]
+  soilTemperature: number[]
+  soilMoisture: number[]
+  co2: number[]
+  light: number[]
+  ph: number[]
+  waterTemperature: number[]
+}
+
+export interface WaterElectric {
+  months: string[]
+  water: number[]
+  electric: number[]
+}
+
+export interface MonthlyReportRow {
+  month: string
+  water: number
+  electric: number
+  cost: number
+  alarms: number
+  orders: number
+}
+
+export interface PesticideLedgerRow {
+  id: string
+  date: string
+  plot: string
+  crop: string
+  name: string
+  amount: string
+  operator: string
+  method: string
+  safetyDays: number
+  compliant: boolean
+  note?: string
+}
+
+export interface DictItem {
+  id: string
+  code: string
+  name: string
+  sort: number
+  status: '启用' | '停用'
+  note: string
+}
+
+export interface DictType {
+  id: string
+  code: string
+  name: string
+  desc: string
+  items: DictItem[]
+}
+
 export interface FarmerPlot {
   id: string
   name: string

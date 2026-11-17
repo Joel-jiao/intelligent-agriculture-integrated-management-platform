@@ -4,7 +4,7 @@ import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { plotName, plots } from '@/data/mock'
+import { plotName, plots, linkageStrategies as strategiesSeed, linkageLogs as execLogsSeed, cloneRows } from '@/api/store'
 import { nowDateTime } from '@/utils/format'
 
 const toast = useToast()
@@ -47,78 +47,7 @@ const actionOptions = [
   '关闭补光灯组',
 ]
 
-const strategies = ref<Strategy[]>([
-  {
-    id: 'LS-01',
-    name: '高温自动通风',
-    plotId: 'P-01',
-    tempMin: 18,
-    tempMax: 30,
-    humidityMin: 55,
-    humidityMax: 85,
-    soilMin: 45,
-    action: '启动环流风机',
-    window: '08:00-18:00',
-    enabled: true,
-    lastTriggered: '2026-11-06 13:20',
-  },
-  {
-    id: 'LS-02',
-    name: '夜间低温保温',
-    plotId: 'P-02',
-    tempMin: 16,
-    tempMax: 28,
-    humidityMin: 60,
-    humidityMax: 85,
-    soilMin: 50,
-    action: '关闭外遮阳卷帘',
-    window: '18:00-08:00',
-    enabled: true,
-    lastTriggered: '2026-11-05 23:10',
-  },
-  {
-    id: 'LS-03',
-    name: '土壤干旱自动补灌',
-    plotId: 'P-03',
-    tempMin: 20,
-    tempMax: 32,
-    humidityMin: 50,
-    humidityMax: 80,
-    soilMin: 40,
-    action: '启动滴灌电磁阀',
-    window: '06:00-10:00',
-    enabled: false,
-    lastTriggered: '2026-11-04 07:05',
-  },
-  {
-    id: 'LS-04',
-    name: '高湿自动除湿',
-    plotId: 'P-05',
-    tempMin: 18,
-    tempMax: 30,
-    humidityMin: 60,
-    humidityMax: 80,
-    soilMin: 50,
-    action: '启动环流风机',
-    window: '00:00-24:00',
-    enabled: true,
-    lastTriggered: '2026-11-06 06:40',
-  },
-  {
-    id: 'LS-05',
-    name: '育苗期定时补光',
-    plotId: 'P-06',
-    tempMin: 22,
-    tempMax: 28,
-    humidityMin: 65,
-    humidityMax: 85,
-    soilMin: 55,
-    action: '开启补光灯组',
-    window: '16:00-22:00',
-    enabled: true,
-    lastTriggered: '2026-11-05 18:00',
-  },
-])
+const strategies = ref<Strategy[]>(cloneRows<Strategy>(strategiesSeed))
 
 function conditionText(strategy: Strategy): string {
   return `温度 ${strategy.tempMin} - ${strategy.tempMax}℃ · 湿度 ${strategy.humidityMin} - ${strategy.humidityMax}% · 土壤湿度 < ${strategy.soilMin}%`
@@ -132,13 +61,7 @@ interface ExecLog {
   result: '成功' | '失败'
 }
 
-const execLogs = ref<ExecLog[]>([
-  { id: 'EL-01', time: '2026-11-06 13:20:08', strategy: '高温自动通风', detail: '1号棚温度 31.2℃，启动环流风机', result: '成功' },
-  { id: 'EL-02', time: '2026-11-06 06:40:12', strategy: '高湿自动除湿', detail: 'B区稻田湿度 84%，启动环流风机', result: '成功' },
-  { id: 'EL-03', time: '2026-11-05 23:10:40', strategy: '夜间低温保温', detail: '2号棚温度 15.4℃，关闭外遮阳卷帘', result: '成功' },
-  { id: 'EL-04', time: '2026-11-05 18:00:05', strategy: '育苗期定时补光', detail: '进入补光时段，开启补光灯组', result: '成功' },
-  { id: 'EL-05', time: '2026-11-04 07:05:22', strategy: '土壤干旱自动补灌', detail: '3号棚土壤湿度 38%，启动滴灌电磁阀', result: '失败' },
-])
+const execLogs = ref<ExecLog[]>(cloneRows<ExecLog>(execLogsSeed))
 
 const enabledCount = computed(() => strategies.value.filter((item) => item.enabled).length)
 const plotCoverage = computed(() => new Set(strategies.value.map((item) => item.plotId)).size)

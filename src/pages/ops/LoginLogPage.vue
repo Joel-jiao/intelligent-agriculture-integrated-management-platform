@@ -5,7 +5,7 @@ import StatCard from '@/components/ui/StatCard.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { loginLogs } from '@/data/mock'
+import { loginLogs } from '@/api/store'
 import type { LogRecord } from '@/data/types'
 import { buildCsv, downloadText, nowDateTime } from '@/utils/format'
 

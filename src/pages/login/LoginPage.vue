@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
-import { park } from '@/data/mock'
+import { park } from '@/api/store'
 
 const router = useRouter()
 const { login } = useAuth()

@@ -6,7 +6,7 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import Pager from '@/components/ui/Pager.vue'
 import { useToast } from '@/composables/useToast'
-import { tenants as seedTenants } from '@/data/mock'
+import { tenants as seedTenants } from '@/api/store'
 import type { Tenant } from '@/data/types'
 
 const toast = useToast()

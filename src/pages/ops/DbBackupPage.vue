@@ -4,7 +4,7 @@ import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { backups, sysInfo } from '@/data/mock'
+import { backups, sysInfo } from '@/api/store'
 import type { BackupRecord } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, nowDateTime, nowTime } from '@/utils/format'
 

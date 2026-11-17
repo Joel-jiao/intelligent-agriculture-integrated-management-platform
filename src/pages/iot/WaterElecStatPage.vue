@@ -5,7 +5,7 @@ import StatCard from '@/components/ui/StatCard.vue'
 import BarChart from '@/components/ui/BarChart.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { monthlyReport, park, plots, waterElectric } from '@/data/mock'
+import { monthlyReport, park, plots, waterElectric } from '@/api/store'
 import { buildCsv, downloadText, formatNumber } from '@/utils/format'
 
 const toast = useToast()

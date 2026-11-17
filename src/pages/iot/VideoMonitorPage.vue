@@ -4,7 +4,7 @@ import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import VideoStage from '@/components/ui/VideoStage.vue'
 import { useToast } from '@/composables/useToast'
-import { cameras, plotName } from '@/data/mock'
+import { cameras, plotName, videoReplays as replayRecordsSeed, cloneRows } from '@/api/store'
 import type { Camera } from '@/data/types'
 import { buildCsv, downloadText } from '@/utils/format'
 
@@ -67,15 +67,7 @@ interface ReplayRecord {
   daysAgo: number
 }
 
-const replayRecords: ReplayRecord[] = [
-  { id: 'R-01', cameraId: 'CAM-01', cameraName: '1号大棚 · 东侧', start: '2026-11-06 09:00', duration: '32 分钟', size: '186 MB', daysAgo: 0 },
-  { id: 'R-02', cameraId: 'CAM-02', cameraName: '1号大棚 · 西侧', start: '2026-11-06 08:30', duration: '28 分钟', size: '164 MB', daysAgo: 0 },
-  { id: 'R-03', cameraId: 'CAM-03', cameraName: '2号草莓棚 · 入口', start: '2026-11-06 07:00', duration: '45 分钟', size: '212 MB', daysAgo: 0 },
-  { id: 'R-04', cameraId: 'CAM-04', cameraName: '3号黄瓜棚 · 中部', start: '2026-11-05 16:20', duration: '36 分钟', size: '198 MB', daysAgo: 1 },
-  { id: 'R-05', cameraId: 'CAM-06', cameraName: '稻田 · 灌渠', start: '2026-11-04 10:15', duration: '52 分钟', size: '264 MB', daysAgo: 2 },
-  { id: 'R-06', cameraId: 'CAM-01', cameraName: '1号大棚 · 东侧', start: '2026-11-02 14:00', duration: '40 分钟', size: '208 MB', daysAgo: 4 },
-  { id: 'R-07', cameraId: 'CAM-05', cameraName: '露天果园 · 全景', start: '2026-10-31 09:30', duration: '25 分钟', size: '142 MB', daysAgo: 6 },
-]
+const replayRecords: ReplayRecord[] = cloneRows<ReplayRecord>(replayRecordsSeed)
 
 const thresholdDays = computed(() => {
   if (period.value === 'today') return 0

@@ -4,6 +4,7 @@ import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
 import { nowDateTime } from '@/utils/format'
+import { opApiKeys as apiKeysSeed, opSessions as devicesSeed, cloneRows } from '@/api/store'
 
 const toast = useToast()
 
@@ -98,10 +99,7 @@ interface ApiKey {
   createdAt: string
 }
 
-const apiKeys = ref<ApiKey[]>([
-  { id: 'K-01', name: '运维自动化脚本', key: 'ak_ops_a12f****90bc', scope: '设备读写 / 备份查询', createdAt: '2026-09-12 10:20' },
-  { id: 'K-02', name: '监控告警回调', key: 'ak_mon_7c3d****e481', scope: '只读 / 告警订阅', createdAt: '2026-10-08 15:42' },
-])
+const apiKeys = ref<ApiKey[]>(cloneRows<ApiKey>(apiKeysSeed))
 
 function genKey(): string {
   const hex = (length: number) => Math.random().toString(16).slice(2, 2 + length).padEnd(length, '0')
@@ -137,11 +135,7 @@ interface SessionDevice {
   current: boolean
 }
 
-const devices = ref<SessionDevice[]>([
-  { id: 'D-01', device: '运维工作站', browser: 'Chrome 130 · Windows 11', ip: '192.168.10.31', location: '园区机房内网', time: '2026-11-06 09:10', current: true },
-  { id: 'D-02', device: '值班笔记本', browser: 'Edge 130 · Windows 11', ip: '10.20.8.42', location: '璧山办公区', time: '2026-11-05 18:22', current: false },
-  { id: 'D-03', device: '移动巡检终端', browser: 'Safari · iPadOS 18', ip: '10.20.8.57', location: '园区东门值班室', time: '2026-11-04 08:15', current: false },
-])
+const devices = ref<SessionDevice[]>(cloneRows<SessionDevice>(devicesSeed))
 
 function offlineDevice(item: SessionDevice) {
   devices.value = devices.value.filter((entry) => entry.id !== item.id)

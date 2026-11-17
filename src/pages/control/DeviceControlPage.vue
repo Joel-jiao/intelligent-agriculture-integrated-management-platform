@@ -4,7 +4,7 @@ import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { devices, plotName, plots } from '@/data/mock'
+import { devices, plotName, plots, controlLogs as logsSeed, cloneRows } from '@/api/store'
 import type { Device } from '@/data/types'
 import { nowDateTime } from '@/utils/format'
 
@@ -123,12 +123,7 @@ interface ControlLog {
   result: '成功' | '失败'
 }
 
-const logs = ref<ControlLog[]>([
-  { id: 'LOG-001', time: '2026-11-06 09:40:12', device: '1号棚水泵', action: '启动', result: '成功' },
-  { id: 'LOG-002', time: '2026-11-06 08:15:40', device: '1号棚外遮阳卷帘', action: '收起', result: '成功' },
-  { id: 'LOG-003', time: '2026-11-05 22:30:08', device: '育苗棚补光灯', action: '停止', result: '成功' },
-  { id: 'LOG-004', time: '2026-11-05 18:12:25', device: '3号棚水泵', action: '启动', result: '失败' },
-])
+const logs = ref<ControlLog[]>(cloneRows<ControlLog>(logsSeed))
 
 function appendLog(deviceName: string, action: ControlAction, result: '成功' | '失败') {
   logs.value.unshift({

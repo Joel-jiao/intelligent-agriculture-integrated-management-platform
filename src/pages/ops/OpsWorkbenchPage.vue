@@ -5,7 +5,7 @@ import StatCard from '@/components/ui/StatCard.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import LineChart from '@/components/ui/LineChart.vue'
 import { useToast } from '@/composables/useToast'
-import { operationLogs, sysInfo } from '@/data/mock'
+import { operationLogs, sysInfo, serviceHealth as servicesSeed, cloneRows } from '@/api/store'
 import { buildCsv, downloadText, formatNumber, nowDateTime } from '@/utils/format'
 
 const toast = useToast()
@@ -20,13 +20,7 @@ interface ServiceItem {
   status: '运行中' | '告警'
 }
 
-const services = ref<ServiceItem[]>([
-  { name: 'API 服务', desc: 'Spring Boot 业务接口', port: 8080, version: '3.2.4', uptime: '128 天', latency: 42, status: '运行中' },
-  { name: 'MQTT Broker', desc: '设备消息接入与分发', port: 1883, version: 'EMQX 5.6', uptime: '128 天', latency: 8, status: '运行中' },
-  { name: 'MySQL 数据库', desc: '业务主数据存储', port: 3306, version: '8.0.36', uptime: '96 天', latency: 6, status: '运行中' },
-  { name: 'Redis 缓存', desc: '会话与热点数据缓存', port: 6379, version: '7.2.4', uptime: '96 天', latency: 3, status: '运行中' },
-  { name: '文件存储', desc: '对象存储与附件服务', port: 9000, version: 'MinIO 2025', uptime: '64 天', latency: 18, status: '告警' },
-])
+const services = ref<ServiceItem[]>(cloneRows<ServiceItem>(servicesSeed))
 
 const health = ref({ cpu: sysInfo.cpu, memory: sysInfo.memory, disk: sysInfo.disk })
 

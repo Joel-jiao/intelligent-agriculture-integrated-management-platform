@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { findPlot, materials, plotName, workOrders as seedWorkOrders } from '@/data/mock'
+import { workOrderCheckins as checkinsSeed, cloneRows, findPlot, materials, plotName, workOrders as seedWorkOrders } from '@/api/store'
 import type { WorkOrder } from '@/data/types'
 import { formatNumber, nowDateTime } from '@/utils/format'
 
@@ -63,9 +63,7 @@ interface CheckinItem {
   distance: string
 }
 
-const checkins = ref<CheckinItem[]>([
-  { id: 1, time: '2026-11-06 08:34', lat: '29.5912', lng: '106.2205', distance: '4.2 m' },
-])
+const checkins = ref<CheckinItem[]>(cloneRows<CheckinItem>(checkinsSeed))
 
 interface PhotoItem {
   id: number

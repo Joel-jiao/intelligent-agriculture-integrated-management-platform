@@ -2,13 +2,16 @@
 import { computed } from 'vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useNetwork } from '@/composables/useNetwork'
-import { alarms, envSeries, park, plotName, plots, weather, workOrders } from '@/data/mock'
+import { useAuth } from '@/composables/useAuth'
+import { alarms, envSeries, park, plotName, plots, weather, workOrders } from '@/api/store'
 import type { WorkOrder } from '@/data/types'
 import { today } from '@/utils/format'
 
 const network = useNetwork()
+const { session } = useAuth()
 
-const farmerName = '王强'
+// 当前登录农户来自登录态，地块信息来自后端
+const farmerName = session('app').value.name
 const farmerPlot = plots.find((item) => item.manager === farmerName)
 
 const todoTasks = computed(() => workOrders.filter((item) => item.status !== '已完成').slice(0, 3))
@@ -77,7 +80,7 @@ function toggleNetwork() {
     <section class="mobile-hero">
       <div class="mobile-hero__row">
         <div>
-          <h2>早上好，王强</h2>
+          <h2>早上好，{{ farmerName }}</h2>
           <p>{{ today() }} · {{ park.name }}</p>
           <p>{{ farmerPlot?.name ?? '园区地块' }} · {{ farmerPlot?.crop ?? '番茄' }}种植管理</p>
         </div>

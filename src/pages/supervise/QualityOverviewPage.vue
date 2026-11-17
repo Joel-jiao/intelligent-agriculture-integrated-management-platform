@@ -6,7 +6,7 @@ import LineChart from '@/components/ui/LineChart.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { inspections, qualityOverview } from '@/data/mock'
+import { inspections, qualityOverview } from '@/api/store'
 import type { InspectReport } from '@/data/types'
 import { buildCsv, downloadText } from '@/utils/format'
 

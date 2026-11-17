@@ -5,7 +5,7 @@ import StatCard from '@/components/ui/StatCard.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { batches, inspections } from '@/data/mock'
+import { batches, inspections } from '@/api/store'
 import type { InspectReport } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, today } from '@/utils/format'
 

@@ -4,7 +4,7 @@ import PageHeader from '@/components/ui/PageHeader.vue'
 import LineChart from '@/components/ui/LineChart.vue'
 import DonutChart from '@/components/ui/DonutChart.vue'
 import { useToast } from '@/composables/useToast'
-import { alarms, devices, envLabels, envSeries, park, plots, workOrders } from '@/data/mock'
+import { alarms, devices, envLabels, envSeries, park, plots, workOrders } from '@/api/store'
 import { buildCsv, downloadText, formatNumber } from '@/utils/format'
 
 const toast = useToast()

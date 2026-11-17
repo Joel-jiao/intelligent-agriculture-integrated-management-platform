@@ -6,7 +6,7 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import DonutChart from '@/components/ui/DonutChart.vue'
 import Pager from '@/components/ui/Pager.vue'
 import { useToast } from '@/composables/useToast'
-import { harvests as seedHarvests, plots, plotName } from '@/data/mock'
+import { harvests as seedHarvests, plots, plotName, users } from '@/api/store'
 import type { HarvestRecord } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, pad, today } from '@/utils/format'
 
@@ -15,7 +15,8 @@ const toast = useToast()
 const harvestList = ref<HarvestRecord[]>(seedHarvests.map((item) => ({ ...item })))
 const seq = ref(7)
 
-const operators = ['王强', '赵敏', '陈刚', '刘洋', '周涛']
+// 操作人名单来自后端用户表（/api/v1/system/users）
+const operators = computed(() => users.filter((user) => user.role === '农户').map((user) => user.name))
 const grades: Array<HarvestRecord['grade']> = ['特级', '一级', '二级']
 
 const batchNo = computed(() => `B${today().replace(/-/g, '')}-${pad(seq.value)}`)

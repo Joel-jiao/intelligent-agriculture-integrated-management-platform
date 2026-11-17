@@ -4,7 +4,7 @@ import PageHeader from '@/components/ui/PageHeader.vue'
 import StatCard from '@/components/ui/StatCard.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { openApis, sysInfo } from '@/data/mock'
+import { openApis, sysInfo } from '@/api/store'
 import type { OpenApi } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, nowDateTime } from '@/utils/format'
 

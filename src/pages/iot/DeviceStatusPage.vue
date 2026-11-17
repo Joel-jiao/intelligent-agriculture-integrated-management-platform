@@ -6,7 +6,7 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import DonutChart from '@/components/ui/DonutChart.vue'
 import LineChart from '@/components/ui/LineChart.vue'
 import { useToast } from '@/composables/useToast'
-import { devices, plotName, plots } from '@/data/mock'
+import { devices, plotName, plots } from '@/api/store'
 import type { Device } from '@/data/types'
 import { buildCsv, downloadText, nowDateTime } from '@/utils/format'
 

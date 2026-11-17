@@ -3,7 +3,7 @@ import { computed, reactive, ref } from 'vue'
 import PageHeader from '@/components/ui/PageHeader.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { roles } from '@/data/mock'
+import { roles } from '@/api/store'
 import type { Role } from '@/data/types'
 
 const toast = useToast()

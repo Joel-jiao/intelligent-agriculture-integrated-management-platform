@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useAuth } from '@/composables/useAuth'
 import { useToast } from '@/composables/useToast'
-import { park, plots, sysInfo, users } from '@/data/mock'
+import { park, plots, sysInfo, users } from '@/api/store'
 
 const auth = useAuth()
 const session = auth.session('app')

@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import QrCode from '@/components/ui/QrCode.vue'
-import { batches, findPlot, inspections, park, plotName, traceDetail, traceTimeline } from '@/data/mock'
+import { batches, findPlot, inspections, park, plotName, traceDetail, traceTimeline } from '@/api/store'
 import { formatNumber } from '@/utils/format'
 
 interface TraceDisplay {
@@ -197,7 +197,7 @@ const report = computed(() => {
         </section>
 
         <div class="h5-footer">
-          数据由云岭智慧农业示范园提供 · 本页面无需登录
+          数据由{{ park.name }}提供 · 本页面无需登录
           <div style="margin-top: 6px">
             <RouterLink class="h5-footer__link" to="/portals">返回平台总览</RouterLink>
           </div>
@@ -215,7 +215,7 @@ const report = computed(() => {
 .trace-code {
   margin-top: 8px;
   font-size: 11px;
-  color: rgba(200, 240, 215, 0.62);
+  color: var(--muted);
   font-family: var(--font-num);
 }
 

@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import LineChart from '@/components/ui/LineChart.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { devices, envLabels, envSeries, plots } from '@/data/mock'
+import { devices, envLabels, envSeries, plots } from '@/api/store'
 import { formatNumber, nowDateTime } from '@/utils/format'
 
 type MetricKey = 'temperature' | 'humidity'

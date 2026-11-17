@@ -4,7 +4,7 @@ import GisMap from '@/components/ui/GisMap.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
 import { useTheme } from '@/composables/useTheme'
-import { devices, envSeries, park, plots } from '@/data/mock'
+import { devices, envSeries, park, plots } from '@/api/store'
 import type { Plot } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, today } from '@/utils/format'
 

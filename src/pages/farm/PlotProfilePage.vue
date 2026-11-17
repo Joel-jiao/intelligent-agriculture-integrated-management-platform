@@ -6,7 +6,7 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import GisMap from '@/components/ui/GisMap.vue'
 import { useToast } from '@/composables/useToast'
-import { devices, plots as seedPlots } from '@/data/mock'
+import { devices, plots as seedPlots } from '@/api/store'
 import type { MapPoint, Plot } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, pad } from '@/utils/format'
 

@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import type { MenuGroup } from '@/config/menus'
 import { useAuth, portalNames, type Portal } from '@/composables/useAuth'
 import { useTheme } from '@/composables/useTheme'
-import { park, sysInfo } from '@/data/mock'
+import { park, sysInfo } from '@/api/store'
 
 const props = defineProps<{
   portal: Extract<Portal, 'admin' | 'ops' | 'sup'>

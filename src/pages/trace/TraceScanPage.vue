@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import QrCode from '@/components/ui/QrCode.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { findPlot, plots } from '@/data/mock'
+import { findPlot, plots } from '@/api/store'
 import { nowDateTime, today } from '@/utils/format'
 
 type Grade = '特级' | '一级' | '二级'

@@ -6,7 +6,7 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import Pager from '@/components/ui/Pager.vue'
 import { useToast } from '@/composables/useToast'
-import { operationLogs } from '@/data/mock'
+import { operationLogs } from '@/api/store'
 import type { LogRecord } from '@/data/types'
 import { buildCsv, downloadText } from '@/utils/format'
 

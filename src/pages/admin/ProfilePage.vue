@@ -3,7 +3,7 @@ import { computed, reactive, ref } from 'vue'
 import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { loginLogs, plots, users } from '@/data/mock'
+import { loginLogs, plots, users, loginDevices as loginDevicesSeed, cloneRows } from '@/api/store'
 import { formatNumber } from '@/utils/format'
 
 interface LoginDevice {
@@ -50,11 +50,7 @@ const prefs = reactive({
   dailyReport: false,
 })
 
-const loginDevices = ref<LoginDevice[]>([
-  { id: 'D-01', name: 'Windows 工作站', client: 'Chrome 122 · Windows 11', ip: '192.168.10.22', time: '2026-11-06 09:32', current: true },
-  { id: 'D-02', name: 'iPhone 15', client: '飞书内置浏览器 · iOS 18', ip: '10.20.8.42', time: '2026-11-05 18:12', current: false },
-  { id: 'D-03', name: 'iPad Air', client: 'Safari · iPadOS 18', ip: '10.20.8.55', time: '2026-11-03 08:26', current: false },
-])
+const loginDevices = ref<LoginDevice[]>(cloneRows<LoginDevice>(loginDevicesSeed))
 
 const securityLogs = computed(() => loginLogs.filter((item) => item.account === 'admin').slice(0, 5))
 

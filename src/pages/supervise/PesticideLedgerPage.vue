@@ -5,7 +5,7 @@ import StatCard from '@/components/ui/StatCard.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { pesticideLedger, plotName, plots } from '@/data/mock'
+import { pesticideLedger, plotName, plots } from '@/api/store'
 import { buildCsv, downloadText } from '@/utils/format'
 
 interface LedgerRow {

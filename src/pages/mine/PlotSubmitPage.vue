@@ -3,7 +3,7 @@ import { computed, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { farmerPlots } from '@/data/mock'
+import { farmerPlots } from '@/api/store'
 import type { MapPoint } from '@/data/types'
 
 const route = useRoute()

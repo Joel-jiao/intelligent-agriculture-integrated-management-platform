@@ -5,7 +5,7 @@ import StatCard from '@/components/ui/StatCard.vue'
 import LineChart from '@/components/ui/LineChart.vue'
 import BarChart from '@/components/ui/BarChart.vue'
 import { useToast } from '@/composables/useToast'
-import { batches, monthlyReport, park, plots, workOrders } from '@/data/mock'
+import { batches, monthlyReport, park, plots, workOrders, exportRecords as recordsSeed, cloneRows } from '@/api/store'
 import { buildCsv, downloadText, formatNumber, nowDateTime } from '@/utils/format'
 
 type ReportType = 'env' | 'water' | 'work' | 'trace'
@@ -222,10 +222,7 @@ const workChartValues = computed(() => workMonths.value.map((item) => item.total
 const traceChartLabels = computed(() => filteredBatches.value.map((item) => item.batchNo.slice(5)))
 const traceChartValues = computed(() => filteredBatches.value.map((item) => item.scans))
 
-const records = ref<ExportRecord[]>([
-  { id: 1, name: '环境月报_2026-10.csv', format: 'CSV', time: '2026-11-05 16:30', rows: 1, operator: '李明', status: '成功' },
-  { id: 2, name: '水肥消耗_2026Q3.xls', format: 'Excel', time: '2026-11-03 10:12', rows: 3, operator: '李明', status: '成功' },
-])
+const records = ref<ExportRecord[]>(cloneRows<ExportRecord>(recordsSeed))
 let recordSeq = 2
 
 function applyFilters() {

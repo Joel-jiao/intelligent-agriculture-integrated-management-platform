@@ -7,7 +7,7 @@ import LineChart from '@/components/ui/LineChart.vue'
 import DonutChart from '@/components/ui/DonutChart.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { batches, inspections, plots, qualityOverview, recalls, supWarnings } from '@/data/mock'
+import { batches, inspections, plots, qualityOverview, recalls, supWarnings } from '@/api/store'
 import { formatNumber } from '@/utils/format'
 
 type Tone = 'ok' | 'warn' | 'danger' | 'info' | 'brand' | 'mute'

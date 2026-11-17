@@ -5,7 +5,7 @@ import StatCard from '@/components/ui/StatCard.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { batches, recalls } from '@/data/mock'
+import { batches, recalls } from '@/api/store'
 import type { RecallRecord } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, nowDateTime, today } from '@/utils/format'
 

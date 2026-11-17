@@ -6,7 +6,7 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import DonutChart from '@/components/ui/DonutChart.vue'
 import { useToast } from '@/composables/useToast'
-import { files } from '@/data/mock'
+import { files } from '@/api/store'
 import type { FileRecord } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, nowDateTime } from '@/utils/format'
 

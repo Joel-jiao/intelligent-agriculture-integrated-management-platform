@@ -6,7 +6,7 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import GisMap from '@/components/ui/GisMap.vue'
 import { useToast } from '@/composables/useToast'
-import { plotAudits as seedAudits, users } from '@/data/mock'
+import { plotAudits as seedAudits, users } from '@/api/store'
 import type { AuditStatus, Plot, PlotAudit } from '@/data/types'
 
 const toast = useToast()

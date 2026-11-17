@@ -3,7 +3,7 @@ import { computed, reactive, ref } from 'vue'
 import PageHeader from '@/components/ui/PageHeader.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { plots } from '@/data/mock'
+import { cloneRows, irrigationPlots as irrigationPlotsSeed, irrigationSummary, plots } from '@/api/store'
 import type { Plot } from '@/data/types'
 import { formatNumber } from '@/utils/format'
 
@@ -19,25 +19,37 @@ interface IrrigationPlot {
   lastRun: string
 }
 
-const moistureSeed = [58, 43, 38, 62, 51, 47]
-const plannedSeed = [28, 18, 24, 36, 32, 14]
+/** 地块墒情与灌溉计划来自后端（/api/v1/control/irrigation-plots） */
+interface IrrigationRow {
+  id: string
+  plotId: string
+  moisture: number
+  planned: number
+  status: IrrigationStatus
+  lastRun: string
+}
+
+const irrigationRows = cloneRows<IrrigationRow>(irrigationPlotsSeed)
 
 const cards = reactive<IrrigationPlot[]>(
-  plots.map((plot, index) => {
-    const moisture = moistureSeed[index] ?? 50
-    return {
-      plot,
-      moisture,
-      planned: plannedSeed[index] ?? 20,
-      status: moisture < 42 ? '待灌溉' : '正常',
-      lastRun: ['2026-11-06 06:20', '2026-11-05 18:40', '2026-11-05 07:10', '2026-11-06 05:50', '2026-11-05 19:05', '2026-11-04 16:30'][index] ?? '—',
-    }
-  }),
+  irrigationRows
+    .map((row) => {
+      const plot = plots.find((item) => item.id === row.plotId)
+      if (!plot) return null
+      return {
+        plot,
+        moisture: row.moisture,
+        planned: row.planned,
+        status: row.status,
+        lastRun: row.lastRun,
+      }
+    })
+    .filter((item): item is IrrigationPlot => item !== null),
 )
 
-const todayWater = 428
-const todayArea = 96.4
-const savingRate = 18.6
+const todayWater = irrigationSummary.todayWater
+const todayArea = irrigationSummary.todayArea
+const savingRate = irrigationSummary.savingRate
 const runningCount = computed(() => cards.filter((item) => item.status === '运行中').length)
 
 function moistureTone(moisture: number): 'ok' | 'warn' | 'danger' {

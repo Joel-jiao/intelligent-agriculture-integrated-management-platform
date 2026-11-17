@@ -4,7 +4,7 @@ import PageHeader from '@/components/ui/PageHeader.vue'
 import StatCard from '@/components/ui/StatCard.vue'
 import BarChart from '@/components/ui/BarChart.vue'
 import { useToast } from '@/composables/useToast'
-import { batches, pesticideLedger, qualityOverview, supWarnings, plotName } from '@/data/mock'
+import { batches, pesticideLedger, qualityOverview, plotName, supWarnings, tenants } from '@/api/store'
 import { buildCsv, downloadText, nowDateTime } from '@/utils/format'
 
 type ReportKey = 'quality' | 'trace' | 'pesticide' | 'warning'
@@ -33,13 +33,8 @@ const startDate = ref('2026-05-01')
 const endDate = ref('2026-11-06')
 const district = ref('全部辖区')
 
-const districtOptions = [
-  '全部辖区',
-  '云岭智慧农业示范园',
-  '璧山果蔬种植合作社',
-  '璧北粮油生产基地',
-  '青杠特色水果基地',
-]
+// 辖区范围来自后端租户列表（/api/v1/system/tenants）
+const districtOptions = computed(() => ['全部辖区', ...tenants.map((tenant) => tenant.name)])
 const monthLabels = ['6月', '7月', '8月', '9月', '10月', '11月']
 
 const activeInfo = computed(() => reports.find((item) => item.key === active.value) ?? reports[0]!)

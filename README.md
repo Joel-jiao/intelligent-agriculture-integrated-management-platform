@@ -2,7 +2,7 @@
 
 基于 Vue 3 + TypeScript + Vite 构建的智慧农业综合管控平台，覆盖**园区业务管理端、系统运维端、监管端、农户移动端**四类门户，集成物联网环境监测、设备远程控制、农事工单、农资库存、质量溯源、GIS 地图与指挥中心大屏等模块。
 
-当前版本为纯前端演示工程，业务数据来自 `src/data/mock.ts`，登录态保存在浏览器 `localStorage`。
+当前版本为**前后端分离**演示工程：前端产物中**不包含任何业务数据**，所有数据（园区概览、地块、设备、告警、工单、溯源、字典…）统一通过 `/api/v1/*` 从后端接口读取；本地开发时后端由 `json-server` + 自定义路由（`src/route/`）模拟，数据持久化在 `src/route/db.json`。**后端未启动时，应用会停留在「后端服务不可用」准入页，不渲染任何业务页面，也不会回退到本地假数据。** 登录态保存在浏览器 `localStorage`。
 
 ## 技术栈
 
@@ -27,21 +27,29 @@
 # 安装依赖
 npm install
 
-# 启动开发服务器（默认 http://localhost:5173）
-npm run dev
+# 同时启动前端（5173）与后端接口服务（3001）——推荐
+npm run dev:all
+
+# 也可以分别启动
+npm run dev       # 仅前端，http://localhost:5173（此时若无后端，页面会停在连接失败页）
+npm run dev:api   # 仅后端接口，http://127.0.0.1:3001
 
 # 类型检查 + 构建生产包
 npm run build
 
-# 本地预览构建产物
+# 本地预览构建产物（需要后端同时运行）
 npm run preview
 ```
+
+> 前端通过 Vite 代理把 `/api` 转发到 `http://127.0.0.1:3001`，开发与 `preview` 均已配置。
 
 ### npm 脚本说明
 
 | 命令 | 作用 |
 | --- | --- |
 | `npm run dev` | 启动 Vite 开发服务器，支持热更新 |
+| `npm run dev:api` | 启动 json-server 接口服务（自定义路由，3001 端口） |
+| `npm run dev:all` | 并行启动前后端 |
 | `npm run build` | 并行执行 `type-check` 与 `build-only` |
 | `npm run build-only` | 仅执行 `vite build`，输出到 `dist/` |
 | `npm run preview` | 预览 `dist/` 构建结果 |
@@ -49,25 +57,24 @@ npm run preview
 
 ## 环境配置文件
 
-仓库当前**未包含** `.env` 系列文件，前端默认使用 Vite 内置变量（如 `import.meta.env.BASE_URL`）。如需接入真实后端或区分多环境，按 Vite 约定在项目根目录新增以下文件（已被 `.gitignore` 中的 `*.local` 规则部分覆盖，敏感配置建议使用 `.env.local`）：
+仓库当前**未包含** `.env` 系列文件，前端默认使用 Vite 内置变量（如 `import.meta.env.BASE_URL`），接口前缀默认 `/api/v1`。如需接入真实后端或区分多环境，按 Vite 约定在项目根目录新增以下文件（已被 `.gitignore` 中的 `*.local` 规则部分覆盖，敏感配置建议使用 `.env.local`）：
 
 ```ini
-# .env.development —— 开发环境
+# .env.development —— 开发环境（留空即使用 Vite 代理的 /api/v1）
 VITE_APP_TITLE=智慧农业综合管理平台
-VITE_API_BASE_URL=/api
-VITE_USE_MOCK=true
+VITE_API_BASE_URL=/api/v1
 ```
 
 ```ini
-# .env.production —— 生产环境
+# .env.production —— 生产环境，指向真实后端
 VITE_APP_TITLE=智慧农业综合管理平台
-VITE_API_BASE_URL=https://api.example.com
-VITE_USE_MOCK=false
+VITE_API_BASE_URL=https://api.example.com/api/v1
 ```
 
 使用约定：
 
 - 仅以 `VITE_` 开头的变量会注入客户端，通过 `import.meta.env.VITE_XXX` 读取。
+- 接口前缀只在 `src/api/http.ts` 中读取一次，页面不拼接接口地址。
 - 新增变量后，建议在 `env.d.ts` 中补充 `ImportMetaEnv` 类型声明以获得类型提示。
 - 修改 `.env` 文件后需重启开发服务器。
 
@@ -90,6 +97,10 @@ VITE_USE_MOCK=false
 .
 ├── .vscode/                     # 编辑器推荐配置
 ├── src/
+│   ├── api/                     # 数据访问层（唯一数据入口）
+│   │   ├── http.ts              # 统一 fetch 封装：基址、超时、错误类型
+│   │   ├── endpoints.ts         # 接口清单与类型化请求函数
+│   │   └── store.ts             # 响应式数据仓库：启动时从后端全量加载，失败即清空
 │   ├── assets/
 │   │   ├── base.css             # 基础样式与颜色变量
 │   │   ├── theme.css            # 平台主题样式（布局、卡片、表格、按钮等）
@@ -104,13 +115,16 @@ VITE_USE_MOCK=false
 │   ├── config/
 │   │   └── menus.ts             # 管理员端 / 运维端 / 监管端菜单及移动端 Tab 配置
 │   ├── data/
-│   │   ├── mock.ts              # 演示业务数据与聚合统计
-│   │   └── types.ts             # 业务实体类型定义
+│   │   └── types.ts             # 业务实体类型定义（不含任何数据）
 │   ├── layouts/
 │   │   ├── PortalLayout.vue     # 桌面端通用布局（侧边菜单 + 顶栏 + 内容区）
 │   │   ├── MobileLayout.vue     # 农户移动端布局（底部 Tab）
 │   │   └── BasicLayout.vue
 │   ├── pages/                   # 按业务域拆分的页面，详见下表
+│   ├── route/                   # 本地模拟后端（json-server）
+│   │   ├── server.cjs           # 启动入口：自实现路由重写器，查询串透传
+│   │   ├── routes.json          # /api/v1/* 真实后端风格地址 → 集合映射
+│   │   └── db.json              # 后端数据集（写操作会持久化到这里）
 │   ├── router/
 │   │   └── index.ts             # 路由表、门户前缀与页面标题
 │   ├── utils/
@@ -167,11 +181,22 @@ VITE_USE_MOCK=false
 
 > 演示登录仅校验账号非空、密码不少于 6 位，不请求后端接口；会话信息存放在 `localStorage` 的 `agri_platform_sessions` 键中。
 
+## 数据读取约定
+
+**前端不存业务数据，一切以接口为准。**
+
+1. 页面统一 `import { plots, devices, ... } from '@/api/store'`，不再从任何本地文件读取业务数据（`src/data/mock.ts` 已删除）。
+2. `src/api/store.ts` 在应用启动时（`App.vue` 的 `loadAllData()`）并发请求全部接口，把响应「就地填充」进响应式容器，页面因此可以直接用同步写法访问数据。
+3. 任一接口失败即判定后端不可用：容器被清空，状态转为 `error`，`BackendGate` 准入页拦截全部页面，只提供「重新连接」入口——**不会回退到本地假数据**。
+4. 取数地址只在 `src/api/endpoints.ts` 维护，与 `src/route/routes.json` 一一对应；接入真实后端时改这两处即可，页面无需改动。
+5. 新增一个业务数据集需同步四处：`routes.json` 路由映射、`db.json` 数据、`endpoints.ts` 请求函数、`store.ts` 容器与加载逻辑。
+6. 写操作（新增/修改/删除）也应走 `src/api/endpoints.ts` 中的写函数，避免页面直接改动内存副本后再无持久化。
+
 ## 开发约定
 
 - 页面按业务域存放在 `src/pages/<domain>/` 下，新增页面需同步在 `src/router/index.ts` 注册，并在 `src/config/menus.ts` 增加菜单项。
 - 可复用组件统一放在 `src/components/ui/`，通过 `@/components/ui/xxx.vue` 引用。
-- 业务实体类型定义在 `src/data/types.ts`，演示数据集中维护在 `src/data/mock.ts`。
+- 业务实体类型定义在 `src/data/types.ts`（只放类型，不放数据），业务数据集维护在 `src/route/db.json`。
 - 路径别名 `@` 指向 `src`，不要在代码中使用较长的相对路径。
 - 路由使用 History 模式，部署到静态服务器时需配置回退到 `index.html`（SPA fallback）。
 
@@ -181,4 +206,8 @@ VITE_USE_MOCK=false
 npm run build
 ```
 
-将生成的 `dist/` 目录部署到任意静态服务器即可；若部署在子路径下，需在 `vite.config.ts` 中配置 `base` 并同步服务器路由重写规则。
+将生成的 `dist/` 部署到任意静态服务器；若部署在子路径下，需在 `vite.config.ts` 中配置 `base` 并同步服务器路由重写规则。
+
+**前端必须配合后端使用**：`dist/` 内不含任何业务数据，部署时需保证 `VITE_API_BASE_URL` 指向的后端接口可访问（本地联调可用 `npm run preview`，已配置 `/api` 代理到 3001）。
+
+修改日期：2026/11/17

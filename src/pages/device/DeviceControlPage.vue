@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { devices as seedDevices, plots } from '@/data/mock'
+import { devices as seedDevices, plots, deviceOpRecords as recordsSeed, cloneRows } from '@/api/store'
 import type { Device } from '@/data/types'
 import { nowDateTime } from '@/utils/format'
 
@@ -27,10 +27,7 @@ interface OpRecord {
   text: string
 }
 
-const records = ref<OpRecord[]>([
-  { id: 1, time: '2026-11-06 09:40', text: '管理员下发 1号棚水泵启动指令' },
-  { id: 2, time: '2026-11-06 08:12', text: '安全锁开启，远程控制已锁定' },
-])
+const records = ref<OpRecord[]>(cloneRows<OpRecord>(recordsSeed))
 let recordSeq = 2
 
 function appendRecord(text: string) {

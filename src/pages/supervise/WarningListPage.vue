@@ -5,7 +5,7 @@ import StatCard from '@/components/ui/StatCard.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { supWarnings } from '@/data/mock'
+import { supWarnings } from '@/api/store'
 import type { SupWarning } from '@/data/types'
 import { buildCsv, downloadText } from '@/utils/format'
 

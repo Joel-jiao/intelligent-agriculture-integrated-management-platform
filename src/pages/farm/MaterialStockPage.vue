@@ -5,7 +5,7 @@ import StatCard from '@/components/ui/StatCard.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
-import { materials as seedMaterials } from '@/data/mock'
+import { materials as seedMaterials } from '@/api/store'
 import type { Material } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, nowDateTime, pad } from '@/utils/format'
 

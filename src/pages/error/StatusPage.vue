@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from '@/composables/useToast'
-import { park, sysInfo } from '@/data/mock'
+import { park, sysInfo } from '@/api/store'
 
 const route = useRoute()
 const router = useRouter()

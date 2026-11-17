@@ -6,7 +6,7 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import Pager from '@/components/ui/Pager.vue'
 import { useToast } from '@/composables/useToast'
-import { findPlot, plots, workOrders as seedWorkOrders } from '@/data/mock'
+import { findPlot, plots, users, workOrders as seedWorkOrders } from '@/api/store'
 import type { WorkOrder } from '@/data/types'
 import { buildCsv, downloadText, nowDateTime, pad } from '@/utils/format'
 
@@ -26,13 +26,10 @@ const statusTabs = ['全部', '待接单', '进行中', '待验收', '已完成'
 const page = ref(1)
 const pageSize = 8
 
-const farmers = [
-  { name: '王强', phone: '139****8832' },
-  { name: '赵敏', phone: '137****4109' },
-  { name: '陈刚', phone: '138****6210' },
-  { name: '刘洋', phone: '136****7521' },
-  { name: '周涛', phone: '135****3390' },
-]
+// 农户名单来自后端用户表（/api/v1/system/users）
+const farmers = computed(() =>
+  users.filter((user) => user.role === '农户').map((user) => ({ name: user.name, phone: user.phone })),
+)
 const orderTypes = ['采收作业', '植株管理', '设备巡检', '水肥管理', '植保作业', '设施维护']
 
 const assigneeOptions = computed(() => Array.from(new Set(orderList.value.map((item) => item.assignee))))
@@ -85,7 +82,7 @@ const form = ref({
   title: '',
   plot: 'P-01',
   type: '植株管理',
-  assignee: '王强',
+  assignee: farmers.value[0]?.name ?? '',
   deadline: '2026-11-07 18:00',
   priority: '中',
   requirement: '',
@@ -106,7 +103,7 @@ function openCreate() {
     title: '',
     plot: 'P-01',
     type: '植株管理',
-    assignee: '王强',
+    assignee: farmers.value[0]?.name ?? '',
     deadline: '2026-11-07 18:00',
     priority: '中',
     requirement: '',
@@ -124,7 +121,7 @@ function submitOrder() {
     return
   }
   const plot = findPlot(form.value.plot)
-  const phone = farmers.find((item) => item.name === form.value.assignee)?.phone ?? '—'
+  const phone = farmers.value.find((item) => item.name === form.value.assignee)?.phone ?? '—'
   const created: WorkOrder = {
     id: nextOrderId(),
     title: form.value.title.trim(),

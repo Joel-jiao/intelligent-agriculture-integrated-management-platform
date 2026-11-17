@@ -6,7 +6,7 @@ import LineChart from '@/components/ui/LineChart.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import Pager from '@/components/ui/Pager.vue'
 import { useToast } from '@/composables/useToast'
-import { devices, envLabels, envSeries, plotName, plots } from '@/data/mock'
+import { devices, envLabels, envSeries, plotName, plots } from '@/api/store'
 import { buildCsv, downloadText, formatNumber, today } from '@/utils/format'
 
 const toast = useToast()

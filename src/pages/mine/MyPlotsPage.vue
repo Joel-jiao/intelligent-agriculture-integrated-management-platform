@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import GisMap from '@/components/ui/GisMap.vue'
-import { devices, farmerPlots } from '@/data/mock'
+import { devices, farmerPlots } from '@/api/store'
 import type { AuditStatus, FarmerPlot, Plot } from '@/data/types'
 
 const router = useRouter()

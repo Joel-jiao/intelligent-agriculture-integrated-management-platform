@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { park } from '@/data/mock'
+import { park } from '@/api/store'
 
 const route = useRoute()
 const router = useRouter()
