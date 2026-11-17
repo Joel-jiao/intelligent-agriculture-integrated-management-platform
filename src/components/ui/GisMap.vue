@@ -11,9 +11,10 @@ const props = withDefaults(
     showDevices?: boolean
     boxSelect?: boolean
     dark?: boolean
+    hideLegend?: boolean
     height?: number
   }>(),
-  { devices: () => [], selectedId: '', showDevices: true, boxSelect: false, dark: false, height: 360 },
+  { devices: () => [], selectedId: '', showDevices: true, boxSelect: false, dark: false, hideLegend: false, height: 360 },
 )
 
 const emit = defineEmits<{
@@ -149,7 +150,7 @@ const selectionRect = computed(() => {
         stroke-width="8"
         fill="none"
       />
-      <path
+      <polygon
         v-for="item in shapes"
         :key="`glow-${item.plot.id}`"
         :points="item.points"
@@ -209,13 +210,13 @@ const selectionRect = computed(() => {
         pointer-events="none"
       />
     </svg>
-    <div class="gis-map__legend">
+    <div v-if="!hideLegend" class="gis-map__legend">
       <span><i style="background: #4fae74" />正常地块</span>
       <span><i style="background: #c9973f" />预警地块</span>
       <span><i style="background: #2f9e5a" />在线设备</span>
       <span><i style="background: #c93e3e" />离线设备</span>
     </div>
-    <div v-if="boxSelect" class="gis-map__hint">按住鼠标拖拽可框选区域</div>
+    <div v-if="boxSelect && !hideLegend" class="gis-map__hint">按住鼠标拖拽可框选区域</div>
   </div>
 </template>
 
