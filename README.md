@@ -95,7 +95,6 @@ VITE_API_BASE_URL=https://api.example.com/api/v1
 
 ```text
 .
-├── .vscode/                     # 编辑器推荐配置
 ├── src/
 │   ├── api/                     # 数据访问层（唯一数据入口）
 │   │   ├── http.ts              # 统一 fetch 封装：基址、超时、错误类型
@@ -209,5 +208,3 @@ npm run build
 将生成的 `dist/` 部署到任意静态服务器；若部署在子路径下，需在 `vite.config.ts` 中配置 `base` 并同步服务器路由重写规则。
 
 **前端必须配合后端使用**：`dist/` 内不含任何业务数据，部署时需保证 `VITE_API_BASE_URL` 指向的后端接口可访问（本地联调可用 `npm run preview`，已配置 `/api` 代理到 3001）。
-
-修改日期：2026/11/17
