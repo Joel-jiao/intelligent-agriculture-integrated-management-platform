@@ -35,7 +35,6 @@ onBeforeUnmount(() => window.clearInterval(timer))
       </div>
       <nav class="phone__tabbar">
         <RouterLink v-for="tab in mobileTabs" :key="tab.to" :to="tab.to" class="phone__tab">
-          <span class="phone__tab-icon">{{ tab.icon }}</span>
           <span>{{ tab.label }}</span>
         </RouterLink>
       </nav>

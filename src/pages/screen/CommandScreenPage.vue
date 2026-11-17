@@ -16,6 +16,10 @@ import {
   workOrders,
 } from '@/api/store'
 import { formatNumber, pad } from '@/utils/format'
+import { useTheme } from '@/composables/useTheme'
+
+const { theme, toggle: toggleTheme } = useTheme()
+const isDark = computed(() => theme.value === 'dark')
 
 const clock = ref('')
 const dateLabel = ref('')
@@ -37,10 +41,17 @@ const overviewMetrics = computed(() => [
   { label: '在线设备', value: onlineDevices.value, unit: `/ ${devices.length} 台` },
 ])
 
-const screenSeries = [
-  { name: '空气温度', color: '#7df0ab', data: envSeries.temperature },
-  { name: '空气湿度', color: '#6fb7e8', data: envSeries.humidity },
-]
+const screenSeries = computed(() =>
+  isDark.value
+    ? [
+        { name: '空气温度', color: '#64d2ff', data: envSeries.temperature },
+        { name: '空气湿度', color: '#8fb7f5', data: envSeries.humidity },
+      ]
+    : [
+        { name: '空气温度', color: '#007aff', data: envSeries.temperature },
+        { name: '空气湿度', color: '#34c759', data: envSeries.humidity },
+      ],
+)
 
 const deviceSegments = computed(() => {
   const total = devices.length || 1
@@ -60,9 +71,9 @@ const alarmLevels = computed(() =>
 )
 
 function levelColor(level: string): string {
-  if (level === '紧急') return '#ff6b6b'
-  if (level === '重要') return '#ffc94d'
-  return '#7db4e6'
+  if (level === '紧急') return '#ff3b30'
+  if (level === '重要') return '#ff9f0a'
+  return 'var(--scr-accent)'
 }
 
 const activeAlarms = computed(() => alarms.filter((item) => item.status !== '已归档'))
@@ -144,7 +155,12 @@ onBeforeUnmount(() => {
         <div class="online-line">
           在线设备<b class="font-num">{{ onlineDevices }}<small>/{{ devices.length }}</small></b>
         </div>
-        <RouterLink to="/portals" class="screen-exit">退出大屏</RouterLink>
+        <div class="head-actions">
+          <button class="screen-exit" type="button" @click="toggleTheme">
+            {{ isDark ? '☀ 白天模式' : '☾ 夜间模式' }}
+          </button>
+          <RouterLink to="/portals" class="screen-exit">退出大屏</RouterLink>
+        </div>
       </div>
     </header>
 
@@ -204,7 +220,7 @@ onBeforeUnmount(() => {
             <span>GIS · {{ plots.length }} 个地块</span>
           </div>
           <div class="screen-map">
-            <GisMap :plots="plots" :devices="devices" :height="360" dark />
+            <GisMap :plots="plots" :devices="devices" :height="360" />
           </div>
         </section>
 
@@ -308,53 +324,47 @@ onBeforeUnmount(() => {
   gap: 6px;
 }
 
+.head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .online-line {
   font-size: 11px;
-  color: rgba(180, 240, 205, 0.62);
+  color: var(--scr-muted);
 }
 
 .online-line b {
   display: inline-block;
   margin-left: 5px;
   font-size: 16px;
-  color: #7df0ab;
+  color: var(--scr-accent);
 }
 
 .online-line b small {
   font-size: 10px;
   font-weight: 400;
-  color: rgba(180, 240, 205, 0.5);
+  color: var(--scr-faint);
 }
 
-.screen-chart :deep(.axis-text) {
-  fill: rgba(160, 235, 190, 0.58);
-}
-
+/* 图表配色交由 LineChart 组件内的主题变量处理 */
 .screen-chart :deep(.line-chart__legend) {
-  color: rgba(200, 247, 221, 0.65);
+  color: var(--scr-muted);
   font-size: 10.5px;
-}
-
-.screen-chart :deep(.line-chart__canvas svg line) {
-  stroke: rgba(90, 220, 150, 0.14);
-}
-
-.screen-chart :deep(.line-chart__tip) {
-  background: rgba(10, 34, 22, 0.94);
-  border: 1px solid rgba(90, 220, 150, 0.24);
 }
 
 .sub-title {
   margin-bottom: 9px;
   font-size: 10.5px;
   letter-spacing: 1px;
-  color: rgba(160, 235, 190, 0.48);
+  color: var(--scr-faint);
 }
 
 .sub-title--gap {
   margin-top: 12px;
   padding-top: 10px;
-  border-top: 1px dashed rgba(90, 220, 150, 0.13);
+  border-top: 1px dashed var(--scr-border);
 }
 
 .level-label {
@@ -362,11 +372,11 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 7px;
   font-size: 11.5px;
-  color: rgba(216, 245, 228, 0.82);
+  color: var(--scr-text);
 }
 
 .screen-list__item b {
-  color: #a7f3c5;
+  color: var(--scr-accent);
 }
 
 .level-dot {
@@ -403,7 +413,7 @@ onBeforeUnmount(() => {
 .alarm-title {
   overflow: hidden;
   font-size: 11.5px;
-  color: rgba(216, 245, 228, 0.9);
+  color: var(--scr-text);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -411,7 +421,7 @@ onBeforeUnmount(() => {
 .alarm-meta {
   margin-top: 1px;
   font-size: 9.5px;
-  color: rgba(180, 240, 205, 0.42);
+  color: var(--scr-muted);
 }
 
 .order-label {
@@ -426,20 +436,15 @@ onBeforeUnmount(() => {
 }
 
 .screen-panel.is-focus {
-  border-color: rgba(125, 240, 171, 0.55);
-  box-shadow: 0 0 18px rgba(85, 230, 154, 0.16), inset 0 0 26px rgba(40, 160, 100, 0.12);
-}
-
-.screen-panel.is-focus::before {
-  width: 90px;
-  box-shadow: 0 0 16px #55e69a;
+  border-color: var(--scr-accent);
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.06), inset 0 0 0 1px var(--scr-accent);
 }
 
 .focus-tip {
   padding: 2px 10px;
-  border: 1px solid rgba(90, 220, 150, 0.28);
+  border: 1px solid var(--scr-border-strong);
   border-radius: 10px;
-  color: #7df0ab;
+  color: var(--scr-accent);
 }
 
 .screen-foot {

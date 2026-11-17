@@ -34,6 +34,13 @@ function refreshCaptcha() {
   captcha.value = ''
 }
 
+const portalPath: Record<Portal, string> = {
+  admin: '/login',
+  ops: '/ops/login',
+  sup: '/sup/login',
+  app: '/app/login',
+}
+
 const otherPortals = computed(() => {
   const list: { label: string; path: string; desc: string }[] = [
     { label: '管理员端', path: '/login', desc: '园区业务管理' },
@@ -41,7 +48,7 @@ const otherPortals = computed(() => {
     { label: '监管端', path: '/sup/login', desc: '辖区质量监管' },
     { label: '农户移动端', path: '/app/login', desc: '任务与打卡' },
   ]
-  return list.filter((item) => !(item.path === '/login' && props.portal === 'admin'))
+  return list.filter((item) => item.path !== portalPath[props.portal])
 })
 
 async function submit() {

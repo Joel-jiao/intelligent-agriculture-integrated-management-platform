@@ -56,6 +56,7 @@ export const adminMenu: MenuGroup[] = [
       { label: '告警信息处理', to: '/alarms', icon: '警' },
       { label: '综合报表导出', to: '/reports', icon: '报' },
       { label: '指挥中心大屏', to: '/screen', icon: '屏' },
+      { label: '大屏展示配置', to: '/screen/config', icon: '配' },
     ],
   },
   {

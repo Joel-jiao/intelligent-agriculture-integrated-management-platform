@@ -8,7 +8,7 @@ const entries = [
     role: '园区业务管理员',
     desc: '数据看板、设备控制、农事工单、质量溯源与报表统计',
     path: '/login',
-    color: '#2f8f5b',
+    color: '#007aff',
     modules: ['物联网监测', '远程控制', '生产管理', '溯源管理', 'GIS 分析'],
   },
   {
@@ -17,7 +17,7 @@ const entries = [
     role: '系统运维人员',
     desc: '用户权限、设备接入、系统参数、日志审计与数据备份',
     path: '/ops/login',
-    color: '#157a8c',
+    color: '#5e5ce6',
     modules: ['用户管理', '角色权限', '设备接入', '日志审计', '备份恢复'],
   },
   {
@@ -26,7 +26,7 @@ const entries = [
     role: '政府农业监管部门',
     desc: '辖区质量安全数据、溯源台账、农药使用记录与监管预警',
     path: '/sup/login',
-    color: '#2f5fa8',
+    color: '#0a84ff',
     modules: ['质量总览', '溯源查询', '农药台账', '异常预警', '监管报表'],
   },
   {
@@ -35,7 +35,7 @@ const entries = [
     role: '一线生产作业人员',
     desc: '接收农事任务、现场打卡、上传照片、记录工时物料与接收告警',
     path: '/app/login',
-    color: '#4fae74',
+    color: '#34c759',
     modules: ['任务列表', '现场打卡', '环境查看', '设备控制', '扫码录入'],
   },
   {
@@ -44,7 +44,7 @@ const entries = [
     role: '普通消费者',
     desc: '微信扫码直接访问，无需登录即可查看产地、农事记录与检测报告',
     path: `/trace/h5/${traceDetail.batchNo}`,
-    color: '#b8862f',
+    color: '#ff9f0a',
     modules: ['产地信息', '生长过程', '检测报告', '批次档案'],
   },
   {
@@ -53,7 +53,7 @@ const entries = [
     role: '园区管理者',
     desc: '深色可视化大屏，园区态势、环境、设备与告警一屏集中展示',
     path: '/screen',
-    color: '#0e7490',
+    color: '#334155',
     modules: ['综合态势', '环境监测', '设备状态', '告警动态', '进度看板'],
   },
 ]
@@ -63,7 +63,7 @@ const entries = [
   <div class="portals-page">
     <header class="portals-head">
       <div class="portals-head__brand">
-        <div class="sidebar__mark" style="color: #0f3d26">农</div>
+        <div class="portals-head__mark">农</div>
         <div>
           <strong>{{ park.name }}</strong>
           <span>INTELLIGENT AGRICULTURE PLATFORM</span>
@@ -77,7 +77,7 @@ const entries = [
 
     <main class="portals-main">
       <div class="portals-hero">
-        <div class="page-head__eyebrow" style="color: #b5ecc7">PLATFORM ENTRY</div>
+        <div class="portals-hero__eyebrow">PLATFORM ENTRY</div>
         <h1>智慧农业综合管理平台</h1>
         <p>物联网感知 · 远程控制 · 生产农事 · 质量溯源 · GIS 分析 · 监管服务</p>
         <div class="portals-hero__stats">
@@ -106,7 +106,7 @@ const entries = [
       </div>
 
       <div class="portals-note">
-        <span>数据说明：</span>本演示使用本地 Mock 数据模拟真实业务，所有操作均为前端交互演示，刷新页面后数据会恢复初始状态。
+        <span>数据说明：</span>前端不内置业务数据，所有数据均经 /api/v1 接口从后端实时读取，未启动后端时页面会停留在连接失败页。
       </div>
     </main>
 
@@ -118,23 +118,50 @@ const entries = [
 
 <style scoped>
 .portals-page {
+  position: relative;
   min-height: 100vh;
-  color: #eaf6ee;
-  background:
-    radial-gradient(900px 500px at 12% 0%, rgba(90, 200, 140, 0.24), transparent 62%),
-    radial-gradient(700px 500px at 95% 90%, rgba(184, 134, 47, 0.16), transparent 60%),
-    linear-gradient(150deg, #0b3220, #0a2a1b 55%, #061a10);
   padding: 0 24px;
+  background: var(--bg-page);
+  overflow: hidden;
+}
+
+/* 与登录页一致的柔和弥散渐变 */
+.portals-page::before,
+.portals-page::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(110px);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.portals-page::before {
+  top: -12%;
+  left: -8%;
+  width: 52vw;
+  height: 52vw;
+  background: rgba(0, 122, 255, 0.22);
+}
+
+.portals-page::after {
+  right: -10%;
+  bottom: -16%;
+  width: 46vw;
+  height: 46vw;
+  background: rgba(52, 199, 89, 0.14);
 }
 
 .portals-head {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   max-width: 1180px;
   margin: 0 auto;
   padding: 22px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  border-bottom: 1px solid var(--border-card);
 }
 
 .portals-head__brand {
@@ -143,43 +170,66 @@ const entries = [
   gap: 11px;
 }
 
+.portals-head__mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: 0 8px 18px -8px rgba(0, 122, 255, 0.55);
+}
+
 .portals-head__brand strong {
   display: block;
   font-size: 15px;
-  color: #fff;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .portals-head__brand span {
   font-size: 10px;
   letter-spacing: 1.6px;
-  color: rgba(234, 246, 238, 0.5);
+  color: var(--text-tertiary);
 }
 
 .portals-head__meta {
   display: flex;
   gap: 14px;
   font-size: 11px;
-  color: rgba(234, 246, 238, 0.55);
+  color: var(--text-secondary);
 }
 
 .portals-main {
+  position: relative;
+  z-index: 1;
   max-width: 1180px;
   margin: 0 auto;
   padding: 56px 0 40px;
 }
 
+.portals-hero__eyebrow {
+  font-size: 11px;
+  letter-spacing: 2.4px;
+  color: var(--primary);
+}
+
 .portals-hero h1 {
+  margin-top: 6px;
   font-size: 38px;
-  font-weight: 780;
+  font-weight: 700;
   letter-spacing: -0.8px;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .portals-hero p {
   margin-top: 8px;
   font-size: 13px;
   letter-spacing: 0.4px;
-  color: rgba(234, 246, 238, 0.62);
+  color: var(--text-secondary);
 }
 
 .portals-hero__stats {
@@ -197,13 +247,13 @@ const entries = [
 
 .portals-hero__stats b {
   font-size: 26px;
-  color: #b5ecc7;
+  color: var(--primary);
   font-variant-numeric: tabular-nums;
 }
 
 .portals-hero__stats span {
   font-size: 11.5px;
-  color: rgba(234, 246, 238, 0.5);
+  color: var(--text-secondary);
 }
 
 .portals-grid {
@@ -217,18 +267,17 @@ const entries = [
   display: flex;
   flex-direction: column;
   padding: 20px 20px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.055);
-  backdrop-filter: blur(8px);
-  transition: 0.22s;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-card);
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  transition: 0.22s var(--ease);
 }
 
 .portal-card:hover {
-  border-color: rgba(181, 236, 199, 0.45);
-  background: rgba(255, 255, 255, 0.09);
+  border-color: var(--primary);
   transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  box-shadow: var(--shadow-float);
 }
 
 .portal-card__top {
@@ -245,29 +294,29 @@ const entries = [
   border-radius: 11px;
   color: #fff;
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .portal-card__top h2 {
   font-size: 15px;
-  font-weight: 650;
-  color: #fff;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .portal-card__top span {
   font-size: 10.5px;
-  color: rgba(234, 246, 238, 0.5);
+  color: var(--text-secondary);
 }
 
 .portal-card__arrow {
   margin-left: auto;
   font-size: 16px;
-  color: rgba(181, 236, 199, 0.6);
-  transition: 0.2s;
+  color: var(--text-tertiary);
+  transition: 0.2s var(--ease);
 }
 
 .portal-card:hover .portal-card__arrow {
-  color: #b5ecc7;
+  color: var(--primary);
   transform: translateX(3px);
 }
 
@@ -276,7 +325,7 @@ const entries = [
   min-height: 42px;
   font-size: 11.5px;
   line-height: 1.75;
-  color: rgba(234, 246, 238, 0.6);
+  color: var(--text-secondary);
 }
 
 .portal-card__tags {
@@ -289,32 +338,34 @@ const entries = [
 .portal-card__tags span {
   padding: 3px 8px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--bg-subtle-2);
   font-size: 10px;
-  color: rgba(234, 246, 238, 0.62);
+  color: var(--text-secondary);
 }
 
 .portals-note {
   margin-top: 28px;
   padding: 13px 16px;
   border-radius: 10px;
-  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border: 1px dashed var(--border-strong);
   font-size: 11.5px;
-  color: rgba(234, 246, 238, 0.5);
+  color: var(--text-secondary);
 }
 
 .portals-note span {
-  color: #b5ecc7;
+  color: var(--primary);
 }
 
 .portals-foot {
+  position: relative;
+  z-index: 1;
   max-width: 1180px;
   margin: 0 auto;
   padding: 20px 0 28px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--border-card);
   text-align: center;
   font-size: 10.5px;
-  color: rgba(234, 246, 238, 0.35);
+  color: var(--text-tertiary);
 }
 
 @media (max-width: 960px) {

@@ -5,7 +5,7 @@ import MobileLayout from '@/layouts/MobileLayout.vue'
 import { adminMenu, opsMenu, supMenu } from '@/config/menus'
 
 const routes: RouteRecordRaw[] = [
-  { path: '/', redirect: '/login' },
+  { path: '/', redirect: '/portals' },
   {
     path: '/portals',
     name: 'portals',

@@ -2708,11 +2708,6 @@ ul {
   color: var(--text-secondary);
 }
 
-.phone__tab-icon {
-  font-size: 15px;
-  line-height: 1;
-}
-
 .phone__tab.router-link-active {
   color: var(--primary);
   font-weight: 600;
@@ -3219,18 +3214,50 @@ ul {
 }
 
 /* ==========================================================================
-   指挥大屏（保留暗色视觉，但降低饱和度）
+   指挥大屏（跟随主题：白天默认浅色，深色模式见 [data-theme='dark']）
    ========================================================================== */
 .screen-page {
-  --scr-bg: #0a0a0b;
+  --scr-bg: #f5f5f7;
+  --scr-glow: rgba(0, 122, 255, 0.12);
+  --scr-panel: rgba(255, 255, 255, 0.82);
+  --scr-panel-solid: #ffffff;
+  --scr-grid: rgba(0, 0, 0, 0.045);
+  --scr-border: rgba(0, 0, 0, 0.08);
+  --scr-border-soft: rgba(0, 0, 0, 0.06);
+  --scr-border-strong: rgba(0, 0, 0, 0.14);
+  --scr-text: #1d1d1f;
+  --scr-muted: #86868b;
+  --scr-faint: #a1a1a6;
+  --scr-accent: #007aff;
+  --scr-metric-bg: rgba(0, 0, 0, 0.03);
+  --scr-track: rgba(0, 0, 0, 0.08);
+  --scr-map-bg: #ffffff;
   position: relative;
   min-height: 100vh;
   padding: 18px 22px 22px;
-  color: #e5e5ea;
+  color: var(--scr-text);
   background:
-    radial-gradient(900px 500px at 50% -10%, rgba(10, 132, 255, 0.16), transparent 65%),
+    radial-gradient(900px 500px at 50% -10%, var(--scr-glow), transparent 65%),
     var(--scr-bg);
   overflow: hidden;
+}
+
+[data-theme='dark'] .screen-page {
+  --scr-bg: #0a0a0b;
+  --scr-glow: rgba(10, 132, 255, 0.16);
+  --scr-panel: rgba(28, 28, 30, 0.72);
+  --scr-panel-solid: #1c1c1e;
+  --scr-grid: rgba(255, 255, 255, 0.03);
+  --scr-border: rgba(255, 255, 255, 0.08);
+  --scr-border-soft: rgba(255, 255, 255, 0.06);
+  --scr-border-strong: rgba(255, 255, 255, 0.14);
+  --scr-text: #f5f5f7;
+  --scr-muted: rgba(245, 245, 247, 0.5);
+  --scr-faint: rgba(245, 245, 247, 0.4);
+  --scr-accent: #64d2ff;
+  --scr-metric-bg: rgba(255, 255, 255, 0.04);
+  --scr-track: rgba(255, 255, 255, 0.08);
+  --scr-map-bg: #0d0d0f;
 }
 
 .screen-page::before {
@@ -3238,8 +3265,8 @@ ul {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(var(--scr-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--scr-grid) 1px, transparent 1px);
   background-size: 54px 54px;
   pointer-events: none;
 }
@@ -3263,20 +3290,20 @@ ul {
   font-size: 26px;
   font-weight: 600;
   letter-spacing: 2px;
-  color: #f5f5f7;
+  color: var(--scr-text);
 }
 
 .screen-head__title p {
   margin-top: 2px;
   font-size: 10.5px;
   letter-spacing: 3px;
-  color: rgba(245, 245, 247, 0.42);
+  color: var(--scr-faint);
 }
 
 .screen-head__side {
   min-width: 200px;
   font-size: 11px;
-  color: rgba(245, 245, 247, 0.5);
+  color: var(--scr-muted);
   font-family: var(--font-num);
 }
 
@@ -3287,7 +3314,7 @@ ul {
 .screen-head__side b {
   display: block;
   font-size: 15px;
-  color: #64d2ff;
+  color: var(--scr-accent);
 }
 
 .screen-grid {
@@ -3308,9 +3335,9 @@ ul {
 .screen-panel {
   position: relative;
   padding: 14px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--scr-border);
   border-radius: var(--radius-card);
-  background: rgba(28, 28, 30, 0.72);
+  background: var(--scr-panel);
   backdrop-filter: blur(16px);
 }
 
@@ -3326,12 +3353,12 @@ ul {
   font-size: 13.5px;
   font-weight: 600;
   letter-spacing: 0.5px;
-  color: #f5f5f7;
+  color: var(--scr-text);
 }
 
 .screen-panel__head span {
   font-size: 10px;
-  color: rgba(245, 245, 247, 0.4);
+  color: var(--scr-faint);
   font-family: var(--font-num);
 }
 
@@ -3344,14 +3371,14 @@ ul {
 .screen-metric {
   padding: 10px 11px;
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--scr-metric-bg);
+  border: 1px solid var(--scr-border-soft);
 }
 
 .screen-metric span {
   display: block;
   font-size: 10px;
-  color: rgba(245, 245, 247, 0.5);
+  color: var(--scr-muted);
 }
 
 .screen-metric b {
@@ -3359,7 +3386,7 @@ ul {
   margin-top: 1px;
   font-size: 21px;
   font-weight: 600;
-  color: #64d2ff;
+  color: var(--scr-accent);
   font-variant-numeric: tabular-nums;
 }
 
@@ -3367,7 +3394,7 @@ ul {
   margin-left: 2px;
   font-size: 10px;
   font-weight: 400;
-  color: rgba(245, 245, 247, 0.45);
+  color: var(--scr-faint);
 }
 
 .screen-list__item {
@@ -3376,9 +3403,9 @@ ul {
   justify-content: space-between;
   gap: 10px;
   padding: 8px 0;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+  border-bottom: 1px dashed var(--scr-border);
   font-size: 11.5px;
-  color: rgba(245, 245, 247, 0.82);
+  color: var(--scr-text);
 }
 
 .screen-list__item:last-child {
@@ -3387,7 +3414,7 @@ ul {
 
 .screen-list__item time {
   font-size: 10px;
-  color: rgba(245, 245, 247, 0.4);
+  color: var(--scr-faint);
   font-family: var(--font-num);
 }
 
@@ -3397,7 +3424,7 @@ ul {
   gap: 9px;
   margin-bottom: 9px;
   font-size: 11px;
-  color: rgba(245, 245, 247, 0.7);
+  color: var(--scr-muted);
 }
 
 .screen-bar__label {
@@ -3409,14 +3436,14 @@ ul {
   flex: 1;
   height: 6px;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--scr-track);
   overflow: hidden;
 }
 
 .screen-bar__fill {
   height: 100%;
   border-radius: var(--radius-pill);
-  background: var(--primary);
+  background: var(--scr-accent);
 }
 
 .screen-bar b {
@@ -3424,15 +3451,15 @@ ul {
   text-align: right;
   font-family: var(--font-num);
   font-size: 11px;
-  color: #64d2ff;
+  color: var(--scr-accent);
 }
 
 .screen-map {
   position: relative;
   min-height: 300px;
   border-radius: var(--radius-sm);
-  background: #0d0d0f;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--scr-map-bg);
+  border: 1px solid var(--scr-border);
   overflow: hidden;
 }
 
@@ -3444,20 +3471,20 @@ ul {
   justify-content: space-between;
   margin-top: 14px;
   font-size: 10px;
-  color: rgba(245, 245, 247, 0.35);
+  color: var(--scr-faint);
   font-family: var(--font-num);
 }
 
 .screen-exit {
   padding: 5px 11px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--scr-border-strong);
   border-radius: 8px;
-  color: #64d2ff;
+  color: var(--scr-accent);
   font-size: 11px;
 }
 
 .screen-exit:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--scr-metric-bg);
 }
 
 /* 深色模式下图表降饱和 */

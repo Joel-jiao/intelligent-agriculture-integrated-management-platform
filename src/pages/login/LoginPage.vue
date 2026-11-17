@@ -66,23 +66,55 @@ function demoLogin() {
 
 <style scoped>
 .mobile-login {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
   padding: 26px 20px;
-  background:
-    radial-gradient(500px 360px at 20% 0%, rgba(120, 210, 155, 0.28), transparent 62%),
-    linear-gradient(160deg, #0e3d26, #071f14);
+  background: var(--bg-page);
+  overflow: hidden;
+}
+
+/* 与登录页一致的柔和弥散渐变 */
+.mobile-login::before,
+.mobile-login::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.mobile-login::before {
+  top: -12%;
+  left: -10%;
+  width: 62vw;
+  height: 62vw;
+  background: rgba(0, 122, 255, 0.26);
+}
+
+.mobile-login::after {
+  right: -14%;
+  bottom: -16%;
+  width: 56vw;
+  height: 56vw;
+  background: rgba(52, 199, 89, 0.16);
 }
 
 .mobile-login__card {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 360px;
   padding: 30px 24px 24px;
-  border-radius: 26px;
-  background: var(--bg-card-solid);
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-card);
+  border-radius: 24px;
+  background: var(--bg-card);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: var(--shadow-float);
 }
 
 .mobile-login__mark {
@@ -92,16 +124,18 @@ function demoLogin() {
   height: 52px;
   margin: 0 auto 12px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #bce9cb, #5bbd80);
-  color: #10442a;
+  background: var(--primary);
+  color: #fff;
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 700;
+  box-shadow: 0 10px 22px -10px rgba(0, 122, 255, 0.6);
 }
 
 .mobile-login__card h1 {
   text-align: center;
   font-size: 21px;
-  font-weight: 750;
+  font-weight: 600;
+  letter-spacing: -0.3px;
   color: var(--ink);
 }
 

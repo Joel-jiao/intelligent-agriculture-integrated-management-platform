@@ -145,7 +145,6 @@ function preview() {
               </div>
               <div class="screen-preview__grid">
                 <div v-for="section in sections.filter((item) => item.enabled).slice(0, 6)" :key="section.id" class="screen-preview__cell">
-                  <span>{{ section.icon }}</span>
                   <em>{{ section.name }}</em>
                 </div>
               </div>
@@ -241,7 +240,7 @@ function preview() {
   height: 22px;
   border: 0;
   border-radius: 999px;
-  background: #d6ded9;
+  background: var(--line-strong);
   cursor: pointer;
   transition: 0.2s;
 }
@@ -266,11 +265,11 @@ function preview() {
 }
 
 .screen-preview {
-  border: 1px solid rgba(90, 220, 150, 0.18);
+  border: 1px solid var(--line);
   border-radius: 10px;
-  background: linear-gradient(150deg, #0b3220, #061a10);
+  background: var(--bg-subtle);
   padding: 12px;
-  color: #eaf6ee;
+  color: var(--ink);
 }
 
 .screen-preview__head {
@@ -278,14 +277,14 @@ function preview() {
   justify-content: space-between;
   align-items: center;
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--line);
   font-size: 11px;
-  color: rgba(234, 246, 238, 0.8);
+  color: var(--muted);
 }
 
 .screen-preview__clock {
   font-family: var(--font-num);
-  color: #b5ecc7;
+  color: var(--brand);
 }
 
 .screen-preview__grid {
@@ -297,39 +296,26 @@ function preview() {
 
 .screen-preview__cell {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
   padding: 12px 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.screen-preview__cell span {
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  background: rgba(181, 236, 199, 0.16);
-  color: #b5ecc7;
-  font-size: 12px;
+  background: var(--bg-card-solid);
 }
 
 .screen-preview__cell em {
   font-style: normal;
   font-size: 10px;
-  color: rgba(234, 246, 238, 0.6);
+  color: var(--muted);
 }
 
 .screen-preview__foot {
   padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--line);
   text-align: center;
   font-size: 10px;
-  color: rgba(234, 246, 238, 0.45);
+  color: var(--muted);
 }
 
 @media (max-width: 900px) {
