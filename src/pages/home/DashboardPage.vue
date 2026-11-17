@@ -316,7 +316,7 @@ function exportReport() {
 }
 
 .alarm-row__value {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   font-size: 12px;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -335,7 +335,7 @@ function exportReport() {
 }
 
 .task-row__progress b {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   font-size: 11.5px;
   font-weight: 500;
   color: var(--text-secondary);

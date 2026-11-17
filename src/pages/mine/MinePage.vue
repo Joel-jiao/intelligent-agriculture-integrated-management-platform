@@ -162,7 +162,7 @@ function confirmLogout() {
 
 <style scoped>
 .font-num {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .page-head {

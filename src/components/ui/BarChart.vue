@@ -56,7 +56,7 @@ function barHeight(value: number): string {
   margin-bottom: 4px;
   font-size: 10.5px;
   color: var(--muted);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   white-space: nowrap;
 }
 

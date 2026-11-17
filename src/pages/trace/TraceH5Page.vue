@@ -216,7 +216,7 @@ const report = computed(() => {
   margin-top: 8px;
   font-size: 11px;
   color: var(--muted);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .stat-batch {

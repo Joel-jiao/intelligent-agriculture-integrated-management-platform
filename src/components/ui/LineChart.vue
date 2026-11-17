@@ -87,8 +87,7 @@ function onMove(event: MouseEvent) {
   const rect = target.getBoundingClientRect()
   const ratio = (event.clientX - rect.left) / rect.width
   const raw = ((ratio * width - pad.left) / plotW) * (props.labels.length - 1)
-  const index = Math.min(props.labels.length - 1, Math.max(0, Math.round(raw)))
-  hover.value = index
+  hover.value = Math.min(props.labels.length - 1, Math.max(0, Math.round(raw)))
 }
 
 function pointAt(series: ChartSeries, index: number): string {
@@ -99,6 +98,24 @@ const hoverLabel = computed(() => {
   if (hover.value === null) return ''
   return props.labels[hover.value] ?? ''
 })
+
+const hovered = computed(() => hover.value !== null)
+
+function hoverX(): number {
+  return hover.value === null ? pad.left : x(hover.value)
+}
+
+function hoverY(item: ChartSeries): number {
+  return hover.value === null ? 0 : y(item.data[hover.value] ?? 0)
+}
+
+function tipLeft(): string {
+  return `${((hover.value === null ? pad.left : x(hover.value)) / width) * 100}%`
+}
+
+function tipValue(item: ChartSeries): number {
+  return hover.value === null ? 0 : (item.data[hover.value] ?? 0)
+}
 </script>
 
 <template>
@@ -143,9 +160,9 @@ const hoverLabel = computed(() => {
           vector-effect="non-scaling-stroke"
         />
         <line
-          v-if="hover !== null"
-          :x1="x(hover)"
-          :x2="x(hover)"
+          v-if="hovered"
+          :x1="hoverX()"
+          :x2="hoverX()"
           :y1="pad.top"
           :y2="pad.top + plotH"
           stroke="var(--border-strong)"
@@ -153,20 +170,20 @@ const hoverLabel = computed(() => {
         />
         <circle
           v-for="item in series"
-          v-show="hover !== null"
+          v-show="hovered"
           :key="`dot-${item.name}`"
-          :cx="hover === null ? 0 : x(hover)"
-          :cy="hover === null ? 0 : y(item.data[hover] ?? 0)"
+          :cx="hoverX()"
+          :cy="hoverY(item)"
           r="4"
           :fill="item.color"
           stroke="var(--bg-card-solid)"
           stroke-width="2"
         />
       </svg>
-      <div v-if="hover !== null" class="line-chart__tip" :style="{ left: `${(x(hover) / width) * 100}%` }">
+      <div v-if="hovered" class="line-chart__tip" :style="{ left: tipLeft() }">
         <b>{{ hoverLabel }}</b>
         <span v-for="item in series" :key="`tip-${item.name}`">
-          <i :style="{ background: item.color }" />{{ item.name }}：{{ item.data[hover] ?? 0 }}{{ unit }}
+          <i :style="{ background: item.color }" />{{ item.name }}：{{ tipValue(item) }}{{ unit }}
         </span>
       </div>
     </div>
@@ -201,7 +218,7 @@ const hoverLabel = computed(() => {
 .axis-text {
   font-size: 9.5px;
   fill: var(--text-tertiary);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .line-chart__tip {
@@ -225,7 +242,7 @@ const hoverLabel = computed(() => {
   margin-bottom: 3px;
   font-size: 10.5px;
   color: var(--text-secondary);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .line-chart__tip span {

@@ -148,7 +148,7 @@ body {
   min-height: 100vh;
   color: var(--text-primary);
   background: var(--bg-page);
-  font-family: var(--font);
+  font-family: var(--font), sans-serif;
   font-size: 14px;
   line-height: 1.55;
   letter-spacing: 0.1px;
@@ -1256,7 +1256,7 @@ ul {
 }
 
 .data-table .num {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   font-size: 12.5px;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.1px;
@@ -1545,7 +1545,7 @@ ul {
 .progress-row b {
   width: 40px;
   text-align: right;
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   font-size: 12px;
   font-weight: 500;
   color: var(--text-secondary);
@@ -2128,7 +2128,7 @@ ul {
   border-radius: 12px;
   background: var(--bg-subtle);
   color: var(--text-primary);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   font-size: 17px;
   font-weight: 600;
   letter-spacing: 3px;
@@ -2557,7 +2557,7 @@ ul {
 }
 
 .moisture__value {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
@@ -3167,7 +3167,7 @@ ul {
 .h5-timeline__date {
   font-size: 10.5px;
   color: var(--text-tertiary);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .h5-timeline__title {
@@ -3304,7 +3304,7 @@ ul {
   min-width: 200px;
   font-size: 11px;
   color: var(--scr-muted);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .screen-head__side--right {
@@ -3359,7 +3359,7 @@ ul {
 .screen-panel__head span {
   font-size: 10px;
   color: var(--scr-faint);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .screen-metrics {
@@ -3415,7 +3415,7 @@ ul {
 .screen-list__item time {
   font-size: 10px;
   color: var(--scr-faint);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .screen-bar {
@@ -3449,7 +3449,7 @@ ul {
 .screen-bar b {
   width: 38px;
   text-align: right;
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   font-size: 11px;
   color: var(--scr-accent);
 }
@@ -3472,7 +3472,7 @@ ul {
   margin-top: 14px;
   font-size: 10px;
   color: var(--scr-faint);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .screen-exit {

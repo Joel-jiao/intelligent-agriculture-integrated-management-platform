@@ -315,7 +315,7 @@ function exportCsv() {
 .compare-row__head b {
   font-size: 12px;
   color: var(--ink);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .compare-row__bar {

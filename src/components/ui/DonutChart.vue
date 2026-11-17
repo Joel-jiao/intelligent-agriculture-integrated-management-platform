@@ -151,7 +151,7 @@ const rings = computed(() => {
 
 .donut__item b {
   color: var(--ink);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   font-weight: 600;
 }
 </style>

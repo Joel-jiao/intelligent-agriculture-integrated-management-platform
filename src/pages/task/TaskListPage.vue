@@ -190,7 +190,7 @@ function refresh() {
 }
 
 .font-num {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .empty-card {

@@ -467,7 +467,7 @@ function exportPlots() {
 
 <style scoped>
 .plot-code {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   font-size: 20px;
   font-weight: 700;
   color: var(--brand-dark);

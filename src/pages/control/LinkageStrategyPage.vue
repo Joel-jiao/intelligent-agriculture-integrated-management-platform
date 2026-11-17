@@ -536,7 +536,7 @@ function refreshStatus() {
 .template-card__meta {
   font-size: 10.5px;
   color: var(--faint);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 @media (max-width: 1024px) {

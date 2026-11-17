@@ -156,6 +156,7 @@ function exportSelection() {
         :show-devices="layers.devices"
         :box-select="true"
         :dark="isDark"
+        :hide-legend="true"
         :height="600"
         @select-plot="selectPlot"
         @select-area="selectArea"
@@ -378,12 +379,6 @@ function exportSelection() {
   font-size: 12.5px;
 }
 
-/* 内置图例与提示由悬浮面板替代 */
-:deep(.gis-map__legend),
-:deep(.gis-map__hint) {
-  display: none;
-}
-
 .plot-list {
   margin-top: 12px;
 }
@@ -433,7 +428,7 @@ function exportSelection() {
 }
 
 .selection-summary b {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .panel__actions {

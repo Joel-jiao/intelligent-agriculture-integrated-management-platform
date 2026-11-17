@@ -75,7 +75,15 @@ function retry() {
         <span>{{ park.name }}</span>
       </div>
 
-      <div class="status-illustration" :class="`status-illustration--${code}`">
+      <div
+        class="status-illustration"
+        :class="{
+          'status-illustration--404': code === '404',
+          'status-illustration--403': code === '403',
+          'status-illustration--401': code === '401',
+          'status-illustration--500': code === '500',
+        }"
+      >
         <span>{{ meta.mark }}</span>
       </div>
       <h1>{{ meta.title }}</h1>
@@ -217,7 +225,7 @@ function retry() {
 
 .trace-box code {
   flex: 1;
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   color: var(--ink-2);
 }
 

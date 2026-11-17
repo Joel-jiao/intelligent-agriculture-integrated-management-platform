@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import {computed, ref, watch} from 'vue'
 import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
-import { useToast } from '@/composables/useToast'
-import { devices, plotName, plots, controlLogs as logsSeed, cloneRows } from '@/api/store'
-import type { Device } from '@/data/types'
-import { nowDateTime } from '@/utils/format'
+import {useToast} from '@/composables/useToast'
+import {devices, plotName, plots, controlLogs as logsSeed, cloneRows} from '@/api/store'
+import type {Device} from '@/data/types'
+import {nowDateTime} from '@/utils/format'
 
 const toast = useToast()
 
@@ -29,7 +29,7 @@ function isControllable(device: Device): boolean {
 }
 
 const controllables = ref<ControlDevice[]>(
-  devices.filter((item) => isControllable(item)).map((item) => ({ ...item, selected: false })),
+    devices.filter((item) => isControllable(item)).map((item) => ({...item, selected: false})),
 )
 
 const plotFilter = ref('all')
@@ -46,11 +46,11 @@ watch(safetyLock, (value) => {
 })
 
 const filteredDevices = computed(() =>
-  controllables.value.filter((item) => {
-    if (plotFilter.value !== 'all' && item.plotId !== plotFilter.value) return false
-    if (typeFilter.value !== 'all' && item.type !== typeFilter.value) return false
-    return true
-  }),
+  controllables.value.filter(
+    (item) =>
+      (plotFilter.value === 'all' || item.plotId === plotFilter.value) &&
+      (typeFilter.value === 'all' || item.type === typeFilter.value),
+  ),
 )
 
 const groups = computed<DeviceGroup[]>(() => {
@@ -70,7 +70,7 @@ const groups = computed<DeviceGroup[]>(() => {
 const selectedCount = computed(() => filteredDevices.value.filter((item) => item.selected).length)
 const runningCount = computed(() => controllables.value.filter((item) => item.running).length)
 const allSelected = computed(
-  () => filteredDevices.value.length > 0 && filteredDevices.value.every((item) => item.selected),
+    () => filteredDevices.value.length > 0 && filteredDevices.value.every((item) => item.selected),
 )
 
 function toggleSelectAll() {
@@ -101,7 +101,7 @@ function blockedByLock(): boolean {
 
 function requestToggle(device: ControlDevice) {
   if (blockedByLock()) return
-  pending.value = { devices: [device], action: device.running ? '停止' : '启动' }
+  pending.value = {devices: [device], action: device.running ? '停止' : '启动'}
   confirmOpen.value = true
 }
 
@@ -111,7 +111,7 @@ function requestBatch(action: ControlAction) {
     toast.warn('请先勾选需要批量控制的设备')
     return
   }
-  pending.value = { devices: filteredDevices.value.filter((item) => item.selected), action }
+  pending.value = {devices: filteredDevices.value.filter((item) => item.selected), action}
   confirmOpen.value = true
 }
 
@@ -175,7 +175,7 @@ function confirmControl() {
 }
 
 function refreshDevices() {
-  controllables.value = controllables.value.map((item) => ({ ...item, lastSeen: nowDateTime() }))
+  controllables.value = controllables.value.map((item) => ({...item, lastSeen: nowDateTime()}))
   toast.success('可控设备状态已刷新')
 }
 </script>
@@ -183,14 +183,14 @@ function refreshDevices() {
 <template>
   <div>
     <PageHeader
-      eyebrow="CONTROL · DEVICE"
-      title="设备远程控制"
-      description="水泵、风机、卷帘、补光灯与电磁阀远程启停 · 所有指令均记录操作日志"
+        eyebrow="CONTROL · DEVICE"
+        title="设备远程控制"
+        description="水泵、风机、卷帘、补光灯与电磁阀远程启停 · 所有指令均记录操作日志"
     >
       <template #actions>
         <button class="btn" type="button" @click="refreshDevices">刷新设备状态</button>
         <span class="tag" :class="safetyLock ? 'tag--danger' : 'tag--ok'">
-          <i class="dot" :class="safetyLock ? 'dot--danger' : 'dot--ok'" />
+          <i class="dot" :class="safetyLock ? 'dot--danger' : 'dot--ok'"/>
           {{ safetyLock ? '安全锁已开启' : '安全锁已关闭' }}
         </span>
       </template>
@@ -209,8 +209,8 @@ function refreshDevices() {
             {{ safetyLock ? '已锁定' : '未锁定' }}
           </span>
           <label class="switch">
-            <input v-model="safetyLock" type="checkbox" />
-            <span class="switch__track" />
+            <input v-model="safetyLock" type="checkbox"/>
+            <span class="switch__track"/>
             <span style="font-size: 11.5px">{{ safetyLock ? '解锁控制' : '开启锁定' }}</span>
           </label>
         </div>
@@ -218,7 +218,8 @@ function refreshDevices() {
     </section>
 
     <div class="notice" style="margin-bottom: 14px">
-      当前可控设备 {{ controllables.length }} 台，运行中 {{ runningCount }} 台。控制指令下发后需经网关回执确认，平均响应 0.4 秒。
+      当前可控设备 {{ controllables.length }} 台，运行中 {{ runningCount }} 台。控制指令下发后需经网关回执确认，平均响应
+      0.4 秒。
     </div>
 
     <div class="toolbar">
@@ -236,7 +237,7 @@ function refreshDevices() {
           <option v-for="type in controlTypes" :key="type" :value="type">{{ type }}</option>
         </select>
       </div>
-      <div class="toolbar__spacer" />
+      <div class="toolbar__spacer"/>
       <span class="tag tag--brand">已选 {{ selectedCount }} 台</span>
       <button class="link-action" type="button" @click="toggleSelectAll">
         {{ allSelected ? '取消全选' : '全选当前' }}
@@ -257,25 +258,25 @@ function refreshDevices() {
         </div>
         <div class="card__body device-grid">
           <div
-            v-for="device in group.devices"
-            :key="device.id"
-            class="device-card"
-            :class="{ 'is-selected': device.selected, 'is-locked': safetyLock }"
+              v-for="device in group.devices"
+              :key="device.id"
+              class="device-card"
+              :class="{ 'is-selected': device.selected, 'is-locked': safetyLock }"
           >
             <div class="device-card__top">
               <label class="device-check">
-                <input v-model="device.selected" type="checkbox" />
+                <input v-model="device.selected" type="checkbox"/>
                 <span>{{ device.id }}</span>
               </label>
               <StatusTag
-                :text="device.status"
-                :tone="device.status === '在线' ? 'ok' : device.status === '故障' ? 'danger' : 'warn'"
-                dot
+                  :text="device.status"
+                  :tone="device.status === '在线' ? 'ok' : device.status === '故障' ? 'danger' : 'warn'"
+                  dot
               />
             </div>
             <div class="device-card__name">{{ device.name }}</div>
             <div class="row" style="gap: 6px; margin-top: 6px">
-              <i class="dot" :class="device.running ? 'dot--ok' : 'dot--info'" />
+              <i class="dot" :class="device.running ? 'dot--ok' : 'dot--info'"/>
               <span style="font-size: 11.5px; color: var(--muted)">{{ device.running ? '运行中' : '已停止' }}</span>
             </div>
             <div class="device-card__meta">
@@ -284,13 +285,13 @@ function refreshDevices() {
               <span>{{ device.power }} kW</span>
             </div>
             <div class="device-card__meta">
-              <span style="font-family: var(--font-num)">{{ device.lastSeen }}</span>
+              <span style="font-family: var(--font-num), monospace">{{ device.lastSeen }}</span>
             </div>
             <button
-              class="btn btn--sm btn--full"
-              :class="device.running ? 'btn--danger' : ''"
-              type="button"
-              @click="requestToggle(device)"
+                class="btn btn--sm btn--full"
+                :class="device.running ? 'btn--danger' : ''"
+                type="button"
+                @click="requestToggle(device)"
             >
               {{ device.running ? '停止设备' : '启动设备' }}
             </button>
@@ -310,22 +311,22 @@ function refreshDevices() {
       <div class="table-wrap" style="border: 0; border-radius: 0 0 14px 14px">
         <table class="data-table">
           <thead>
-            <tr>
-              <th>时间</th>
-              <th>设备</th>
-              <th>动作</th>
-              <th>结果</th>
-            </tr>
+          <tr>
+            <th>时间</th>
+            <th>设备</th>
+            <th>动作</th>
+            <th>结果</th>
+          </tr>
           </thead>
           <tbody>
-            <tr v-for="log in logs.slice(0, 10)" :key="log.id">
-              <td class="num cell-strong">{{ log.time }}</td>
-              <td>{{ log.device }}</td>
-              <td>{{ log.action }}</td>
-              <td>
-                <StatusTag :text="log.result" :tone="log.result === '成功' ? 'ok' : 'danger'" dot />
-              </td>
-            </tr>
+          <tr v-for="log in logs.slice(0, 10)" :key="log.id">
+            <td class="num cell-strong">{{ log.time }}</td>
+            <td>{{ log.device }}</td>
+            <td>{{ log.action }}</td>
+            <td>
+              <StatusTag :text="log.result" :tone="log.result === '成功' ? 'ok' : 'danger'" dot/>
+            </td>
+          </tr>
           </tbody>
         </table>
       </div>
@@ -344,24 +345,25 @@ function refreshDevices() {
         <div class="table-wrap" style="margin-top: 14px">
           <table class="data-table">
             <thead>
-              <tr>
-                <th>设备编号</th>
-                <th>设备名称</th>
-                <th>所属地块</th>
-                <th>当前状态</th>
-                <th>目标状态</th>
-              </tr>
+            <tr>
+              <th>设备编号</th>
+              <th>设备名称</th>
+              <th>所属地块</th>
+              <th>当前状态</th>
+              <th>目标状态</th>
+            </tr>
             </thead>
             <tbody>
-              <tr v-for="device in pending.devices" :key="device.id">
-                <td class="num cell-strong">{{ device.id }}</td>
-                <td>{{ device.name }}</td>
-                <td>{{ plotName(device.plotId) }}</td>
-                <td>{{ device.running ? '运行中' : '已停止' }}</td>
-                <td>
-                  <StatusTag :text="pending.action === '启动' ? '启动' : '停止'" :tone="pending.action === '启动' ? 'ok' : 'warn'" />
-                </td>
-              </tr>
+            <tr v-for="device in pending.devices" :key="device.id">
+              <td class="num cell-strong">{{ device.id }}</td>
+              <td>{{ device.name }}</td>
+              <td>{{ plotName(device.plotId) }}</td>
+              <td>{{ device.running ? '运行中' : '已停止' }}</td>
+              <td>
+                <StatusTag :text="pending.action === '启动' ? '启动' : '停止'"
+                           :tone="pending.action === '启动' ? 'ok' : 'warn'"/>
+              </td>
+            </tr>
             </tbody>
           </table>
         </div>
@@ -417,7 +419,7 @@ function refreshDevices() {
   gap: 6px;
   font-size: 11px;
   color: var(--muted);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   cursor: pointer;
 }
 

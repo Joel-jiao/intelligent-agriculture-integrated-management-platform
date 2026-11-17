@@ -282,7 +282,7 @@ function exportCodes() {
 
 .preview__code {
   margin-top: 12px;
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   font-size: 12.5px;
   font-weight: 600;
   color: var(--ink);

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import {computed, reactive, ref} from 'vue'
 import PageHeader from '@/components/ui/PageHeader.vue'
 import AppModal from '@/components/ui/AppModal.vue'
-import { useToast } from '@/composables/useToast'
-import { roles } from '@/api/store'
-import type { Role } from '@/data/types'
+import {useToast} from '@/composables/useToast'
+import {roles} from '@/api/store'
+import type {Role} from '@/data/types'
 
 const toast = useToast()
 
@@ -22,77 +22,77 @@ const modules: PermissionModule[] = [
   {
     title: '看板与总览',
     items: [
-      { key: 'dashboard', label: '综合数据看板' },
-      { key: 'workbench', label: '运维工作台' },
-      { key: 'sup-overview', label: '监管数据总览' },
+      {key: 'dashboard', label: '综合数据看板'},
+      {key: 'workbench', label: '运维工作台'},
+      {key: 'sup-overview', label: '监管数据总览'},
     ],
   },
   {
     title: '物联网感知',
     items: [
-      { key: 'iot', label: '环境与设备监测' },
-      { key: 'device-access', label: '设备接入管理' },
-      { key: 'app-env', label: '移动端环境查看' },
-      { key: 'app-device', label: '移动端设备控制' },
+      {key: 'iot', label: '环境与设备监测'},
+      {key: 'device-access', label: '设备接入管理'},
+      {key: 'app-env', label: '移动端环境查看'},
+      {key: 'app-device', label: '移动端设备控制'},
     ],
   },
   {
     title: '远程控制',
     items: [
-      { key: 'control', label: '设备远程控制' },
-      { key: 'linkage', label: '自动联动策略' },
+      {key: 'control', label: '设备远程控制'},
+      {key: 'linkage', label: '自动联动策略'},
     ],
   },
   {
     title: '生产农事',
     items: [
-      { key: 'farm', label: '农事与地块管理' },
-      { key: 'app-tasks', label: '移动端任务执行' },
+      {key: 'farm', label: '农事与地块管理'},
+      {key: 'app-tasks', label: '移动端任务执行'},
     ],
   },
   {
     title: '质量溯源',
     items: [
-      { key: 'trace', label: '溯源批次与赋码' },
-      { key: 'app-trace', label: '移动端扫码录入' },
-      { key: 'h5-trace', label: '公开溯源查询' },
-      { key: 'sup-trace', label: '辖区溯源台账' },
+      {key: 'trace', label: '溯源批次与赋码'},
+      {key: 'app-trace', label: '移动端扫码录入'},
+      {key: 'h5-trace', label: '公开溯源查询'},
+      {key: 'sup-trace', label: '辖区溯源台账'},
     ],
   },
   {
     title: 'GIS 地图',
-    items: [{ key: 'gis', label: 'GIS 综合地图' }],
+    items: [{key: 'gis', label: 'GIS 综合地图'}],
   },
   {
     title: '告警中心',
     items: [
-      { key: 'alarm', label: '告警信息处理' },
-      { key: 'sup-warning', label: '监管预警管理' },
+      {key: 'alarm', label: '告警信息处理'},
+      {key: 'sup-warning', label: '监管预警管理'},
     ],
   },
   {
     title: '报表中心',
     items: [
-      { key: 'report', label: '综合报表导出' },
-      { key: 'sup-report', label: '监管报表导出' },
+      {key: 'report', label: '综合报表导出'},
+      {key: 'sup-report', label: '监管报表导出'},
     ],
   },
   {
     title: '系统运维',
     items: [
-      { key: 'users', label: '用户管理' },
-      { key: 'roles', label: '角色权限配置' },
-      { key: 'dict', label: '数据字典' },
-      { key: 'logs', label: '日志审计' },
-      { key: 'backup', label: '备份恢复' },
-      { key: 'openapi', label: '第三方接口' },
-      { key: 'files', label: '文件存储' },
+      {key: 'users', label: '用户管理'},
+      {key: 'roles', label: '角色权限配置'},
+      {key: 'dict', label: '数据字典'},
+      {key: 'logs', label: '日志审计'},
+      {key: 'backup', label: '备份恢复'},
+      {key: 'openapi', label: '第三方接口'},
+      {key: 'files', label: '文件存储'},
     ],
   },
 ]
 
 const allKeys = modules.flatMap((module) => module.items.map((item) => item.key))
-const roleList = ref<Role[]>(roles.map((item) => ({ ...item, permissions: [...item.permissions] })))
+const roleList = ref<Role[]>(roles.map((item) => ({...item, permissions: [...item.permissions]})))
 const activeId = ref(roleList.value[0]?.id ?? '')
 
 const currentRole = computed(() => roleList.value.find((item) => item.id === activeId.value) ?? roleList.value[0])
@@ -143,7 +143,7 @@ function saveDescription() {
 }
 
 const addOpen = ref(false)
-const addForm = reactive({ name: '', code: '', description: '' })
+const addForm = reactive({name: '', code: '', description: ''})
 
 function openAdd() {
   addForm.name = ''
@@ -211,7 +211,8 @@ function confirmDelete() {
 
 <template>
   <div>
-    <PageHeader eyebrow="RBAC" title="RBAC 角色权限配置" description="按角色分配功能权限，遵循最小权限原则，变更将实时写入审计日志">
+    <PageHeader eyebrow="RBAC" title="RBAC 角色权限配置"
+                description="按角色分配功能权限，遵循最小权限原则，变更将实时写入审计日志">
       <template #actions>
         <button class="btn" type="button" @click="selectAll">全选权限</button>
         <button class="btn btn--primary" type="button" @click="openAdd">新增角色</button>
@@ -225,21 +226,21 @@ function confirmDelete() {
         </div>
         <div class="card__body role-list">
           <button
-            v-for="role in roleList"
-            :key="role.id"
-            class="role-item"
-            :class="{ 'role-item--active': role.id === activeId }"
-            type="button"
-            @click="activeId = role.id"
+              v-for="role in roleList"
+              :key="role.id"
+              class="role-item"
+              :class="{ 'role-item--active': role.id === activeId }"
+              type="button"
+              @click="activeId = role.id"
           >
-            <div class="role-item__top">
+            <span class="role-item__top">
               <b>{{ role.name }}</b>
               <span class="tag" :class="role.id === activeId ? 'tag--brand' : ''">{{ role.code }}</span>
-            </div>
-            <div class="role-item__meta">
+            </span>
+            <span class="role-item__meta">
               <span>{{ role.members }} 名成员</span>
               <span>{{ role.permissions.length }} 项权限</span>
-            </div>
+            </span>
           </button>
           <div class="notice notice--brand" style="margin-top: 12px">
             <span>权限变更保存后对已登录用户即时生效，建议在业务低峰期调整。</span>
@@ -262,10 +263,11 @@ function confirmDelete() {
           <div class="toolbar" style="margin-bottom: 16px">
             <span class="tag tag--brand">已选 {{ currentRole.permissions.length }} / {{ allKeys.length }} 项</span>
             <span class="cell-muted" style="font-size: 11.5px">勾选模块下的功能项即可授予对应权限</span>
-            <div class="toolbar__spacer" />
+            <div class="toolbar__spacer"/>
             <button class="link-action" type="button" @click="selectAll">全选</button>
             <button class="link-action" type="button" @click="clearAll">清空</button>
-            <button class="link-action" style="color: var(--danger)" type="button" @click="openDeleteCurrent">删除角色</button>
+            <button class="link-action" style="color: var(--danger)" type="button" @click="openDeleteCurrent">删除角色
+            </button>
           </div>
 
           <div class="perm-grid">
@@ -275,7 +277,7 @@ function confirmDelete() {
                 <span>{{ module.items.filter((item) => isChecked(item.key)).length }}/{{ module.items.length }}</span>
               </div>
               <label v-for="item in module.items" :key="item.key" class="perm-item">
-                <input type="checkbox" :checked="isChecked(item.key)" @change="onToggle(item.key, $event)" />
+                <input type="checkbox" :checked="isChecked(item.key)" @change="onToggle(item.key, $event)"/>
                 <span>{{ item.label }}</span>
                 <small>{{ item.key }}</small>
               </label>
@@ -284,7 +286,7 @@ function confirmDelete() {
 
           <div class="field" style="margin-top: 18px">
             <span class="field__label">角色说明</span>
-            <textarea v-model="currentRole.description" class="textarea" placeholder="描述该角色的职责与适用场景" />
+            <textarea v-model="currentRole.description" class="textarea" placeholder="描述该角色的职责与适用场景"/>
           </div>
           <div class="form-foot">
             <button class="btn" type="button" @click="saveDescription">保存说明</button>
@@ -298,15 +300,15 @@ function confirmDelete() {
       <div class="form-grid">
         <label class="field">
           <span class="field__label">角色名称</span>
-          <input v-model="addForm.name" class="input" placeholder="如：设备维护员" />
+          <input v-model="addForm.name" class="input" placeholder="如：设备维护员"/>
         </label>
         <label class="field">
           <span class="field__label">角色编码</span>
-          <input v-model="addForm.code" class="input" placeholder="大写英文，如 MAINTAINER" />
+          <input v-model="addForm.code" class="input" placeholder="大写英文，如 MAINTAINER"/>
         </label>
         <label class="field span-2">
           <span class="field__label">角色说明</span>
-          <textarea v-model="addForm.description" class="textarea" placeholder="描述职责范围（可选）" />
+          <textarea v-model="addForm.description" class="textarea" placeholder="描述职责范围（可选）"/>
         </label>
       </div>
       <div class="notice notice--brand" style="margin-top: 14px">
@@ -411,7 +413,7 @@ function confirmDelete() {
 .perm-module__head span {
   font-size: 11px;
   color: var(--faint);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .perm-item {
@@ -432,7 +434,7 @@ function confirmDelete() {
   margin-left: auto;
   font-size: 10px;
   color: var(--faint);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 @media (max-width: 900px) {

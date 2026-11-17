@@ -145,7 +145,7 @@ const sceneStyle = computed(() => ({
   gap: 10px;
   font-size: 10px;
   color: rgba(220, 245, 230, 0.72);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .video-stage__top {
@@ -193,7 +193,7 @@ const sceneStyle = computed(() => ({
   border-radius: 4px;
   background: rgba(10, 30, 18, 0.45);
   color: #d8f5e4;
-  font-family: var(--font);
+  font-family: var(--font), sans-serif;
   font-size: 10.5px;
 }
 </style>

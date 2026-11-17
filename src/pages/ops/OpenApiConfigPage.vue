@@ -404,7 +404,7 @@ function exportApis() {
   border: 1px solid var(--line);
   border-radius: 9px;
   background: var(--surface-2);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   font-size: 11.5px;
   line-height: 1.7;
   color: var(--ink-2);

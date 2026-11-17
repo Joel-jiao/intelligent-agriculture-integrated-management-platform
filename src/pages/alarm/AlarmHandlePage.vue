@@ -400,7 +400,7 @@ function exportCsv() {
   margin-top: 2px;
   font-size: 17px;
   color: var(--danger);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .alarm-compare__item--threshold b {

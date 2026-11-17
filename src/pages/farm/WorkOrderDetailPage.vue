@@ -430,14 +430,14 @@ const totalHours = computed(() => usages.value.reduce((sum, item) => sum + item.
 .checkin-item__time {
   font-size: 12px;
   color: var(--ink-2);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .checkin-item__gps {
   margin-top: 1px;
   font-size: 10.5px;
   color: var(--faint);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .photo-grid {

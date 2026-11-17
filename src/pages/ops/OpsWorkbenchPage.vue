@@ -275,7 +275,7 @@ function exportServices() {
 .health__row b {
   width: 44px;
   text-align: right;
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .entry-grid {

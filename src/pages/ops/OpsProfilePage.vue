@@ -479,7 +479,7 @@ function refreshSession() {
   margin-top: 2px;
   font-size: 11.5px;
   color: var(--muted);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .profile-card .kv {

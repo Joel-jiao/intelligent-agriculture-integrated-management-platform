@@ -200,7 +200,7 @@ function toggleNetwork() {
 
 <style scoped>
 .font-num {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .mobile-stat-grid {

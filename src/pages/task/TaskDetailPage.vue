@@ -175,7 +175,7 @@ const stepStates = computed(() => [
 ])
 
 function stepState(index: number): 'done' | 'active' | '' {
-  if (stepStates.value[index] === true) return 'done'
+  if (stepStates.value[index]) return 'done'
   const pendingIndex = stepStates.value.findIndex((item) => !item)
   return index === pendingIndex ? 'active' : ''
 }
@@ -396,7 +396,7 @@ function stepState(index: number): 'done' | 'active' | '' {
 
 <style scoped>
 .font-num {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .page-head {

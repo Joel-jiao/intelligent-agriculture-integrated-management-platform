@@ -154,10 +154,10 @@ function createType() {
             type="button"
             @click="selectType(type.id)"
           >
-            <div class="type-item__top">
+            <span class="type-item__top">
               <b>{{ type.name }}</b>
               <span class="tag" :class="type.id === activeId ? 'tag--brand' : ''">{{ type.items.length }} 项</span>
-            </div>
+            </span>
             <code>{{ type.code }}</code>
             <small>{{ type.desc }}</small>
           </button>
@@ -340,7 +340,7 @@ function createType() {
 .type-item code {
   font-size: 10.5px;
   color: var(--faint);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .type-item small {

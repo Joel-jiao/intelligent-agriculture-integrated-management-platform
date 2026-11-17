@@ -118,7 +118,7 @@ async function submit() {
               autocomplete="current-password"
             />
           </label>
-          <label class="field">
+          <div class="field">
             <span class="field__label">验证码</span>
             <div class="captcha-field">
               <input v-model="captcha" class="input" type="text" maxlength="4" placeholder="请输入验证码" />
@@ -126,7 +126,7 @@ async function submit() {
                 {{ captchaCode }}
               </button>
             </div>
-          </label>
+          </div>
 
           <button class="btn btn--primary btn--full" type="submit" :disabled="loading">
             {{ loading ? '正在登录…' : '登录' }}

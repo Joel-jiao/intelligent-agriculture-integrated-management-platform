@@ -348,7 +348,7 @@ function exportCsv() {
           >
             <div class="timeline__title">
               {{ item.title }}
-              <span class="cell-muted" style="font-family: var(--font-num); font-size: 11px">{{ item.date }}</span>
+              <span class="cell-muted" style="font-family: var(--font-num), monospace; font-size: 11px">{{ item.date }}</span>
             </div>
             <div class="timeline__desc">{{ item.desc }}</div>
           </div>

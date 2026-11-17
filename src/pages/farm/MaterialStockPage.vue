@@ -346,7 +346,7 @@ function exportMaterials() {
   margin-top: 1px;
   font-size: 10.5px;
   color: var(--faint);
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .stock-low {

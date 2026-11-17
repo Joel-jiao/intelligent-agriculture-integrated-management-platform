@@ -283,7 +283,7 @@ function preview() {
 }
 
 .screen-preview__clock {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
   color: var(--brand);
 }
 

@@ -339,7 +339,7 @@ function exportBackups() {
 }
 
 .backup-progress b {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .link-action--danger {

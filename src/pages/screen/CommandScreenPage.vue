@@ -309,7 +309,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .font-num {
-  font-family: var(--font-num);
+  font-family: var(--font-num), monospace;
 }
 
 .screen-page {
@@ -346,12 +346,6 @@ onBeforeUnmount(() => {
   font-size: 10px;
   font-weight: 400;
   color: var(--scr-faint);
-}
-
-/* 图表配色交由 LineChart 组件内的主题变量处理 */
-.screen-chart :deep(.line-chart__legend) {
-  color: var(--scr-muted);
-  font-size: 10.5px;
 }
 
 .sub-title {
