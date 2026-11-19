@@ -169,6 +169,10 @@ export function createResource<T>(path: string, payload: unknown) {
   return apiPost<T>(path, payload)
 }
 
+/** 修改当前登录账号的密码（需携带登录令牌，校验原密码后更新后端） */
+export const changePassword = (oldPassword: string, newPassword: string) =>
+  apiPost<{ ok: boolean }>('/auth/change-password', { oldPassword, newPassword })
+
 export function updateResource<T>(path: string, id: string, payload: unknown) {
   return apiPatch<T>(`${path}/${encodeURIComponent(id)}`, payload)
 }

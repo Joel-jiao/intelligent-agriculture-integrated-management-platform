@@ -5,6 +5,8 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
 import { useAuth } from '@/composables/useAuth'
 import { loginLogs, plots, users, loginDevices as loginDevicesSeed, cloneRows } from '@/api/store'
+import { changePassword as changePasswordApi } from '@/api/endpoints'
+import { ApiError } from '@/api/http'
 import { formatNumber } from '@/utils/format'
 
 interface LoginDevice {
@@ -87,7 +89,7 @@ function resetProfile() {
   toast.info('个人资料已恢复为默认值')
 }
 
-function changePassword() {
+async function changePassword() {
   pwdError.value = ''
   if (!pwd.old) {
     pwdError.value = '请输入原密码'
@@ -104,10 +106,16 @@ function changePassword() {
     toast.error(pwdError.value)
     return
   }
-  pwd.old = ''
-  pwd.next = ''
-  pwd.confirm = ''
-  toast.success('登录密码已更新，下次登录请使用新密码')
+  try {
+    await changePasswordApi(pwd.old, pwd.next)
+    pwd.old = ''
+    pwd.next = ''
+    pwd.confirm = ''
+    toast.success('登录密码已更新，下次登录请使用新密码')
+  } catch (error) {
+    pwdError.value = error instanceof ApiError ? error.message : '修改失败，请稍后重试'
+    toast.error(pwdError.value)
+  }
 }
 
 function savePrefs() {

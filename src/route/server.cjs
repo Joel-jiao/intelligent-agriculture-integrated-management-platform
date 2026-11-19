@@ -128,6 +128,36 @@ function loginHandler(req, res) {
   })
 }
 
+// ---------- 修改密码 ----------
+// 需携带有效 Bearer token（req.user 由 authMiddleware 注入），
+// 校验原密码后更新 db.json 的 accounts 集合，密码持久化到后端。
+function changePasswordHandler(req, res) {
+  const user = req.user
+  if (!user || !user.portal || !user.account) {
+    return res.status(401).json({ error: '未登录或登录已过期' })
+  }
+  const { oldPassword, newPassword } = req.body || {}
+  const next = String(newPassword ?? '')
+  if (next.length < 6) {
+    return res.status(400).json({ error: '新密码长度不能少于 6 位' })
+  }
+  const accounts = router.db.get('accounts')
+  const entry = accounts
+    .find((a) => a.portal === user.portal && a.account === user.account)
+    .value()
+  if (!entry) {
+    return res.status(404).json({ error: '账号不存在' })
+  }
+  if (String(entry.password) !== String(oldPassword ?? '')) {
+    return res.status(400).json({ error: '原密码错误' })
+  }
+  accounts
+    .find((a) => a.portal === user.portal && a.account === user.account)
+    .assign({ password: next })
+    .write()
+  res.json({ ok: true })
+}
+
 // ---------- 公开白名单（无需登录） ----------
 const PUBLIC_PATTERNS = [
   /^\/api\/v1\/auth\/login$/,
@@ -217,6 +247,7 @@ server.use(jsonServer.defaults({ bodyParser: true }))
 server.use(authMiddleware)
 server.use(blockAccounts)
 server.post('/api/v1/auth/login', loginHandler)
+server.post('/api/v1/auth/change-password', changePasswordHandler)
 server.use(rewrite)
 server.use(router)
 

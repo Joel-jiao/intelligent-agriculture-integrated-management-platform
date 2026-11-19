@@ -6,6 +6,8 @@ import { useToast } from '@/composables/useToast'
 import { useAuth } from '@/composables/useAuth'
 import { nowDateTime } from '@/utils/format'
 import { opApiKeys as apiKeysSeed, opSessions as devicesSeed, cloneRows } from '@/api/store'
+import { changePassword as changePasswordApi } from '@/api/endpoints'
+import { ApiError } from '@/api/http'
 
 const toast = useToast()
 const { session } = useAuth()
@@ -63,7 +65,7 @@ const twoFactor = ref(true)
 const loginGuard = ref(true)
 const sessionTimeout = ref('30')
 
-function changePassword() {
+async function changePassword() {
   pwdError.value = ''
   if (!pwdForm.current) {
     pwdError.value = '请输入当前登录密码'
@@ -80,10 +82,16 @@ function changePassword() {
     toast.error(pwdError.value)
     return
   }
-  pwdForm.current = ''
-  pwdForm.next = ''
-  pwdForm.confirm = ''
-  toast.success('登录密码已更新，其他设备上的会话将在 5 分钟内失效')
+  try {
+    await changePasswordApi(pwdForm.current, pwdForm.next)
+    pwdForm.current = ''
+    pwdForm.next = ''
+    pwdForm.confirm = ''
+    toast.success('登录密码已更新，其他设备上的会话将在 5 分钟内失效')
+  } catch (error) {
+    pwdError.value = error instanceof ApiError ? error.message : '修改失败，请稍后重试'
+    toast.error(pwdError.value)
+  }
 }
 
 function toggleTwoFactor() {

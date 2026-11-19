@@ -5,6 +5,8 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
 import { useAuth } from '@/composables/useAuth'
 import { loginLogs, operationLogs } from '@/api/store'
+import { changePassword as changePasswordApi } from '@/api/endpoints'
+import { ApiError } from '@/api/http'
 import { nowDateTime } from '@/utils/format'
 
 interface SecurityRecord {
@@ -77,7 +79,7 @@ function saveNotify() {
   toast.success(`通知偏好已更新：预警短信${notify.sms ? '开启' : '关闭'}，监管周报${notify.weekly ? '开启' : '关闭'}`)
 }
 
-function changePassword() {
+async function changePassword() {
   if (!pwd.old) {
     toast.warn('请输入原密码')
     return
@@ -94,19 +96,24 @@ function changePassword() {
     toast.error('两次输入的新密码不一致')
     return
   }
-  securityRecords.unshift({
-    id: `SR-${Date.now().toString().slice(-6)}`,
-    time: nowDateTime(),
-    action: '修改登录密码',
-    module: '账号安全',
-    ip: '10.20.5.118',
-    result: '成功',
-  })
-  if (securityRecords.length > 8) securityRecords.splice(8)
-  pwd.old = ''
-  pwd.next = ''
-  pwd.confirm = ''
-  toast.success('密码修改成功，请使用新密码重新登录')
+  try {
+    await changePasswordApi(pwd.old, pwd.next)
+    securityRecords.unshift({
+      id: `SR-${Date.now().toString().slice(-6)}`,
+      time: nowDateTime(),
+      action: '修改登录密码',
+      module: '账号安全',
+      ip: '10.20.5.118',
+      result: '成功',
+    })
+    if (securityRecords.length > 8) securityRecords.splice(8)
+    pwd.old = ''
+    pwd.next = ''
+    pwd.confirm = ''
+    toast.success('密码修改成功，请使用新密码重新登录')
+  } catch (error) {
+    toast.error(error instanceof ApiError ? error.message : '修改失败，请稍后重试')
+  }
 }
 </script>
 

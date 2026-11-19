@@ -91,7 +91,16 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   }
 
   if (!response.ok) {
-    throw new ApiError(`接口 ${path} 响应异常（HTTP ${response.status}）`, {
+    // 尽量把后端返回的 error / message 透传给调用方（如「原密码错误」「账号或密码错误」）
+    let detail = ''
+    try {
+      const errText = await response.text()
+      const errBody = errText ? (JSON.parse(errText) as { error?: string; message?: string }) : null
+      detail = errBody?.error || errBody?.message || ''
+    } catch {
+      // 响应体不是 JSON 时忽略，回退到通用文案
+    }
+    throw new ApiError(detail || `接口 ${path} 响应异常（HTTP ${response.status}）`, {
       status: response.status,
       url,
     })
