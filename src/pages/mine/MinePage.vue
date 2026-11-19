@@ -94,7 +94,6 @@ function confirmLogout() {
         </RouterLink>
 
         <button class="mobile-list-item menu-row menu-row--button" type="button" @click="accountOpen = true">
-          <span class="mobile-icon">我</span>
           <span class="menu-main">
             <span class="menu-label">账号资料</span>
             <span class="menu-desc">姓名、角色与联系方式</span>
@@ -102,7 +101,6 @@ function confirmLogout() {
           <span class="menu-arrow">›</span>
         </button>
         <button class="mobile-list-item menu-row menu-row--button" type="button" @click="aboutOpen = true">
-          <span class="mobile-icon">介</span>
           <span class="menu-main">
             <span class="menu-label">关于平台</span>
             <span class="menu-desc">版本信息与运行环境</span>

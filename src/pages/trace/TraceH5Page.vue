@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import QrCode from '@/components/ui/QrCode.vue'
 import { batches, findPlot, inspections, park, plotName, traceDetail, traceTimeline } from '@/api/store'
 import { formatNumber } from '@/utils/format'
@@ -24,6 +24,7 @@ interface TraceDisplay {
 }
 
 const route = useRoute()
+const router = useRouter()
 
 const code = computed(() => {
   const raw = route.params.code
@@ -38,7 +39,16 @@ const matchedBatch = computed(() => {
   return batches.find((item) => item.batchNo === value || item.batchNo === stripped)
 })
 
-const isFallback = computed(() => !matchedBatch.value)
+// 数据加载完成后仍无匹配批次 → 跳转 404（失效/不存在的溯源码不再回退展示示例批次）
+watch(
+  () => [batches.length, matchedBatch.value] as const,
+  ([count, batch]) => {
+    if (count > 0 && !batch) {
+      router.replace({ name: 'error', query: { code: '404' } })
+    }
+  },
+  { immediate: true },
+)
 
 const display = computed<TraceDisplay>(() => {
   const batch = matchedBatch.value ?? batches.find((item) => item.batchNo === traceDetail.batchNo)
@@ -126,10 +136,6 @@ const report = computed(() => {
       </div>
 
       <div class="h5-body">
-        <div v-if="isFallback" class="notice notice--warn" style="margin-bottom: 13px">
-          未查询到“{{ code || '空码' }}”对应的溯源批次，当前展示示例批次 {{ display.batchNo }} 的完整档案。
-        </div>
-
         <div v-if="display.batchNo === 'B20261030-06'" class="notice notice--danger" style="margin-bottom: 13px">
           召回提示：该批次因农残检测结果超出内部验收标准，已启动产品召回，请勿继续食用；如已购买，请联系园区办理退换。
         </div>

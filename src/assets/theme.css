@@ -2845,18 +2845,6 @@ ul {
   border-bottom: 0;
 }
 
-.mobile-icon {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--primary-soft);
-  color: var(--primary);
-  font-size: 15px;
-  flex: 0 0 auto;
-}
-
 .mobile-btn {
   display: inline-flex;
   align-items: center;
