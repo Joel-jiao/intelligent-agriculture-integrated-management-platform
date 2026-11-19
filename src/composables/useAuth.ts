@@ -58,8 +58,43 @@ function readToken(): string {
   }
 }
 
-// 脏数据清理：旧版本只存 session 不存 token，升级后 session 残留但无 token。
-// 此时视为未登录，清空 session，避免 hasSession 误判导致接口 401 循环。
+/** 解析 JWT payload（仅本地读取 exp，签名校验仍以后端为准） */
+function decodeJwtPayload(tokenStr: string): Record<string, unknown> | null {
+  try {
+    const segment = tokenStr.split('.')[1]
+    if (!segment) return null
+    const b64 = segment.replace(/-/g, '+').replace(/_/g, '/')
+    const padded = b64.padEnd(Math.ceil(b64.length / 4) * 4, '=')
+    const binary = atob(padded)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+    return JSON.parse(new TextDecoder('utf-8').decode(bytes)) as Record<string, unknown>
+  } catch {
+    return null
+  }
+}
+
+/** 令牌是否仍有效：结构完整且未过期 */
+function isTokenValid(tokenStr: string): boolean {
+  const payload = decodeJwtPayload(tokenStr)
+  if (!payload) return false
+  const exp = payload.exp as number | undefined
+  return typeof exp !== 'number' || Date.now() < exp
+}
+
+// 脏数据清理：两种「残留但无效」的登录态都会让 hasSession 误判为已登录，
+// 从而触发 loadAllData 对受保护接口的 401 风暴，并把公开页（/portals 等）
+// 挡在 BackendGate 后面。这里在模块加载时统一归零：
+//   1) 令牌已过期 / 损坏 → 清除令牌；
+//   2) 无令牌但 session 残留（旧版本升级）→ 清空 session。
+if (token.value !== '' && !isTokenValid(token.value)) {
+  token.value = ''
+  try {
+    localStorage.removeItem('agri_platform_token')
+  } catch {
+    // ignore
+  }
+}
 if (token.value === '' && Object.values(sessions).some(Boolean)) {
   for (const key of Object.keys(sessions)) {
     delete sessions[key as Portal]
