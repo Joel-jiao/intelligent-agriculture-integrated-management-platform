@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
-import { materials, plotName, workOrders as seedOrders } from '@/api/store'
+import { materials, plotName, users, workOrders as seedOrders } from '@/api/store'
 import type { WorkOrder } from '@/data/types'
 import { nowDateTime, today } from '@/utils/format'
 
@@ -13,6 +13,12 @@ const toast = useToast()
 const orders = ref<WorkOrder[]>(seedOrders.map((item) => ({ ...item })))
 const routeId = computed(() => String(route.params.id ?? ''))
 const order = computed(() => orders.value.find((item) => item.id === routeId.value))
+
+// 验收人来自后端用户表（园区管理员），非前端硬编码
+const acceptor = computed(() => {
+  const admin = users.find((u) => u.role === '园区管理员' || u.account === 'admin')
+  return admin ? `${admin.name} · ${admin.role}` : '园区管理员'
+})
 
 function statusTone(status: WorkOrder['status']): 'ok' | 'warn' | 'brand' | 'info' {
   if (status === '待接单') return 'warn'
@@ -360,7 +366,7 @@ function stepState(index: number): 'done' | 'active' | '' {
                 <StatusTag text="验收通过" tone="ok" dot />
               </div>
               <div class="result-row"><span>验收结论</span><b class="result-ok">合格</b></div>
-              <div class="result-row"><span>验收人</span><b>李明 · 园区管理员</b></div>
+              <div class="result-row"><span>验收人</span><b>{{ acceptor }}</b></div>
               <div class="result-row"><span>验收时间</span><b class="font-num">{{ order.deadline }}</b></div>
               <div class="result-row"><span>验收意见</span><b>作业质量符合要求，准予归档</b></div>
             </div>

@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useNetwork } from '@/composables/useNetwork'
-import { useAuth, demoUsers } from '@/composables/useAuth'
+import { useAuth } from '@/composables/useAuth'
 import { alarms, envSeries, park, plotName, plots, weather, workOrders } from '@/api/store'
 import type { WorkOrder } from '@/data/types'
 import { today } from '@/utils/format'
@@ -11,13 +11,13 @@ const network = useNetwork()
 const { session } = useAuth()
 
 // 当前登录农户来自登录态，地块信息来自后端
-const farmerName = session('app').value?.name ?? demoUsers.app.name
-const farmerPlot = plots.find((item) => item.manager === farmerName)
+const farmerName = computed(() => session('app').value?.name ?? '')
+const farmerPlot = computed(() => plots.find((item) => item.manager === farmerName.value))
 
 const todoTasks = computed(() => workOrders.filter((item) => item.status !== '已完成').slice(0, 3))
 const todayTaskCount = computed(() => workOrders.filter((item) => item.status !== '已完成').length)
 const pendingCheckin = computed(
-  () => workOrders.filter((item) => item.status === '进行中' && item.assignee === farmerName).length,
+  () => workOrders.filter((item) => item.status === '进行中' && item.assignee === farmerName.value).length,
 )
 const unreadAlarms = computed(() => alarms.filter((item) => item.status !== '已归档').length)
 const latestAlarm = computed(() => alarms[0])
@@ -81,7 +81,7 @@ function toggleNetwork() {
         <div>
           <h2>早上好，{{ farmerName }}</h2>
           <p>{{ today() }} · {{ park.name }}</p>
-          <p>{{ farmerPlot?.name ?? '园区地块' }} · {{ farmerPlot?.crop ?? '番茄' }}种植管理</p>
+          <p>{{ farmerPlot?.name ?? '园区地块' }} · {{ farmerPlot?.crop ?? '作物' }}种植管理</p>
         </div>
         <div class="mobile-hero__weather">
           <b class="font-num">{{ weather.temperature }}℃</b>
@@ -182,7 +182,7 @@ function toggleNetwork() {
           <b class="font-num">{{ item.value }}<small>{{ item.unit }}</small></b>
         </div>
       </div>
-      <p class="env-note">数据来源：{{ farmerPlot?.name ?? '1号智能大棚' }}环境传感器 · 每小时更新</p>
+      <p class="env-note">数据来源：{{ farmerPlot?.name ?? '园区地块' }}环境传感器 · 每小时更新</p>
     </section>
 
     <section class="mobile-section">

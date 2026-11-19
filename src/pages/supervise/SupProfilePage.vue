@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue'
 import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
+import { useAuth } from '@/composables/useAuth'
 import { loginLogs, operationLogs } from '@/api/store'
 import { nowDateTime } from '@/utils/format'
 
@@ -16,11 +17,13 @@ interface SecurityRecord {
 }
 
 const toast = useToast()
+const { session } = useAuth()
+const supUser = session('sup').value
 
 const profile = reactive({
-  name: '黄洁',
-  account: 'sup01',
-  role: '监管人员',
+  name: supUser?.name ?? '',
+  account: supUser?.account ?? '',
+  role: supUser?.role ?? '',
   unit: '璧山区农业农村委员会',
   phone: '135****1180',
   email: 'huangjie@bishan.gov.cn',
@@ -43,10 +46,10 @@ const pwd = reactive({
 
 const securityRecords = reactive<SecurityRecord[]>([
   ...loginLogs
-    .filter((item) => item.account === 'sup01')
+    .filter((item) => item.account === (supUser?.account ?? ''))
     .map((item) => ({ id: item.id, time: item.time, action: item.action, module: item.module, ip: item.ip, result: item.result })),
   ...operationLogs
-    .filter((item) => item.account === 'sup01')
+    .filter((item) => item.account === (supUser?.account ?? ''))
     .map((item) => ({ id: item.id, time: item.time, action: item.action, module: item.module, ip: item.ip, result: item.result })),
   { id: 'SR-PWD', time: '2026-11-03 18:22:41', action: '修改登录密码', module: '账号安全', ip: '10.20.5.118', result: '成功' },
   { id: 'SR-SMS', time: '2026-10-29 09:14:07', action: '绑定监管短信通道', module: '账号安全', ip: '10.20.5.118', result: '成功' },

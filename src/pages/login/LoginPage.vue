@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth, DEMO_PASSWORD } from '@/composables/useAuth'
+import { useAuth } from '@/composables/useAuth'
 import { park, loadAllData } from '@/api/store'
 
 const router = useRouter()
@@ -21,10 +21,6 @@ async function submit() {
     error.value = '密码长度不能少于 6 位'
     return
   }
-  if (password.value !== DEMO_PASSWORD) {
-    error.value = '密码错误，请重新输入'
-    return
-  }
   loading.value = true
   const result = await login('app', account.value.trim(), password.value)
   if (!result.ok) {
@@ -35,12 +31,6 @@ async function submit() {
   await loadAllData()
   loading.value = false
   router.push('/app/home')
-}
-
-function demoLogin() {
-  account.value = 'wangq'
-  password.value = '123456'
-  submit()
 }
 </script>
 
@@ -63,10 +53,7 @@ function demoLogin() {
       <button class="mobile-btn mobile-btn--full" type="button" :disabled="loading" @click="submit">
         {{ loading ? '登录中…' : '登录' }}
       </button>
-      <button class="mobile-btn mobile-btn--ghost mobile-btn--full" type="button" style="margin-top: 10px" @click="demoLogin">
-        使用演示账号登录
-      </button>
-      <div class="mobile-login__hint">演示账号 wangq / 密码 123456</div>
+      <div class="mobile-login__hint">账号由系统管理员统一分配，登录校验由后端完成</div>
       <RouterLink to="/portals" class="mobile-login__link">返回业务端总览</RouterLink>
     </div>
   </div>

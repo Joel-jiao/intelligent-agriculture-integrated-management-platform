@@ -5,6 +5,7 @@ import StatCard from '@/components/ui/StatCard.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import { useToast } from '@/composables/useToast'
+import { useAuth } from '@/composables/useAuth'
 import { alarms, plotName } from '@/api/store'
 import type { Alarm, AlarmLevel, AlarmStatus } from '@/data/types'
 import { buildCsv, downloadText, today } from '@/utils/format'
@@ -15,6 +16,8 @@ interface AlarmRow extends Alarm {
 }
 
 const toast = useToast()
+const { session } = useAuth()
+const operatorName = computed(() => session('admin').value?.name ?? '')
 
 const alarmRows = reactive<AlarmRow[]>(
   alarms.map((item) => ({
@@ -91,7 +94,7 @@ function confirmAlarm() {
   if (!row) return
   row.status = '处置中'
   row.started = false
-  row.handler = '李明'
+  row.handler = operatorName.value
   row.remark = remarkDraft.value.trim() || '已确认告警，转入现场处置。'
   toast.success(`告警 ${row.id} 已确认，转入处置中`)
 }
@@ -100,9 +103,9 @@ function startAlarm() {
   const row = selected.value
   if (!row) return
   row.started = true
-  row.handler = '李明'
+  row.handler = operatorName.value
   row.remark = remarkDraft.value.trim() || '已开始现场处置，等待设备恢复。'
-  toast.success(`告警 ${row.id} 已开始处置，处置人李明`)
+  toast.success(`告警 ${row.id} 已开始处置，处置人${operatorName.value}`)
 }
 
 function archiveAlarm() {

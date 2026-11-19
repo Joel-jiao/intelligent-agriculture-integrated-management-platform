@@ -17,16 +17,6 @@ export const portalNames: Record<Portal, string> = {
   app: '农户移动端',
 }
 
-export const demoUsers: Record<Portal, SessionUser> = {
-  admin: { portal: 'admin', account: 'admin', name: '李明', role: '园区管理员' },
-  ops: { portal: 'ops', account: 'ops', name: '张运维', role: '系统运维' },
-  sup: { portal: 'sup', account: 'sup01', name: '黄洁', role: '监管人员' },
-  app: { portal: 'app', account: 'wangq', name: '王强', role: '农户' },
-}
-
-/** 演示环境统一登录密码（最终校验以后端为准） */
-export const DEMO_PASSWORD = '123456'
-
 const STORAGE_KEY = 'agri_platform_sessions'
 const sessions = reactive<Partial<Record<Portal, SessionUser>>>(load())
 

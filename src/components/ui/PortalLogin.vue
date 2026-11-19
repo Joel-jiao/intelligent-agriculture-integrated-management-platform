@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useAuth, portalNames, DEMO_PASSWORD, type Portal } from '@/composables/useAuth'
+import { useAuth, portalNames, type Portal } from '@/composables/useAuth'
 import { useTheme } from '@/composables/useTheme'
 import { loadAllData } from '@/api/store'
 
@@ -33,13 +33,6 @@ const rules = {
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 6, message: '密码长度不能少于 6 位', trigger: 'blur' },
-    {
-      validator: (_rule: unknown, value: string) =>
-        value === DEMO_PASSWORD
-          ? Promise.resolve()
-          : Promise.reject(new Error('密码错误，请重新输入')),
-      trigger: 'blur',
-    },
   ],
   captcha: [
     { required: true, whitespace: true, message: '请输入验证码', trigger: 'blur' },
@@ -191,7 +184,7 @@ function onFinishFailed(info: { errorFields?: { name: (string | number)[] }[] })
         </div>
 
         <div class="login-demo">
-          演示账号：<b>{{ portal === 'sup' ? 'sup01' : portal }}</b> / 密码：<b>123456</b><br />
+          账号由系统管理员统一分配，登录校验由后端完成。<br />
           系统采用 RBAC 权限控制，不同角色仅可访问授权范围内的数据。
         </div>
 

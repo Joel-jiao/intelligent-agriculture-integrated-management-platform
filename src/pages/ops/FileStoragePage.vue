@@ -6,11 +6,14 @@ import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import DonutChart from '@/components/ui/DonutChart.vue'
 import { useToast } from '@/composables/useToast'
+import { useAuth } from '@/composables/useAuth'
 import { files } from '@/api/store'
 import type { FileRecord } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, nowDateTime } from '@/utils/format'
 
 const toast = useToast()
+const { session } = useAuth()
+const uploaderName = computed(() => session('ops').value?.name ?? '')
 
 const rows = ref<FileRecord[]>(files.map((item) => ({ ...item })))
 const typeFilter = ref('')
@@ -61,7 +64,7 @@ function onFilePick(event: Event) {
     name: picked.name,
     type: detectType(picked),
     size: formatSize(picked.size),
-    uploader: '张运维',
+    uploader: uploaderName.value,
     uploadedAt: nowDateTime(),
     url: `/files/upload/${picked.name}`,
   })

@@ -170,7 +170,9 @@ VITE_API_BASE_URL=https://api.example.com/api/v1
 | 管理员端 | `/login` | `admin` / `123456` | `/dashboard` |
 | 运维端 | `/ops/login` | `ops` / `123456` | `/ops/workbench` |
 | 监管端 | `/sup/login` | `sup01` / `123456` | `/sup/overview` |
-| 农户移动端 | `/app/login` | 任意账号 / `123456` | `/app/home` |
+| 农户移动端 | `/app/login` | `wangq` / `123456` | `/app/home` |
+
+> 演示账号与密码统一维护在后端 `src/route/db.json` 的 `accounts` 集合，前端不内置任何账号或密码。
 
 其他独立入口：
 
@@ -178,7 +180,7 @@ VITE_API_BASE_URL=https://api.example.com/api/v1
 - `/screen`：指挥中心大屏（独立全屏页面）
 - `/trace/h5/:code`：农产品溯源 H5 查询页，可直接分享访问
 
-> 演示登录仅校验账号非空、密码不少于 6 位，不请求后端接口；会话信息存放在 `localStorage` 的 `agri_platform_sessions` 键中。
+> 登录由后端 `POST /api/v1/auth/login` 校验（账号密码存于 `src/route/db.json` 的 `accounts` 集合），校验通过签发 HMAC 访问令牌；前端仅将令牌与会话信息写入 `localStorage` 的 `agri_platform_token` / `agri_platform_sessions` 键，不再内置或校验任何演示账号、密码。
 
 ## 数据读取约定
 

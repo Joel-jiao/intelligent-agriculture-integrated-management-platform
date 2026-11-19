@@ -8,11 +8,16 @@
  *   此处改为自实现重写器：只匹配 pathname，查询串原样透传。
  *
  * 鉴权（登录门禁）：
- *   POST /api/v1/auth/login 校验演示账号并签发 HMAC token；
+ *   POST /api/v1/auth/login 校验后端账号（db.json 的 accounts 集合）并签发 HMAC token；
  *   除公开白名单外，所有 /api/v1/* 请求都必须携带
  *   `Authorization: Bearer <token>`，否则返回 401。
  *   公开白名单仅含：登录接口、园区/系统基础信息、溯源公开查询
  *   （扫码溯源「无需登录」场景）与地块地理信息。
+ *
+ * 账号存储：
+ *   登录账号统一维护在 db.json 的 `accounts` 集合（portal/account/password/name/role/status），
+ *   前端不再内置任何演示账号或密码；登录成功后把账号写入 loginLogs（登录日志）。
+ *   `/accounts` 路由被显式屏蔽，避免账号密码通过 json-server 默认路由外泄。
  *
  * 用法：
  *   node src/route/server.cjs            # 默认 127.0.0.1:3001
@@ -27,16 +32,11 @@ const JSON5 = require('json5') // json-server 0.17 自带依赖，支持带 // �
 const jsonServer = require('json-server')
 const routes = JSON5.parse(fs.readFileSync(path.join(__dirname, 'routes.json'), 'utf8'))
 
-// ---------- 演示账号（与前端 useAuth.demoUsers 对齐） ----------
-const ACCOUNTS = {
-  admin: { portal: 'admin', account: 'admin', password: '123456', name: '李明', role: '园区管理员' },
-  ops: { portal: 'ops', account: 'ops', password: '123456', name: '张运维', role: '系统运维' },
-  sup: { portal: 'sup', account: 'sup01', password: '123456', name: '黄洁', role: '监管人员' },
-  app: { portal: 'app', account: 'wangq', password: '123456', name: '王强', role: '农户' },
-}
-
 const TOKEN_SECRET = process.env.AUTH_SECRET || 'agri-platform-demo-secret-2026'
 const TOKEN_TTL = 12 * 60 * 60 * 1000 // 12 小时
+
+// 各门户中文名，用于登录日志 module 字段
+const PORTAL_NAMES = { admin: '管理员端', ops: '运维端', sup: '监管端', app: '农户端' }
 
 function signToken(payload) {
   const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url')
@@ -65,13 +65,55 @@ function verifyToken(token) {
   }
 }
 
+function nowText() {
+  const d = new Date()
+  const p = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`
+}
+
+// ---------- 数据源：db.json 的 accounts 集合（后端唯一账号来源） ----------
+const dbFile = path.join(__dirname, 'db.json')
+const router = jsonServer.router(dbFile)
+
+function findAccount(portal, account) {
+  const accounts = router.db.get('accounts').value() || []
+  const acc = String(account ?? '').trim()
+  return accounts.find((a) => a.portal === portal && a.account === acc) || null
+}
+
+function appendLoginLog(entry, result, ip) {
+  try {
+    router.db
+      .get('loginLogs')
+      .unshift({
+        id: `LL-${Date.now()}`,
+        account: entry.account,
+        name: entry.name,
+        action: result === '成功' ? '登录系统' : '密码错误',
+        module: PORTAL_NAMES[entry.portal] || entry.portal,
+        ip: ip || '127.0.0.1',
+        time: nowText(),
+        result,
+      })
+      .write()
+  } catch {
+    // 登录日志写入失败不阻塞登录流程
+  }
+}
+
 // ---------- 登录接口 ----------
 function loginHandler(req, res) {
   const { portal, account, password } = req.body || {}
-  const entry = ACCOUNTS[portal]
-  if (!entry || entry.account !== String(account ?? '').trim() || entry.password !== password) {
+  const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '')
+    .split(',')[0]
+    .trim()
+
+  const entry = findAccount(portal, account)
+  if (!entry || entry.status !== '启用' || entry.password !== password) {
+    if (entry) appendLoginLog(entry, '失败', ip)
     return res.status(401).json({ error: '账号或密码错误' })
   }
+
   const token = signToken({
     portal: entry.portal,
     account: entry.account,
@@ -79,6 +121,7 @@ function loginHandler(req, res) {
     role: entry.role,
     exp: Date.now() + TOKEN_TTL,
   })
+  appendLoginLog(entry, '成功', ip)
   res.json({
     token,
     user: { portal: entry.portal, account: entry.account, name: entry.name, role: entry.role },
@@ -110,6 +153,14 @@ function authMiddleware(req, res, next) {
     return res.status(401).json({ error: '未登录或登录已过期' })
   }
   req.user = payload
+  next()
+}
+
+// 账号集合包含密码，不对外提供任何读/写，一律 404
+function blockAccounts(req, res, next) {
+  if (/^\/accounts(\/|$)/.test(req.path)) {
+    return res.status(404).json({ error: 'Not found' })
+  }
   next()
 }
 
@@ -157,21 +208,21 @@ function rewrite(req, _res, next) {
 // ---------- 启动服务 ----------
 const PORT = Number(process.env.PORT || 3001)
 const HOST = process.env.HOST || '127.0.0.1'
-const dbFile = path.join(__dirname, 'db.json')
 
 const server = jsonServer.create()
 
-// 顺序：CORS/bodyParser 等基础中间件 → 鉴权 → 登录 → 路径重写 → 数据路由
+// 顺序：CORS/bodyParser 等基础中间件 → 鉴权 → 屏蔽账号集合 → 登录 → 路径重写 → 数据路由
 // 注意：鉴权与登录必须在 rewrite 之前，基于原始 /api/v1 路径判断
 server.use(jsonServer.defaults({ bodyParser: true }))
 server.use(authMiddleware)
+server.use(blockAccounts)
 server.post('/api/v1/auth/login', loginHandler)
 server.use(rewrite)
-server.use(jsonServer.router(dbFile))
+server.use(router)
 
 server.listen(PORT, HOST, () => {
   console.log(`\n  JSON Server (custom routes) is running at http://${HOST}:${PORT}/`)
-  console.log('  Auth: POST /api/v1/auth/login  (Bearer token required for protected endpoints)')
+  console.log('  Auth: POST /api/v1/auth/login  (accounts stored in db.json, Bearer token required)')
   console.log('  Route mappings:')
   for (const [from, to] of Object.entries(routes)) {
     console.log(`    ${from}  ->  ${to}`)

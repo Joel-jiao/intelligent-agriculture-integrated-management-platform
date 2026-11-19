@@ -5,8 +5,10 @@ import StatCard from '@/components/ui/StatCard.vue'
 import LineChart from '@/components/ui/LineChart.vue'
 import BarChart from '@/components/ui/BarChart.vue'
 import { useToast } from '@/composables/useToast'
+import { useAuth } from '@/composables/useAuth'
 import { batches, monthlyReport, park, plots, workOrders, exportRecords as recordsSeed, cloneRows } from '@/api/store'
 import { buildCsv, downloadText, formatNumber, nowDateTime } from '@/utils/format'
+import StatusTag from "@/components/ui/StatusTag.vue";
 
 type ReportType = 'env' | 'water' | 'work' | 'trace'
 
@@ -47,6 +49,8 @@ interface TraceMonthRow {
 }
 
 const toast = useToast()
+const { session } = useAuth()
+const operatorName = computed(() => session('admin').value?.name ?? '')
 
 const tabs: Array<{ key: ReportType; label: string }> = [
   { key: 'env', label: '环境月报' },
@@ -265,7 +269,7 @@ function exportFile(format: 'Excel' | 'CSV') {
     format,
     time: nowDateTime(),
     rows: previewRows.value.length,
-    operator: '李明',
+    operator: operatorName.value,
     status: '成功',
   })
   toast.success(`${activeLabel.value}已导出为 ${format} 文件，共 ${previewRows.value.length} 条记录`)
@@ -284,7 +288,7 @@ function exportPdf() {
     format: 'PDF',
     time: nowDateTime(),
     rows: previewRows.value.length,
-    operator: '李明',
+    operator: operatorName.value,
     status: '生成中',
   })
   toast.info(`${activeLabel.value} PDF 生成任务已提交，完成后可在导出记录中查看`)

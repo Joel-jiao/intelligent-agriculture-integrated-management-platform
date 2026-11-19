@@ -3,10 +3,13 @@ import { reactive, ref } from 'vue'
 import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
+import { useAuth } from '@/composables/useAuth'
 import { nowDateTime } from '@/utils/format'
 import { opApiKeys as apiKeysSeed, opSessions as devicesSeed, cloneRows } from '@/api/store'
 
 const toast = useToast()
+const { session } = useAuth()
+const opsUser = session('ops').value
 
 type TabKey = 'basic' | 'security' | 'keys' | 'notify'
 const activeTab = ref<TabKey>('basic')
@@ -19,8 +22,8 @@ const tabs: { key: TabKey; label: string }[] = [
 ]
 
 const profile = reactive({
-  name: '张运维',
-  account: 'ops',
+  name: opsUser?.name ?? '',
+  account: opsUser?.account ?? '',
   phone: '136****5521',
   email: 'ops@yunling-agri.com',
   department: '运维中心',

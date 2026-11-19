@@ -8,6 +8,44 @@
     "farmers": 12,
     "manager": "李明"
   },
+  "accounts": [
+    {
+      "id": "A-001",
+      "portal": "admin",
+      "account": "admin",
+      "password": "123456",
+      "name": "李明",
+      "role": "园区管理员",
+      "status": "启用"
+    },
+    {
+      "id": "A-002",
+      "portal": "ops",
+      "account": "ops",
+      "password": "123456",
+      "name": "张运维",
+      "role": "系统运维",
+      "status": "启用"
+    },
+    {
+      "id": "A-003",
+      "portal": "sup",
+      "account": "sup01",
+      "password": "123456",
+      "name": "黄洁",
+      "role": "监管人员",
+      "status": "启用"
+    },
+    {
+      "id": "A-004",
+      "portal": "app",
+      "account": "wangq",
+      "password": "123456",
+      "name": "王强",
+      "role": "农户",
+      "status": "启用"
+    }
+  ],
   "weather": {
     "temperature": 26,
     "humidity": 68,
@@ -1219,6 +1257,56 @@
     }
   ],
   "loginLogs": [
+    {
+      "id": "LL-1795052062387",
+      "account": "ops",
+      "name": "张运维",
+      "action": "登录系统",
+      "module": "运维端",
+      "ip": "127.0.0.1",
+      "time": "2026-11-19 09:34:22",
+      "result": "成功"
+    },
+    {
+      "id": "LL-1795052030144",
+      "account": "admin",
+      "name": "李明",
+      "action": "登录系统",
+      "module": "管理员端",
+      "ip": "127.0.0.1",
+      "time": "2026-11-19 09:33:50",
+      "result": "成功"
+    },
+    {
+      "id": "LL-1795051371829",
+      "account": "admin",
+      "name": "李明",
+      "action": "登录系统",
+      "module": "管理员端",
+      "ip": "127.0.0.1",
+      "time": "2026-11-19 09:22:51",
+      "result": "成功"
+    },
+    {
+      "id": "LL-1795051272939",
+      "account": "admin",
+      "name": "李明",
+      "action": "密码错误",
+      "module": "管理员端",
+      "ip": "127.0.0.1",
+      "time": "2026-11-19 09:21:12",
+      "result": "失败"
+    },
+    {
+      "id": "LL-1795051272882",
+      "account": "admin",
+      "name": "李明",
+      "action": "登录系统",
+      "module": "管理员端",
+      "ip": "127.0.0.1",
+      "time": "2026-11-19 09:21:12",
+      "result": "成功"
+    },
     {
       "id": "LL-01",
       "account": "admin",

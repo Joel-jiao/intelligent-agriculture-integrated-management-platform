@@ -26,7 +26,7 @@ const form = ref({
   weight: '',
   grade: '一级',
   harvestedAt: '2026-11-06 10:30',
-  operator: '陈刚',
+  operator: operators.value[0] ?? '',
   note: '',
 })
 

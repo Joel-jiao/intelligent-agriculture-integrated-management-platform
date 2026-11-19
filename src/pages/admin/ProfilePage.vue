@@ -3,6 +3,7 @@ import { computed, reactive, ref } from 'vue'
 import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import { useToast } from '@/composables/useToast'
+import { useAuth } from '@/composables/useAuth'
 import { loginLogs, plots, users, loginDevices as loginDevicesSeed, cloneRows } from '@/api/store'
 import { formatNumber } from '@/utils/format'
 
@@ -16,25 +17,29 @@ interface LoginDevice {
 }
 
 const toast = useToast()
+const { session } = useAuth()
 
-const currentUser = users[0]
-const defaultProfile = {
-  name: currentUser?.name ?? '李明',
-  account: currentUser?.account ?? 'admin',
-  role: currentUser?.role ?? '园区管理员',
-  phone: '13800000001',
+// 当前登录账号来自后端登录态，用户档案来自后端用户表
+const currentUser = computed(() =>
+  users.find((item) => item.account === session('admin').value?.account) ?? users[0],
+)
+const defaultProfile = computed(() => ({
+  name: currentUser.value?.name ?? '',
+  account: currentUser.value?.account ?? '',
+  role: currentUser.value?.role ?? '',
+  phone: currentUser.value?.phone ?? '',
   email: 'liming@yunling-agri.com',
-  position: '园区管理员',
-  scope: '全部地块',
-}
+  position: currentUser.value?.role ?? '',
+  scope: currentUser.value?.plotScope ?? '全部地块',
+}))
 
-const profile = reactive({ ...defaultProfile })
-const avatarText = computed(() => profile.name.slice(0, 1) || '李')
+const profile = reactive({ ...defaultProfile.value })
+const avatarText = computed(() => profile.name.slice(0, 1) || '管')
 const phoneMasked = computed(() =>
   profile.phone.length >= 11 ? `${profile.phone.slice(0, 3)}****${profile.phone.slice(7)}` : profile.phone,
 )
-const lastLogin = currentUser?.lastLogin ?? '2026-11-06 09:32'
-const createdAt = currentUser?.createdAt ?? '2026-03-01'
+const lastLogin = computed(() => currentUser.value?.lastLogin ?? '—')
+const createdAt = computed(() => currentUser.value?.createdAt ?? '—')
 
 const scopeOptions = computed(() => [
   '全部地块',
@@ -52,7 +57,9 @@ const prefs = reactive({
 
 const loginDevices = ref<LoginDevice[]>(cloneRows<LoginDevice>(loginDevicesSeed))
 
-const securityLogs = computed(() => loginLogs.filter((item) => item.account === 'admin').slice(0, 5))
+const securityLogs = computed(() =>
+  loginLogs.filter((item) => item.account === (currentUser.value?.account ?? '')).slice(0, 5),
+)
 
 function saveProfile() {
   if (!profile.name.trim()) {
@@ -75,7 +82,7 @@ function saveProfile() {
 }
 
 function resetProfile() {
-  Object.assign(profile, defaultProfile)
+  Object.assign(profile, defaultProfile.value)
   pwdError.value = ''
   toast.info('个人资料已恢复为默认值')
 }

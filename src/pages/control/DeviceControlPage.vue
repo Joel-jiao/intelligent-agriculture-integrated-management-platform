@@ -4,6 +4,7 @@ import PageHeader from '@/components/ui/PageHeader.vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import {useToast} from '@/composables/useToast'
+import {useAuth} from '@/composables/useAuth'
 import {devices, plotName, plots, controlLogs as logsSeed, cloneRows} from '@/api/store'
 import type {Device} from '@/data/types'
 import {nowDateTime} from '@/utils/format'
@@ -35,7 +36,11 @@ const controllables = ref<ControlDevice[]>(
 const plotFilter = ref('all')
 const typeFilter = ref('all')
 const safetyLock = ref(false)
-const operator = '李明（园区管理员）'
+const { session } = useAuth()
+const operator = computed(() => {
+  const u = session('admin').value
+  return u ? `${u.name}（${u.role}）` : '管理员'
+})
 
 watch(safetyLock, (value) => {
   if (value) {

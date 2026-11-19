@@ -2,21 +2,21 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AppModal from '@/components/ui/AppModal.vue'
-import { useAuth, demoUsers } from '@/composables/useAuth'
+import { useAuth } from '@/composables/useAuth'
 import { useToast } from '@/composables/useToast'
 import { park, plots, sysInfo, users } from '@/api/store'
 
 const auth = useAuth()
 const session = auth.session('app')
-// 路由守卫保证进入时已登录，demoUsers 仅作类型层面的防御性回退
-const profile = computed(() => session.value ?? demoUsers.app)
-const accountUser = computed(() => users.find((item) => item.account === profile.value.account))
+// 路由守卫保证进入时已登录，当前用户来自后端登录态
+const profile = computed(() => session.value)
+const accountUser = computed(() => users.find((item) => item.account === profile.value?.account))
 const router = useRouter()
 const toast = useToast()
 
 const completedCount = 46
 const totalHours = 128.5
-const plotCount = computed(() => plots.filter((item) => item.manager === profile.value.name).length)
+const plotCount = computed(() => plots.filter((item) => item.manager === profile.value?.name).length)
 
 interface NavRow {
   label: string
@@ -52,15 +52,15 @@ function confirmLogout() {
         <h2>个人中心</h2>
         <p>账号与常用功能</p>
       </div>
-      <span class="tag tag--brand">{{ profile.role }}</span>
+      <span class="tag tag--brand">{{ profile?.role ?? '—' }}</span>
     </header>
 
     <section class="mobile-card profile-card">
-      <span class="avatar avatar--xl">{{ profile.name.slice(0, 1) }}</span>
+      <span class="avatar avatar--xl">{{ (profile?.name ?? '').slice(0, 1) }}</span>
       <div class="profile-main">
-        <div class="profile-name">{{ profile.name }}</div>
-        <div class="profile-role">{{ profile.role }} · 负责 {{ plotCount }} 个地块</div>
-        <div class="profile-account font-num">账号 {{ profile.account }}</div>
+        <div class="profile-name">{{ profile?.name ?? '' }}</div>
+        <div class="profile-role">{{ profile?.role ?? '' }} · 负责 {{ plotCount }} 个地块</div>
+        <div class="profile-account font-num">账号 {{ profile?.account ?? '' }}</div>
       </div>
     </section>
 
@@ -125,12 +125,12 @@ function confirmLogout() {
     <div class="page-spacer" />
 
     <AppModal v-model="accountOpen" title="账号资料">
-      <div class="detail-row"><span>姓名</span><b>{{ profile.name }}</b></div>
-      <div class="detail-row"><span>角色</span><b>{{ profile.role }}</b></div>
-      <div class="detail-row"><span>登录账号</span><b class="font-num">{{ profile.account }}</b></div>
-      <div class="detail-row"><span>联系电话</span><b class="font-num">{{ accountUser?.phone ?? '139****8832' }}</b></div>
-      <div class="detail-row"><span>负责地块</span><b>{{ accountUser?.plotScope ?? 'P-01' }}</b></div>
-      <div class="detail-row"><span>最近登录</span><b class="font-num">{{ accountUser?.lastLogin ?? '2026-11-06 08:12' }}</b></div>
+      <div class="detail-row"><span>姓名</span><b>{{ profile?.name ?? '—' }}</b></div>
+      <div class="detail-row"><span>角色</span><b>{{ profile?.role ?? '—' }}</b></div>
+      <div class="detail-row"><span>登录账号</span><b class="font-num">{{ profile?.account ?? '—' }}</b></div>
+      <div class="detail-row"><span>联系电话</span><b class="font-num">{{ accountUser?.phone ?? '—' }}</b></div>
+      <div class="detail-row"><span>负责地块</span><b>{{ accountUser?.plotScope ?? '—' }}</b></div>
+      <div class="detail-row"><span>最近登录</span><b class="font-num">{{ accountUser?.lastLogin ?? '—' }}</b></div>
       <template #footer>
         <button class="mobile-btn mobile-btn--ghost" type="button" @click="accountOpen = false">关闭</button>
       </template>

@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { MenuGroup } from '@/config/menus'
-import { useAuth, portalNames, demoUsers, type Portal } from '@/composables/useAuth'
+import { useAuth, portalNames, type Portal } from '@/composables/useAuth'
 import { useTheme } from '@/composables/useTheme'
 import { park, sysInfo } from '@/api/store'
 
@@ -15,8 +15,8 @@ const route = useRoute()
 const router = useRouter()
 const { session, logout } = useAuth()
 const { theme, toggle } = useTheme()
-// 路由守卫保证进入布局时已登录，demoUsers 仅作类型层面的防御性回退
-const user = computed(() => session(props.portal).value ?? demoUsers[props.portal])
+// 路由守卫保证进入布局时已登录，当前用户来自后端登录态
+const user = computed(() => session(props.portal).value)
 const menuOpen = ref(false)
 
 const marks: Record<string, string> = { admin: '农', ops: '运', sup: '监' }
@@ -123,10 +123,10 @@ function doLogout() {
           </button>
 
           <div class="topbar__user">
-            <div class="avatar">{{ user.name.slice(0, 1) }}</div>
+            <div class="avatar">{{ (user?.name ?? '').slice(0, 1) }}</div>
             <div class="topbar__user-text">
-              <b>{{ user.name }}</b>
-              {{ user.role }}
+              <b>{{ user?.name ?? '' }}</b>
+              {{ user?.role ?? '' }}
             </div>
             <button class="topbar__logout" type="button" @click="doLogout">退出</button>
           </div>
