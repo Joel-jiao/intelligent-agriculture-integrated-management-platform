@@ -71,15 +71,12 @@ const entries = [
       </div>
       <div class="portals-head__meta">
         <span>{{ sysInfo.version }} · {{ sysInfo.env }}</span>
-        <span>演示入口</span>
       </div>
     </header>
 
     <main class="portals-main">
       <div class="portals-hero">
-        <div class="portals-hero__eyebrow">PLATFORM ENTRY</div>
         <h1>智慧农业综合管理平台</h1>
-        <p>物联网感知 · 远程控制 · 生产农事 · 质量溯源 · GIS 分析 · 监管服务</p>
         <div class="portals-hero__stats">
           <div><b>{{ park.area }}</b><span>亩种植面积</span></div>
           <div><b>{{ plots.length }}</b><span>个管理地块</span></div>
@@ -91,12 +88,10 @@ const entries = [
       <div class="portals-grid">
         <RouterLink v-for="item in entries" :key="item.path" :to="item.path" class="portal-card">
           <div class="portal-card__top">
-            <div class="portal-card__mark" :style="{ background: item.color }">{{ item.mark }}</div>
             <div>
-              <h2>{{ item.name }}</h2>
+              <h1>{{ item.name }}</h1>
               <span>{{ item.role }}</span>
             </div>
-            <span class="portal-card__arrow">→</span>
           </div>
           <p>{{ item.desc }}</p>
           <div class="portal-card__tags">
@@ -105,9 +100,6 @@ const entries = [
         </RouterLink>
       </div>
 
-      <div class="portals-note">
-        <span>数据说明：</span>前端不内置业务数据，所有数据均经 /api/v1 接口从后端实时读取，未启动后端时页面会停留在连接失败页。
-      </div>
     </main>
 
     <footer class="portals-foot">
@@ -211,12 +203,6 @@ const entries = [
   padding: 56px 0 40px;
 }
 
-.portals-hero__eyebrow {
-  font-size: 11px;
-  letter-spacing: 2.4px;
-  color: var(--primary);
-}
-
 .portals-hero h1 {
   margin-top: 6px;
   font-size: 38px;
@@ -286,17 +272,6 @@ const entries = [
   gap: 11px;
 }
 
-.portal-card__mark {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
-  color: #fff;
-  font-size: 17px;
-  font-weight: 700;
-}
-
 .portal-card__top h2 {
   font-size: 15px;
   font-weight: 600;
@@ -306,13 +281,6 @@ const entries = [
 .portal-card__top span {
   font-size: 10.5px;
   color: var(--text-secondary);
-}
-
-.portal-card__arrow {
-  margin-left: auto;
-  font-size: 16px;
-  color: var(--text-tertiary);
-  transition: 0.2s var(--ease);
 }
 
 .portal-card:hover .portal-card__arrow {

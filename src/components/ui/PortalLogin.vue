@@ -20,12 +20,10 @@ const { theme, toggle } = useTheme()
 
 const loading = ref(false)
 const error = ref('')
-const captchaCode = ref(createCode())
 
 const formState = reactive({
   account: '',
   password: '',
-  captcha: '',
 })
 
 const rules = {
@@ -34,26 +32,6 @@ const rules = {
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 6, message: '密码长度不能少于 6 位', trigger: 'blur' },
   ],
-  captcha: [
-    { required: true, whitespace: true, message: '请输入验证码', trigger: 'blur' },
-    {
-      validator: (_rule: unknown, value: string) =>
-        value.trim().toUpperCase() === captchaCode.value
-          ? Promise.resolve()
-          : Promise.reject(new Error('验证码不正确，请重新输入')),
-      trigger: 'blur',
-    },
-  ],
-}
-
-function createCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-  return Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
-}
-
-function refreshCaptcha() {
-  captchaCode.value = createCode()
-  formState.captcha = ''
 }
 
 const portalPath: Record<Portal, string> = {
@@ -93,10 +71,6 @@ async function onFinish() {
   router.push(redirect)
 }
 
-function onFinishFailed(info: { errorFields?: { name: (string | number)[] }[] }) {
-  // 保持旧行为：验证码输错时自动换一张
-  if ((info.errorFields ?? []).some((item) => item.name.includes('captcha'))) refreshCaptcha()
-}
 </script>
 
 <template>
@@ -140,7 +114,6 @@ function onFinishFailed(info: { errorFields?: { name: (string | number)[] }[] })
           layout="vertical"
           class="login-antd-form"
           @finish="onFinish"
-          @finish-failed="onFinishFailed"
         >
           <a-form-item name="account" label="账号">
             <a-input
@@ -159,20 +132,6 @@ function onFinishFailed(info: { errorFields?: { name: (string | number)[] }[] })
               autocomplete="current-password"
             />
           </a-form-item>
-          <a-form-item name="captcha" label="验证码">
-            <div class="captcha-field">
-              <a-input
-                v-model:value="formState.captcha"
-                :maxlength="4"
-                placeholder="请输入验证码"
-                size="large"
-              />
-              <button class="captcha-box" type="button" title="点击刷新验证码" @click="refreshCaptcha">
-                {{ captchaCode }}
-              </button>
-            </div>
-          </a-form-item>
-
           <a-button type="primary" html-type="submit" block size="large" :loading="loading">
             登录
           </a-button>

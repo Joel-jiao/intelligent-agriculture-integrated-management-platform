@@ -15,17 +15,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  // 开发代理：前端默认以 /api/v1 为接口前缀（见 src/api/http.ts），
+  // 由 Vite 转发到 Spring Boot（默认 3001），避免跨域与端口不一致。
   server: {
-    proxy: {
-      // json-server 通过 src/route/routes.json 直接识别 /api/v1/* 真实后端风格地址，路径原样透传
-      '/api': {
-        target: 'http://127.0.0.1:3001',
-        changeOrigin: true,
-      },
-    },
-  },
-  preview: {
-    // 生产构建预览同样需要后端，保持与 dev 一致的代理行为
     proxy: {
       '/api': {
         target: 'http://127.0.0.1:3001',

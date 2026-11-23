@@ -4,7 +4,7 @@ import PageHeader from '@/components/ui/PageHeader.vue'
 import LineChart from '@/components/ui/LineChart.vue'
 import DonutChart from '@/components/ui/DonutChart.vue'
 import { useToast } from '@/composables/useToast'
-import { alarms, devices, envLabels, envSeries, park, plots, workOrders } from '@/api/store'
+import { alarms, batches, devices, envLabels, envSeries, harvests, monthlyReport, park, plots, qualityOverview, workOrders } from '@/api/store'
 import { buildCsv, downloadText, formatNumber } from '@/utils/format'
 
 const toast = useToast()
@@ -50,8 +50,17 @@ const chartUnit = computed(() => {
 const onlineDevices = computed(() => devices.filter((item) => item.status === '在线').length)
 const onlineRate = computed(() => Math.round((onlineDevices.value / devices.length) * 100))
 const todayAlarms = computed(() => alarms.filter((item) => item.createdAt.startsWith(today)))
+const abnormalAlarms = computed(() => todayAlarms.value.filter((item) => item.level === '紧急').length)
+const warningAlarms = computed(() => todayAlarms.value.filter((item) => item.level === '重要').length)
 const healthyPlots = computed(() => plots.filter((item) => item.status === '正常').length)
 const healthyRate = computed(() => Math.round((healthyPlots.value / plots.length) * 100))
+
+const gateways = computed(() => devices.filter((item) => item.type === '网关'))
+const onlineGateways = computed(() => gateways.value.filter((item) => item.status === '在线').length)
+const lastDeviceSync = computed(() => {
+  const latest = devices.reduce((value, item) => (item.lastSeen > value ? item.lastSeen : value), '')
+  return latest ? latest.slice(11, 16) : '—'
+})
 
 const deviceSegments = computed(() => [
   { label: '在线', value: devices.filter((item) => item.status === '在线').length, color: '#34c759' },
@@ -61,6 +70,22 @@ const deviceSegments = computed(() => [
 
 const latestAlarms = computed(() => alarms.slice(0, 4))
 const todayTasks = computed(() => workOrders.filter((item) => item.deadline.startsWith(today)).slice(0, 4))
+
+const coreMetrics = computed(() => {
+  const month = today.slice(0, 7)
+  const report = monthlyReport.find((item) => item.month === month)
+  const monthBatches = batches.filter((item) => item.harvestedAt.startsWith(month))
+  return {
+    water: report?.water ?? 0,
+    electric: report?.electric ?? 0,
+    harvestWeight: harvests
+      .filter((item) => item.harvestedAt.startsWith(month))
+      .reduce((sum, item) => sum + item.weight, 0),
+    qrCount: monthBatches.reduce((sum, item) => sum + item.qrCount, 0),
+    scans: monthBatches.reduce((sum, item) => sum + item.scans, 0),
+    passRate: qualityOverview.passRate,
+  }
+})
 
 function alarmTone(level: string): 'ok' | 'warn' | 'danger' {
   if (level === '紧急') return 'danger'
@@ -113,7 +138,7 @@ function exportReport() {
       <section class="kpi">
         <div class="kpi__label">农田总面积</div>
         <div class="kpi__value">{{ formatNumber(park.area) }}<small>亩</small></div>
-        <div class="kpi__meta">{{ plots.length }} 个地块 · 3 座温室</div>
+        <div class="kpi__meta">{{ plots.length }} 个地块 · {{  }} 座温室</div>
       </section>
       <section class="kpi">
         <div class="kpi__label">在线设备数</div>
@@ -123,7 +148,7 @@ function exportReport() {
       <section class="kpi">
         <div class="kpi__label">今日告警</div>
         <div class="kpi__value">{{ todayAlarms.length }}<small>条</small></div>
-        <div class="kpi__meta">异常 1 条 · 预警 2 条</div>
+        <div class="kpi__meta">异常 {{ abnormalAlarms }} 条 · 预警 {{ warningAlarms }} 条</div>
       </section>
       <section class="kpi">
         <div class="kpi__label">作物生长良好率</div>
@@ -173,8 +198,8 @@ function exportReport() {
             center-label="在线设备"
           />
           <div class="device-foot">
-            <span>网关 <b>1 / 1</b> 在线</span>
-            <span>最后同步 09:42</span>
+            <span>网关 <b>{{ onlineGateways }} / {{ gateways.length }}</b> 在线</span>
+            <span>最后同步 {{ lastDeviceSync }}</span>
           </div>
         </div>
       </section>
@@ -248,12 +273,12 @@ function exportReport() {
       </div>
       <div class="card__body">
         <div class="kv kv--3">
-          <div class="kv__item"><span>本月用水量</span><b>{{ formatNumber(1260) }} m³</b></div>
-          <div class="kv__item"><span>本月用电量</span><b>{{ formatNumber(3120) }} kWh</b></div>
-          <div class="kv__item"><span>本月采收重量</span><b>{{ formatNumber(6820) }} kg</b></div>
-          <div class="kv__item"><span>溯源码生成</span><b>{{ formatNumber(6180) }} 枚</b></div>
-          <div class="kv__item"><span>溯源扫码访问</span><b>{{ formatNumber(1677) }} 次</b></div>
-          <div class="kv__item"><span>平均检测合格率</span><b>98.6%</b></div>
+          <div class="kv__item"><span>本月用水量</span><b>{{ formatNumber(coreMetrics.water) }} m³</b></div>
+          <div class="kv__item"><span>本月用电量</span><b>{{ formatNumber(coreMetrics.electric) }} kWh</b></div>
+          <div class="kv__item"><span>本月采收重量</span><b>{{ formatNumber(coreMetrics.harvestWeight) }} kg</b></div>
+          <div class="kv__item"><span>溯源码生成</span><b>{{ formatNumber(coreMetrics.qrCount) }} 枚</b></div>
+          <div class="kv__item"><span>溯源扫码访问</span><b>{{ formatNumber(coreMetrics.scans) }} 次</b></div>
+          <div class="kv__item"><span>平均检测合格率</span><b>{{ coreMetrics.passRate }}%</b></div>
         </div>
       </div>
     </section>

@@ -1,8 +1,7 @@
 /**
  * 后端接口清单
  *
- * 路径与 src/route/routes.json 中的映射一一对应（真实后端风格地址），
- * 更换真实后端时只需要调整 routes.json / 本文件，页面无需改动。
+ * 统一以真实后端风格地址声明，接入后端时按实际接口调整本文件即可，页面无需改动。
  */
 import { apiDelete, apiGet, apiPatch, apiPost } from './http'
 import type {

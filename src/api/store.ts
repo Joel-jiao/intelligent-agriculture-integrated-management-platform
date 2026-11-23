@@ -280,6 +280,14 @@ function fillObject<T extends object>(target: T, source: Partial<T> | null | und
   if (source) Object.assign(target, source)
 }
 
+/**
+ * 单例接口在「无数据」时后端返回 200 + 空响应体，request() 会得到 undefined。
+ * 此时保留容器里的空默认值（'' / 0 / []），既避免 TypeError，也让页面呈现空态而非崩溃。
+ */
+function fillObjectIfPresent<T extends object>(target: T, source: Partial<T> | null | undefined) {
+  if (source && typeof source === 'object') fillObject(target, source)
+}
+
 /** 清空所有容器（后端不可用时不留任何残留数据） */
 function clearAll() {
   fillArray(plots, [])
@@ -351,9 +359,9 @@ export function loadPublicData(): Promise<void> {
         fetchInspections(),
       ])
 
-      fillObject(park, parkData)
-      fillObject(sysInfo, sysInfoData)
-      fillObject(traceDetail, traceDetailData)
+      fillObjectIfPresent(park, parkData)
+      fillObjectIfPresent(sysInfo, sysInfoData)
+      fillObjectIfPresent(traceDetail, traceDetailData)
       fillArray(plots, plotsData)
       fillArray(batches, batchesData)
       fillArray(inspections, inspectionsData)
@@ -459,16 +467,16 @@ export function loadAllData(): Promise<void> {
         fetchDictTypes(),
       ])
 
-      fillObject(park, parkData)
-      fillObject(weather, weatherData)
-      fillObject(sysInfo, sysInfoData)
-      fillObject(qualityOverview, qualityOverviewData)
-      fillObject(traceDetail, traceDetailData)
-      fillObject(screenConfig, screenConfigData)
-      fillObject(envSeries, envSeriesData)
-      fillObject(waterElectric, waterElectricData)
+      fillObjectIfPresent(park, parkData)
+      fillObjectIfPresent(weather, weatherData)
+      fillObjectIfPresent(sysInfo, sysInfoData)
+      fillObjectIfPresent(qualityOverview, qualityOverviewData)
+      fillObjectIfPresent(traceDetail, traceDetailData)
+      fillObjectIfPresent(screenConfig, screenConfigData)
+      fillObjectIfPresent(envSeries, envSeriesData)
+      fillObjectIfPresent(waterElectric, waterElectricData)
 
-      fillArray(envLabels, envSeriesData.labels)
+      fillArray(envLabels, envSeriesData?.labels ?? [])
       fillArray(plots, plotsData)
       fillArray(cameras, camerasData)
       fillArray(devices, devicesData)

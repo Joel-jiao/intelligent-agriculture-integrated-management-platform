@@ -32,10 +32,8 @@ function retry() {
             <a-button type="primary" @click="retry">重新连接</a-button>
           </div>
           <div class="gate__hint">
-            <b>启动后端后重试</b>
-            <code>npm run dev:api</code>
-            <span class="gate__hint-or">或前后端一起启动</span>
-            <code>npm run dev:all</code>
+            <b>确认真实后端服务已启动后重试</b>
+            <span>接口地址由 VITE_API_BASE_URL 或 Vite 代理配置决定</span>
           </div>
           <p class="gate__error">{{ backend.error }}</p>
           <p class="gate__meta">接口地址 {{ API_BASE_URL }} · 已尝试 {{ backend.attempts }} 次</p>

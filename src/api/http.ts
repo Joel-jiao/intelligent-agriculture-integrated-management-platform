@@ -6,7 +6,7 @@
  * 绝不做「静默回退到本地假数据」这类兜底。
  */
 
-/** 接口前缀，开发环境经 Vite 代理转发到 json-server（见 vite.config.ts） */
+/** 接口前缀：默认 /api/v1，可通过 VITE_API_BASE_URL 指向真实后端 */
 export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) || '/api/v1'
 
 /** 单次请求超时时间（毫秒） */

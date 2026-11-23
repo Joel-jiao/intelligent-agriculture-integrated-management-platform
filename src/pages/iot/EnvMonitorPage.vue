@@ -7,7 +7,7 @@ import AppModal from '@/components/ui/AppModal.vue'
 import Pager from '@/components/ui/Pager.vue'
 import { useToast } from '@/composables/useToast'
 import { devices, envLabels, envSeries, plotName, plots } from '@/api/store'
-import { buildCsv, downloadText, formatNumber, today } from '@/utils/format'
+import { buildCsv, downloadText, formatNumber, nowDateTime, today } from '@/utils/format'
 
 const toast = useToast()
 
@@ -132,6 +132,7 @@ function refreshData() {
   liveSeries.value.light = jitter(liveSeries.value.light, 90)
   liveSeries.value.waterTemperature = jitter(liveSeries.value.waterTemperature, 0.6, 1)
   liveSeries.value.ph = jitter(liveSeries.value.ph, 0.1, 1)
+  if (currentDevice.value) currentDevice.value.lastSeen = nowDateTime()
   toast.success('24 小时环境数据已刷新至最新采集时刻')
 }
 
@@ -177,6 +178,9 @@ function saveThresholds() {
 
 const currentPlot = computed(() => plots.find((item) => item.id === selectedPlot.value))
 const currentDevice = computed(() => sensorDevices.value.find((item) => item.id === selectedDevice.value))
+const pageDescription = computed(
+  () => `温室环境要素实时采集与趋势分析 · 采集间隔 1 小时 · 数据更新于 ${currentDevice.value?.lastSeen ?? '—'}`,
+)
 </script>
 
 <template>
@@ -184,7 +188,7 @@ const currentDevice = computed(() => sensorDevices.value.find((item) => item.id 
     <PageHeader
       eyebrow="IOT · ENVIRONMENT"
       title="环境数据监测"
-      description="温室环境要素实时采集与趋势分析 · 采集间隔 1 小时 · 数据更新于 2026-11-06 09:42"
+      :description="pageDescription"
     >
       <template #actions>
         <button class="btn" type="button" @click="thresholdOpen = true">阈值设置</button>

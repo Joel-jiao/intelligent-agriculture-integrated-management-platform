@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import type { MenuGroup } from '@/config/menus'
 import { useAuth, portalNames, type Portal } from '@/composables/useAuth'
 import { useTheme } from '@/composables/useTheme'
-import { park, sysInfo } from '@/api/store'
+import { alarms, devices, park, plots, serviceHealth, supWarnings, sysInfo } from '@/api/store'
 
 const props = defineProps<{
   portal: Extract<Portal, 'admin' | 'ops' | 'sup'>
@@ -22,12 +22,20 @@ const menuOpen = ref(false)
 const marks: Record<string, string> = { admin: '农', ops: '运', sup: '监' }
 const loginPaths: Record<string, string> = { admin: '/login', ops: '/ops/login', sup: '/sup/login' }
 const alertPaths: Record<string, string> = { admin: '/alarms', ops: '/ops/logs/operation', sup: '/sup/warnings' }
-const chips: Record<string, string> = {
-  admin: '网关在线 19 / 20',
-  ops: `MQTT 吞吐 ${sysInfo.mqttMessages.toLocaleString()} 条`,
-  sup: '辖区覆盖 12 个园区',
-}
-const alertCount: Record<string, number> = { admin: 3, ops: 1, sup: 3 }
+const chips = computed<Record<string, string>>(() => {
+  const gateways = devices.filter((item) => item.type === '网关')
+  const gatewayOnline = gateways.filter((item) => item.status === '在线').length
+  return {
+    admin: `网关在线 ${gatewayOnline} / ${gateways.length}`,
+    ops: `MQTT 吞吐 ${sysInfo.mqttMessages.toLocaleString()} 条`,
+    sup: `辖区覆盖 ${plots.length} 个地块`,
+  }
+})
+const alertCount = computed<Record<string, number>>(() => ({
+  admin: alarms.filter((item) => item.status !== '已归档').length,
+  ops: (serviceHealth as Array<{ status: string }>).filter((item) => item.status === '告警').length,
+  sup: supWarnings.filter((item) => item.status !== '已办结').length,
+}))
 
 const pageTitle = computed(() => String(route.meta.title ?? '工作台'))
 const portalLabel = computed(() => portalNames[props.portal])
@@ -119,7 +127,7 @@ function doLogout() {
               <path d="M18 8a6 6 0 0 0-12 0c0 5-2 6-2 6h16s-2-1-2-6" />
               <path d="M10.3 20a2 2 0 0 0 3.4 0" />
             </svg>
-            <span class="topbar__badge">{{ alertCount[portal] }}</span>
+            <span v-if="(alertCount[portal] ?? 0) > 0" class="topbar__badge">{{ alertCount[portal] }}</span>
           </button>
 
           <div class="topbar__user">
