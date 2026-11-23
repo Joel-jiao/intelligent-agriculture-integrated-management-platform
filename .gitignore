@@ -40,3 +40,28 @@ __screenshots__/
 /.workbuddy/
 /.screenshots/
 /.vscode/
+
+# ==========================
+# 后端 Java / Maven 忽略项
+# ==========================
+
+# 1. Maven 编译与打包产物 (核心)
+IAIMP-Backend/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# 2. 后端日志与临时文件
+IAIMP-Backend/logs/
+*.log
+
+# 3. 后端 IDE 配置文件 (防止 IDEA 冲突)
+IAIMP-Backend/.idea/
+*.iml
+*.ipr
+*.iws
+
+# 4. 后端本地敏感配置 (如果有的话，建议忽略)
+application-local.yml
+application-local.properties
