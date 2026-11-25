@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { MenuGroup } from '@/config/menus'
 import { useAuth, portalNames, type Portal } from '@/composables/useAuth'
@@ -37,6 +37,77 @@ const alertCount = computed<Record<string, number>>(() => ({
   sup: supWarnings.filter((item) => item.status !== '已办结').length,
 }))
 
+/* ---------- 菜单分组折叠 ---------- */
+const COLLAPSE_KEY = 'agri_platform_sidebar_collapsed'
+
+// 分组键带门户前缀，避免三个门户出现同名分组时状态互相污染
+function groupKey(title: string) {
+  return `${props.portal}:${title}`
+}
+
+function readCollapsed(): Set<string> {
+  try {
+    const raw = localStorage.getItem(COLLAPSE_KEY)
+    const parsed: unknown = raw ? JSON.parse(raw) : []
+    return new Set(Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [])
+  } catch {
+    return new Set()
+  }
+}
+
+const collapsedGroups = ref<Set<string>>(readCollapsed())
+
+function persistCollapsed() {
+  try {
+    localStorage.setItem(COLLAPSE_KEY, JSON.stringify([...collapsedGroups.value]))
+  } catch {
+    /* 隐私模式等场景忽略持久化失败 */
+  }
+}
+
+function isCollapsed(title: string) {
+  return collapsedGroups.value.has(groupKey(title))
+}
+
+function toggleGroup(title: string) {
+  const key = groupKey(title)
+  const next = new Set(collapsedGroups.value)
+  if (next.has(key)) next.delete(key)
+  else next.add(key)
+  collapsedGroups.value = next
+  persistCollapsed()
+}
+
+function isItemActive(to: string) {
+  return route.path === to || route.path.startsWith(`${to}/`)
+}
+
+const activeGroupTitles = computed(() =>
+  props.menu.filter((group) => group.items.some((item) => isItemActive(item.to))).map((group) => group.title),
+)
+
+function isActiveGroup(title: string) {
+  return activeGroupTitles.value.includes(title)
+}
+
+// 切到某页时，自动展开它所在的分组，避免折叠状态导致"找不到当前页"
+watch(
+  activeGroupTitles,
+  (titles) => {
+    if (!titles.length) return
+    const next = new Set(collapsedGroups.value)
+    let changed = false
+    for (const title of titles) {
+      if (next.delete(groupKey(title))) changed = true
+    }
+    if (changed) {
+      collapsedGroups.value = next
+      persistCollapsed()
+    }
+  },
+  { immediate: true },
+)
+
 const pageTitle = computed(() => String(route.meta.title ?? '工作台'))
 const portalLabel = computed(() => portalNames[props.portal])
 const flush = computed(() => route.meta.flush === true)
@@ -60,17 +131,37 @@ function doLogout() {
       </div>
 
       <nav class="sidebar__nav">
-        <div v-for="group in menu" :key="group.title" class="sidebar__group">
-          <div class="sidebar__group-title">{{ group.title }}</div>
-          <RouterLink
-            v-for="item in group.items"
-            :key="item.to"
-            :to="item.to"
-            class="sidebar__link"
-            @click="menuOpen = false"
+        <div
+          v-for="group in menu"
+          :key="group.title"
+          class="sidebar__group"
+          :class="{ 'is-collapsed': isCollapsed(group.title), 'is-active': isActiveGroup(group.title) }"
+        >
+          <button
+            class="sidebar__group-title"
+            type="button"
+            :aria-expanded="!isCollapsed(group.title)"
+            :title="isCollapsed(group.title) ? `展开「${group.title}」` : `收起「${group.title}」`"
+            @click="toggleGroup(group.title)"
           >
-            <span>{{ item.label }}</span>
-          </RouterLink>
+            <span>{{ group.title }}</span>
+            <svg class="sidebar__group-arrow" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <div class="sidebar__items" :inert="isCollapsed(group.title)">
+            <div class="sidebar__items-inner">
+              <RouterLink
+                v-for="item in group.items"
+                :key="item.to"
+                :to="item.to"
+                class="sidebar__link"
+                @click="menuOpen = false"
+              >
+                <span>{{ item.label }}</span>
+              </RouterLink>
+            </div>
+          </div>
         </div>
       </nav>
 
@@ -149,6 +240,76 @@ function doLogout() {
 </template>
 
 <style scoped>
+.sidebar__group-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin: 0 0 2px;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.18s var(--ease), background 0.18s var(--ease);
+}
+
+.sidebar__group-title:hover {
+  color: var(--text-secondary);
+  background: var(--bg-subtle);
+}
+
+.sidebar__group-title:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.sidebar__group.is-active > .sidebar__group-title {
+  color: var(--primary);
+}
+
+.sidebar__group-arrow {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.7;
+  transition: transform 0.22s var(--ease), opacity 0.18s var(--ease);
+}
+
+.sidebar__group.is-collapsed .sidebar__group-arrow {
+  transform: rotate(-90deg);
+  opacity: 1;
+}
+
+/* 0fr → 1fr：纯 CSS 高度过渡，无需测量内容高度 */
+.sidebar__items {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.22s var(--ease);
+}
+
+.sidebar__group.is-collapsed .sidebar__items {
+  grid-template-rows: 0fr;
+}
+
+.sidebar__items-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
 .sidebar-backdrop {
   position: fixed;
   inset: 0;
