@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import GisMap from '@/components/ui/GisMap.vue'
 import { devices, farmerPlots } from '@/api/store'
 import type { AuditStatus, FarmerPlot, Plot } from '@/data/types'
+import { formatAreaSqm, polygonAreaSqm } from '@/utils/geo'
 
 const router = useRouter()
 
+const mapRef = ref<InstanceType<typeof GisMap> | null>(null)
 const selectedId = ref(farmerPlots[0]?.id ?? '')
 const selected = computed<FarmerPlot | undefined>(() => farmerPlots.find((item) => item.id === selectedId.value))
 
@@ -33,6 +35,20 @@ const previewPlot = computed<Plot | undefined>(() => {
 })
 
 const plotDevices = computed(() => devices.filter((device) => device.plotId === selectedId.value))
+const plotGeometryArea = computed(() => polygonAreaSqm(selected.value?.polygon ?? []))
+
+watch(
+  () => farmerPlots.map((item) => item.id).join(','),
+  () => {
+    if (!farmerPlots.some((item) => item.id === selectedId.value)) selectedId.value = farmerPlots[0]?.id ?? ''
+  },
+)
+
+/** 切换地块后把地图飞到该地块边界 */
+function selectPlot(id: string) {
+  selectedId.value = id
+  nextTick(() => mapRef.value?.fitToPlot(id))
+}
 
 function auditTone(status: AuditStatus): 'ok' | 'warn' | 'danger' {
   if (status === '已通过') return 'ok'
@@ -66,7 +82,7 @@ function resubmitPlot(id: string) {
         class="mobile-tab"
         :class="{ 'is-active': plot.id === selectedId }"
         type="button"
-        @click="selectedId = plot.id"
+        @click="selectPlot(plot.id)"
       >
         {{ plot.name }}
       </button>
@@ -79,7 +95,17 @@ function resubmitPlot(id: string) {
           <span>{{ selected.name }}</span>
           <span class="tag" :class="`tag--${auditTone(selected.auditStatus)}`">{{ selected.auditStatus }}</span>
         </div>
-        <GisMap v-if="previewPlot" :plots="[previewPlot]" :devices="[]" :show-devices="false" :height="180" />
+        <GisMap
+          v-if="previewPlot"
+          ref="mapRef"
+          :plots="[previewPlot]"
+          :devices="[]"
+          :show-devices="false"
+          :height="200"
+          :zoom="17"
+          :show-coords="false"
+          :show-toolbar="true"
+        />
       </div>
 
       <div v-if="selected.rejectReason" class="notice notice--danger" style="margin-top: 10px">
@@ -91,7 +117,8 @@ function resubmitPlot(id: string) {
           <h3>档案信息</h3>
         </div>
         <div class="detail-row"><span>种植作物</span><b>{{ selected.crop }} · {{ selected.variety }}</b></div>
-        <div class="detail-row"><span>地块面积</span><b class="font-num">{{ selected.area }} 亩</b></div>
+        <div class="detail-row"><span>档案面积</span><b class="font-num">{{ selected.area }} 亩</b></div>
+        <div class="detail-row"><span>图形面积</span><b class="font-num">{{ formatAreaSqm(plotGeometryArea) }}</b></div>
         <div class="detail-row"><span>温室类型</span><b>{{ selected.greenhouse }}</b></div>
         <div class="detail-row"><span>种植时间</span><b class="font-num">{{ selected.plantedAt }}</b></div>
         <div class="detail-row"><span>预计采收</span><b class="font-num">{{ selected.expectedHarvest }}</b></div>

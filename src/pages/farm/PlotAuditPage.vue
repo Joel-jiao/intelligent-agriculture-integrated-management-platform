@@ -8,6 +8,7 @@ import GisMap from '@/components/ui/GisMap.vue'
 import { useToast } from '@/composables/useToast'
 import { plotAudits as seedAudits, users } from '@/api/store'
 import type { AuditStatus, Plot, PlotAudit } from '@/data/types'
+import { formatAreaSqm, isBoundaryClosed, polygonAreaSqm } from '@/utils/geo'
 
 const toast = useToast()
 
@@ -68,6 +69,15 @@ const previewPlot = computed<Plot | undefined>(() => {
 const assignFarmer = ref('')
 const rejectReason = ref('')
 
+/** GIS 校验：真实几何是否闭合、量算面积与申报面积偏差 */
+const boundaryValid = computed(() => isBoundaryClosed(selected.value?.polygon ?? []))
+const geometryArea = computed(() => polygonAreaSqm(selected.value?.polygon ?? []))
+const areaDeviation = computed(() => {
+  const declared = selected.value?.area ?? 0
+  if (declared <= 0 || geometryArea.value <= 0) return 0
+  return Math.abs(geometryArea.value / 666.6667 - declared) / declared
+})
+
 function openAudit(audit: PlotAudit) {
   selectedId.value = audit.id
   assignFarmer.value = audit.farmerId
@@ -78,8 +88,8 @@ function openAudit(audit: PlotAudit) {
 function auditPass() {
   const audit = selected.value
   if (!audit) return
-  if (!audit.boundaryClosed) {
-    toast.error('边界未闭合，无法通过审核')
+  if (!audit.boundaryClosed || !boundaryValid.value) {
+    toast.error('GIS 边界未闭合或图形退化，无法通过审核')
     return
   }
   audit.status = '已通过'
@@ -219,10 +229,32 @@ function confirmAssign() {
     <AppModal v-model="drawerOpen" :title="`地块审核 · ${selected?.plotName ?? ''}`" size="lg">
       <div class="audit-grid">
         <div>
-          <div class="audit-block-title">GIS 边界预览</div>
-          <GisMap v-if="previewPlot" :plots="[previewPlot]" :devices="[]" :height="220" />
-          <div v-if="selected && !selected.boundaryClosed" class="notice notice--danger" style="margin-top: 10px">
-            <span>该地块边界未闭合，无法通过审核，需驳回并退回农户重新绘制。</span>
+          <div class="audit-block-title">GIS 边界预览（真实底图）</div>
+          <GisMap
+            v-if="previewPlot"
+            :plots="[previewPlot]"
+            :devices="[]"
+            :show-devices="false"
+            :height="248"
+            :zoom="17"
+            :show-coords="false"
+          />
+          <div class="kv" style="margin-top: 10px">
+            <div class="kv__item"><span>边界顶点</span><b>{{ selected?.polygon.length ?? 0 }} 个</b></div>
+            <div class="kv__item"><span>图形量算</span><b>{{ formatAreaSqm(geometryArea) }}</b></div>
+            <div class="kv__item"><span>申报面积</span><b>{{ selected?.area }} 亩</b></div>
+            <div class="kv__item">
+              <span>面积偏差</span>
+              <b :style="{ color: areaDeviation > 0.15 ? 'var(--danger)' : 'var(--success)' }">
+                {{ (areaDeviation * 100).toFixed(1) }}%
+              </b>
+            </div>
+          </div>
+          <div v-if="selected && (!selected.boundaryClosed || !boundaryValid)" class="notice notice--danger" style="margin-top: 10px">
+            <span>该地块边界未闭合或图形退化，无法通过审核，需驳回并退回农户重新绘制。</span>
+          </div>
+          <div v-else-if="areaDeviation > 0.15" class="notice notice--warn" style="margin-top: 10px">
+            <span>图形量算面积与申报面积偏差超过 15%，建议现场复核后再通过。</span>
           </div>
         </div>
         <div>

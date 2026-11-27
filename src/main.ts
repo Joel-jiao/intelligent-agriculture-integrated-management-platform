@@ -22,6 +22,9 @@ import {
 import 'ant-design-vue/dist/reset.css'
 // antd 内部样式覆盖（统一收敛到独立 CSS 文件，避免 .vue 内样式块的 IDE 误报）
 import './assets/antd-overrides.css'
+// GIS 底图（Leaflet）样式与项目皮肤
+import 'leaflet/dist/leaflet.css'
+import './assets/leaflet-overrides.css'
 import App from './App.vue'
 import router from './router'
 import { initTheme } from './composables/useTheme'

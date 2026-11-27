@@ -7,51 +7,45 @@ import { useTheme } from '@/composables/useTheme'
 import { devices, envSeries, park, plots } from '@/api/store'
 import type { Plot } from '@/data/types'
 import { buildCsv, downloadText, formatNumber, today } from '@/utils/format'
+import {
+  boundsContain,
+  formatAreaSqm,
+  polygonAreaSqm,
+  polygonCentroid,
+  type Basemap,
+  type SelectionArea,
+} from '@/utils/geo'
 
 const toast = useToast()
 const { theme } = useTheme()
 
-interface AreaRect {
-  x: number
-  y: number
-  width: number
-  height: number
-}
-
 const layers = reactive({ plots: true, devices: true, weather: true, remote: true })
+
+const mapRef = ref<InstanceType<typeof GisMap> | null>(null)
+const basemap = ref<Basemap>('vector')
+const boxMode = ref(false)
 
 const localDark = ref(false)
 const isDark = computed(() => localDark.value || theme.value === 'dark')
 const keyword = ref('')
 const statusFilter = ref<'全部' | '正常' | '预警' | '休耕'>('全部')
 const selectedPlotId = ref('')
-const selectedArea = ref<AreaRect | null>(null)
+const selectedArea = ref<SelectionArea | null>(null)
 const drawerOpen = ref(false)
 
 const visiblePlots = computed(() => (layers.plots ? plots : []))
 const visibleDevices = computed(() => (layers.devices ? devices : []))
 
-function centroid(plot: Plot): { x: number; y: number } {
-  if (plot.polygon.length === 0) return { x: 0, y: 0 }
-  const sum = plot.polygon.reduce((acc, point) => ({ x: acc.x + point.x, y: acc.y + point.y }), { x: 0, y: 0 })
-  return { x: sum.x / plot.polygon.length, y: sum.y / plot.polygon.length }
-}
-
 const selectedPlots = computed(() => {
   const area = selectedArea.value
   if (!area) return []
-  return plots.filter((plot) => {
-    const center = centroid(plot)
-    return (
-      center.x >= area.x &&
-      center.x <= area.x + area.width &&
-      center.y >= area.y &&
-      center.y <= area.y + area.height
-    )
-  })
+  return plots.filter((plot) => boundsContain(area.bounds, polygonCentroid(plot.polygon)))
 })
 
 const selectionArea = computed(() => selectedPlots.value.reduce((sum, plot) => sum + plot.area, 0))
+const selectionGeometryArea = computed(() =>
+  selectedPlots.value.reduce((sum, plot) => sum + polygonAreaSqm(plot.polygon), 0),
+)
 
 const filteredPlots = computed(() =>
   plots.filter((plot) => {
@@ -92,14 +86,36 @@ function selectPlot(id: string) {
   drawerOpen.value = true
 }
 
-function selectArea(rect: AreaRect) {
-  selectedArea.value = rect
-  const total = selectionArea.value
+/** 列表点击：选中并飞到该地块 */
+function locatePlot(id: string) {
+  selectPlot(id)
+  mapRef.value?.fitToPlot(id)
+}
+
+/** 地图上点击地块：只高亮，不打断当前视野 */
+function onMapSelectPlot(id: string) {
+  selectPlot(id)
+}
+
+function selectArea(area: SelectionArea) {
+  selectedArea.value = area
+  boxMode.value = false
   if (selectedPlots.value.length === 0) {
     toast.warn('框选区域内没有地块，请重新选择范围')
     return
   }
-  toast.success(`框选完成：${selectedPlots.value.length} 个地块，总面积 ${formatNumber(total, 1)} 亩`)
+  toast.success(
+    `框选完成：${selectedPlots.value.length} 个地块 · 档案面积 ${formatNumber(selectionArea.value, 1)} 亩 · 图形面积 ${formatAreaSqm(selectionGeometryArea.value)}`,
+  )
+}
+
+function toggleBox() {
+  boxMode.value = !boxMode.value
+  mapRef.value?.toggleBoxSelect()
+}
+
+function fitPark() {
+  mapRef.value?.fitAll()
 }
 
 function selectDevice(id: string) {
@@ -113,6 +129,10 @@ function resetSelection() {
   selectedPlotId.value = ''
   drawerOpen.value = false
   toast.info('已清除地图框选与地块选中状态')
+}
+
+function setBasemap(value: Basemap) {
+  basemap.value = value
 }
 
 function toggleDark() {
@@ -150,15 +170,20 @@ function exportSelection() {
   <div class="cockpit">
     <div class="cockpit__map">
       <GisMap
+        ref="mapRef"
         :plots="visiblePlots"
         :devices="visibleDevices"
         :selected-id="selectedPlotId"
         :show-devices="layers.devices"
-        :box-select="true"
         :dark="isDark"
+        :basemap="basemap"
         :hide-legend="true"
+        :show-toolbar="false"
+        :show-coords="false"
+        :show-zoom="true"
         :height="600"
-        @select-plot="selectPlot"
+        :zoom="15"
+        @select-plot="onMapSelectPlot"
         @select-area="selectArea"
         @select-device="selectDevice"
       />
@@ -193,7 +218,7 @@ function exportSelection() {
               class="plot-item"
               :class="{ 'is-active': plot.id === selectedPlotId }"
               type="button"
-              @click="selectPlot(plot.id)"
+              @click="locatePlot(plot.id)"
             >
               <i
                 class="dot"
@@ -224,17 +249,43 @@ function exportSelection() {
             </label>
           </div>
 
+          <div class="layer-row layer-row--stack">
+            <span>底图</span>
+            <div class="segmented" style="flex: 1">
+              <button
+                v-for="item in [
+                  { key: 'vector', label: '矢量' },
+                  { key: 'satellite', label: '影像' },
+                  { key: 'blank', label: '纯色' },
+                ] as const"
+                :key="item.key"
+                type="button"
+                :class="{ 'is-active': basemap === item.key }"
+                style="flex: 1"
+                @click="setBasemap(item.key)"
+              >
+                {{ item.label }}
+              </button>
+            </div>
+          </div>
+
           <div v-if="selectedArea" class="selection-summary">
             <span>已框选 <b>{{ selectedPlots.length }}</b> 个地块 · {{ formatNumber(selectionArea, 1) }} 亩</span>
             <button class="link-action" type="button" @click="resetSelection">清除</button>
           </div>
 
           <div class="panel__actions">
-            <button class="btn btn--sm" type="button" @click="toggleDark">
-              {{ localDark ? '浅色底图' : '深色底图' }}
+            <button class="btn btn--sm" type="button" @click="fitPark">全园</button>
+            <button class="btn btn--sm" :class="{ 'btn--primary': boxMode }" type="button" @click="toggleBox">
+              框选
             </button>
-            <button class="btn btn--sm btn--primary" type="button" @click="exportSelection">导出</button>
+            <button class="btn btn--sm" type="button" @click="toggleDark">
+              {{ localDark ? '浅色' : '深色' }}
+            </button>
           </div>
+          <button class="btn btn--sm btn--primary btn--full" type="button" style="margin-top: 8px" @click="exportSelection">
+            导出空间统计
+          </button>
         </div>
       </section>
     </div>
@@ -324,7 +375,8 @@ function exportSelection() {
             <div class="side-panel__section-title">地块信息</div>
             <div class="kv">
               <div class="kv__item"><span>作物 / 品种</span><b>{{ selectedPlot.crop }} / {{ selectedPlot.variety }}</b></div>
-              <div class="kv__item"><span>种植面积</span><b>{{ selectedPlot.area }} 亩</b></div>
+              <div class="kv__item"><span>档案面积</span><b>{{ selectedPlot.area }} 亩</b></div>
+              <div class="kv__item"><span>图形面积</span><b>{{ formatAreaSqm(polygonAreaSqm(selectedPlot.polygon)) }}</b></div>
               <div class="kv__item"><span>土壤类型</span><b>{{ selectedPlot.soil }}</b></div>
               <div class="kv__item"><span>生育期</span><b>{{ selectedPlot.stage }}</b></div>
               <div class="kv__item"><span>定植日期</span><b>{{ selectedPlot.plantedAt }}</b></div>
@@ -365,7 +417,7 @@ function exportSelection() {
           </div>
         </div>
         <div class="drawer__foot">
-          <button class="btn btn--full" type="button" @click="drawerOpen = false">关闭</button>
+          <button class="btn btn--full" type="button" @click="mapRef?.fitToPlot(selectedPlot.id)">定位地块</button>
           <button class="btn btn--primary btn--full" type="button" @click="exportSelection">导出地块数据</button>
         </div>
       </aside>
@@ -393,6 +445,15 @@ function exportSelection() {
   border-top: 1px solid var(--border-card);
   font-size: 11.5px;
   color: var(--text-secondary);
+}
+
+.layer-row--stack {
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.layer-row--stack .segmented {
+  padding: 2px;
 }
 
 .switch--sm {

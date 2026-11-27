@@ -134,6 +134,18 @@ mysql --default-character-set=utf8mb4 -u root -p agri_platform < sql/agri_platfo
 - 表格、分页、弹窗、图表、GIS 一律使用 `src/components/ui/*` 自有组件，**不要引入 ECharts / Element Plus / 其他 UI 库**。
 - 全局提示统一 `useToast()`（它拿的是 `<a-app>` 内跟随主题的 message 实例），不要直接调 antd 静态 `message`。
 
+### 4.7 GIS 地图（Leaflet）
+
+地图已从 SVG 示意图换成真实 Leaflet（高德瓦片），组件 `src/components/ui/GisMap.vue` 是**唯一**的地图入口。
+
+- 坐标：`MapPoint` 以 `lng` / `lat`（WGS84）为准；`x` / `y` 是历史 1000×600 虚拟画布坐标，由 `utils/geo.ts` 与经纬度互算。老数据（只有 `x`/`y`）无需迁移即可落到真实底图，**不要**再写死 `x/y` 画 SVG。
+- 面积/周长统一走 `utils/geo.ts`（球面公式），不要再手写像素比或引入 turf。
+- 绘制：`drawable` → 用户圈画 → `@draw-complete` 返回 `{ polygon, area, areaMu, perimeter, geojson }`；绘制结果通过 `pending` prop 回显为蓝色虚线，避免"画完就消失"。
+- 编辑：`editable` + `selectedId` 可直接拖拽顶点，`@edit-complete` 同样返回边界数据。
+- 框选：`box-select` 或 `defineExpose` 的 `toggleBoxSelect()`；`@select-area` 同时给出真实 `bounds` 与兼容旧代码的画布矩形。
+- 底图三种：`vector` / `satellite` / `blank`，`dark` 对瓦片做反相滤镜；Leaflet 运行时生成的 DOM 样式写在 `assets/leaflet-overrides.css`，**不要**塞进 SFC 的 scoped 样式。
+- 地块写操作已接后端（`POST/PATCH/DELETE /farm/plots`），失败必须 `toast.error`，不要静默回退。
+
 ---
 
 ## 5. 常见改造路径

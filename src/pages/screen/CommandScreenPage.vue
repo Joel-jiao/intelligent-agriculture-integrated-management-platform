@@ -220,7 +220,17 @@ onBeforeUnmount(() => {
             <span>GIS · {{ plots.length }} 个地块</span>
           </div>
           <div class="screen-map">
-            <GisMap :plots="plots" :devices="devices" :height="360" />
+            <GisMap
+              :plots="plots"
+              :devices="devices"
+              :height="360"
+              :dark="true"
+              :basemap="'vector'"
+              :show-toolbar="false"
+              :show-coords="false"
+              :hide-legend="true"
+              :zoom="15"
+            />
           </div>
         </section>
 

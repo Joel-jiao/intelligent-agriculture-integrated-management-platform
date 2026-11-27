@@ -2,9 +2,11 @@
 import { computed, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppModal from '@/components/ui/AppModal.vue'
+import GisMap from '@/components/ui/GisMap.vue'
 import { useToast } from '@/composables/useToast'
 import { farmerPlots } from '@/api/store'
-import type { MapPoint } from '@/data/types'
+import type { MapPoint, Plot } from '@/data/types'
+import { formatAreaSqm, isBoundaryClosed, polygonAreaSqm, type DrawnBoundary } from '@/utils/geo'
 
 const route = useRoute()
 const router = useRouter()
@@ -29,25 +31,53 @@ const form = reactive({
   expectedHarvest: sourcePlot.value?.expectedHarvest ?? '',
 })
 
-const points = ref<MapPoint[]>(sourcePlot.value?.polygon.map((p) => ({ ...p })) ?? [])
+const polygon = ref<MapPoint[]>(sourcePlot.value?.polygon.map((p) => ({ ...p })) ?? [])
 const photos = ref<string[]>(['现场照片-1', '现场照片-2'])
 const submitOpen = ref(false)
+const mapRef = ref<InstanceType<typeof GisMap> | null>(null)
 
-const boundaryClosed = computed(() => points.value.length >= 3)
+const boundaryClosed = computed(() => isBoundaryClosed(polygon.value))
+const geometryArea = computed(() => polygonAreaSqm(polygon.value))
 
-const polygonString = computed(() => points.value.map((p) => `${p.x},${p.y}`).join(' '))
+/** 已录入地块作为底图参照，方便农户判断新地块位置 */
+const contextPlots = computed<Plot[]>(() =>
+  farmerPlots
+    .filter((item) => item.id !== editId.value)
+    .map((item) => ({
+    id: item.id,
+    code: item.id,
+    name: item.name,
+    crop: item.crop,
+    variety: item.variety,
+    area: item.area,
+    greenhouse: item.greenhouse,
+    stage: '—',
+    soil: '—',
+    manager: '本人',
+    plantedAt: item.plantedAt,
+    expectedHarvest: item.expectedHarvest,
+      status: '正常',
+      color: '#4fae74',
+      polygon: item.polygon,
+    })),
+)
 
-function onMapClick(event: MouseEvent) {
-  const target = event.currentTarget as SVGSVGElement | null
-  if (!target) return
-  const rect = target.getBoundingClientRect()
-  const x = ((event.clientX - rect.left) / rect.width) * 1000
-  const y = ((event.clientY - rect.top) / rect.height) * 600
-  points.value.push({ x: Math.round(x), y: Math.round(y) })
+/** 绘制完成：边界与面积同步回填到表单 */
+function onBoundaryDrawn(boundary: DrawnBoundary) {
+  polygon.value = boundary.polygon
+  form.area = boundary.areaMu.toFixed(2)
+  toast.success(`边界已闭合：${boundary.polygon.length} 个顶点 · ${boundary.areaMu.toFixed(2)} 亩`)
+}
+
+function startDraw() {
+  mapRef.value?.startDraw()
 }
 
 function clearBoundary() {
-  points.value = []
+  polygon.value = []
+  form.area = ''
+  mapRef.value?.cancelDraw()
+  mapRef.value?.startDraw()
 }
 
 function addPhoto() {
@@ -70,7 +100,7 @@ function validate(): boolean {
     return false
   }
   if (!boundaryClosed.value) {
-    toast.warn('请在地图上点击绘制并闭合地块边界')
+    toast.warn('请在地图上真实绘制并闭合地块边界（至少 3 个顶点）')
     return false
   }
   return true
@@ -152,20 +182,29 @@ function confirmSubmit() {
       </div>
       <div class="mobile-card">
         <div class="boundary-map" :class="{ 'is-incomplete': !boundaryClosed }">
-          <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" @click="onMapClick">
-            <rect width="1000" height="600" fill="#f2f6f3" />
-            <polygon v-if="points.length >= 3" :points="polygonString" fill="rgba(47,143,91,0.22)" stroke="#2f8f5b" stroke-width="2.5" />
-            <polyline v-else-if="points.length >= 2" :points="polygonString" fill="none" stroke="#2f8f5b" stroke-width="2" stroke-dasharray="6 5" />
-            <circle v-for="(point, index) in points" :key="index" :cx="point.x" :cy="point.y" r="6" fill="#2f8f5b" stroke="#fff" stroke-width="2" />
-            <text v-if="points.length < 3" x="500" y="300" text-anchor="middle" fill="#94a69b" font-size="15">
-              点击地图依次添加边界顶点
-            </text>
-          </svg>
+          <GisMap
+            ref="mapRef"
+            :plots="contextPlots"
+            :devices="[]"
+            :show-devices="false"
+            :show-labels="false"
+            :pending="polygon"
+            :height="248"
+            :zoom="17"
+            :show-coords="false"
+            drawable
+            @draw-complete="onBoundaryDrawn"
+          />
         </div>
         <div class="boundary-meta">
-          <span :class="boundaryClosed ? 'tag--ok' : 'tag--warn'" class="tag">{{ boundaryClosed ? `已闭合 · ${points.length} 个顶点` : `未闭合 · ${points.length} 个顶点` }}</span>
-          <span class="cell-muted">至少 3 个顶点才能闭合边界</span>
+          <span :class="boundaryClosed ? 'tag--ok' : 'tag--warn'" class="tag">
+            {{ boundaryClosed ? `已闭合 · ${polygon.length} 个顶点 · ${formatAreaSqm(geometryArea)}` : `未闭合 · ${polygon.length} 个顶点` }}
+          </span>
+          <span class="cell-muted">真实底图圈画，至少 3 个顶点</span>
         </div>
+        <button class="mobile-btn mobile-btn--ghost mobile-btn--full" type="button" style="margin-top: 10px" @click="startDraw">
+          在地图上绘制边界
+        </button>
       </div>
     </section>
 
@@ -197,7 +236,7 @@ function confirmSubmit() {
       <p class="confirm-text">确认提交地块「{{ form.name }}」档案吗？提交后将进入待审核状态。</p>
       <div class="detail-row"><span>面积</span><b class="font-num">{{ form.area }} 亩</b></div>
       <div class="detail-row"><span>作物</span><b>{{ form.crop }} · {{ form.variety }}</b></div>
-      <div class="detail-row"><span>边界</span><b>{{ points.length }} 个顶点</b></div>
+      <div class="detail-row"><span>边界</span><b>{{ polygon.length }} 个顶点 · {{ formatAreaSqm(geometryArea) }}</b></div>
       <template #footer>
         <button class="mobile-btn mobile-btn--ghost" type="button" @click="submitOpen = false">取消</button>
         <button class="mobile-btn mobile-btn--primary" type="button" @click="confirmSubmit">确认提交</button>
@@ -244,11 +283,9 @@ function confirmSubmit() {
   border-color: var(--warn);
 }
 
-.boundary-map svg {
-  display: block;
-  width: 100%;
-  height: 200px;
-  cursor: crosshair;
+.boundary-map :deep(.gis-map) {
+  border: 0;
+  border-radius: 10px;
 }
 
 .boundary-meta {

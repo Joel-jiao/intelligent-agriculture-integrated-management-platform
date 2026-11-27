@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
-import { park, loadAllData } from '@/api/store'
+import {ref} from 'vue'
+import {useRouter} from 'vue-router'
+import {useAuth} from '@/composables/useAuth'
+import {park, loadAllData} from '@/api/store'
 
 const router = useRouter()
-const { login } = useAuth()
+const {login} = useAuth()
 const account = ref('')
 const password = ref('')
 const loading = ref(false)
@@ -44,11 +44,11 @@ async function submit() {
       <div v-if="error" class="login-error">{{ error }}</div>
       <label class="mobile-field">
         <span>手机号 / 账号</span>
-        <input v-model="account" type="text" placeholder="请输入手机号或账号" />
+        <input v-model="account" type="text" placeholder="请输入手机号或账号"/>
       </label>
       <label class="mobile-field">
         <span>登录密码</span>
-        <input v-model="password" type="password" placeholder="请输入密码" @keyup.enter="submit" />
+        <input v-model="password" type="password" placeholder="请输入密码" @keyup.enter="submit"/>
       </label>
       <button class="mobile-btn mobile-btn--full" type="button" :disabled="loading" @click="submit">
         {{ loading ? '登录中…' : '登录' }}

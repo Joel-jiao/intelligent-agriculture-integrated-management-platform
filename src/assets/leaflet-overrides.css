@@ -1,0 +1,158 @@
+/* ==========================================================================
+   Leaflet 地图皮肤
+   Leaflet 会在运行时生成 DOM（tooltip / popup / 图标），无法用 SFC 的 scoped 样式命中，
+   因此统一收敛到这里，跟随项目设计系统的 CSS 变量。
+   ========================================================================== */
+
+.leaflet-container {
+  font-family: var(--font);
+  font-size: 12px;
+  background: transparent;
+}
+
+.leaflet-container a {
+  color: var(--primary);
+}
+
+/* 悬浮提示卡 */
+.leaflet-tooltip.gis-tip {
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(20, 22, 21, 0.92);
+  box-shadow: 0 10px 26px -12px rgba(0, 0, 0, 0.5);
+  color: #f2f7f4;
+  white-space: nowrap;
+  backdrop-filter: blur(6px);
+}
+
+.leaflet-tooltip.gis-tip::before {
+  border-top-color: rgba(20, 22, 21, 0.92);
+}
+
+.gis-tip__title {
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.gis-tip__row {
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: rgba(242, 247, 244, 0.72);
+}
+
+/* 常驻地块标注 */
+.leaflet-tooltip.gis-label {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.leaflet-tooltip.gis-label::before {
+  display: none;
+}
+
+.gis-label__title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: #14251b;
+  text-shadow:
+    0 0 3px #ffffff,
+    0 0 5px rgba(255, 255, 255, 0.9),
+    0 0 7px rgba(255, 255, 255, 0.7);
+}
+
+.gis-label__meta {
+  margin-top: 1px;
+  font-size: 10px;
+  color: #35473c;
+  text-shadow:
+    0 0 3px #ffffff,
+    0 0 5px rgba(255, 255, 255, 0.85);
+}
+
+/* 深色底图上改为浅色文字 + 暗描边 */
+.gis-map--dark .gis-label__title,
+.gis-dark-labels .gis-label__title {
+  color: #ffffff;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.9),
+    0 0 4px rgba(0, 0, 0, 0.85);
+}
+
+.gis-map--dark .gis-label__meta {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.9),
+    0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+/* 顶点手柄 */
+.gis-handle {
+  background: transparent;
+  border: 0;
+}
+
+.gis-handle span {
+  display: block;
+  width: 14px;
+  height: 14px;
+  margin: 1px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  cursor: move;
+}
+
+.gis-handle--first span {
+  background: var(--success);
+  box-shadow:
+    0 0 0 4px rgba(52, 199, 89, 0.24),
+    0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.gis-handle--edit span {
+  background: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+}
+
+/* 设备点位 */
+.gis-device {
+  background: transparent;
+  border: 0;
+}
+
+.gis-device__dot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.gis-device__dot--online {
+  background: #34c759;
+}
+
+.gis-device__dot--offline {
+  background: #ff3b30;
+}
+
+.gis-device__dot--fault {
+  background: #ff9f0a;
+}
+
+/* 缩放控件在深色底图下的辅助文字 */
+.leaflet-control-zoom a {
+  font-weight: 500;
+}

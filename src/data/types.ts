@@ -1,6 +1,14 @@
+/**
+ * 地块边界顶点
+ *
+ * 真实 GIS 数据以 lng / lat（WGS84）为准；x / y 是历史虚拟画布坐标，
+ * 新数据由经纬度反算得到，保留是为了兼容仍按像素取值的旧代码（见 utils/geo.ts）。
+ */
 export interface MapPoint {
   x: number
   y: number
+  lng?: number
+  lat?: number
 }
 
 export interface Plot {
